@@ -985,16 +985,68 @@ function quickAction(key){
   setTimeout(()=>{addMsg(responses[key][lang],false);},600);
 }
 
-function sendChat(){
-  const inp=document.getElementById('chat-input');
-  const txt=inp.value.trim();
-  if(!txt)return;
-  addMsg(txt,true);
-  inp.value='';
-  const reply=lang==='de'
-    ?'Danke für deine Frage! Ich suche in den internen Richtlinien von NoRFood AG nach einer passenden Antwort. Für komplexe HR-Themen empfehle ich dir, dich direkt an Thomas Radler (HR Salzburg) zu wenden: <strong>t.radler@norfood.at</strong>'
-    :'Thanks for your question! I\'m searching NoRFood AG\'s internal policies for a relevant answer. For complex HR topics, I recommend contacting Thomas Radler (HR Salzburg) directly: <strong>t.radler@norfood.at</strong>';
-  setTimeout(()=>{addMsg(reply,false);},700);
+async function sendChat() {
+  const inp = document.getElementById('chat-input');
+  const txt = inp.value.trim();
+  if (!txt) return;
+
+  addMsg(txt, true);
+  inp.value = '';
+
+  const thinking =
+    lang === 'de'
+      ? 'Ich denke kurz nach...'
+      : 'Thinking for a moment...';
+
+  addMsg(thinking, false);
+
+  const msgs = document.getElementById('chat-messages');
+  const lastMsg = msgs.lastElementChild;
+
+  try {
+    const response = await fetch('/api/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        message: txt,
+        language: lang
+      })
+    });
+
+    const data = await response.json();
+
+    if (lastMsg) {
+      lastMsg.remove();
+    }
+
+    if (!response.ok) {
+      addMsg(
+        lang === 'de'
+          ? 'Gerade gibt es ein technisches Problem. Bitte versuche es gleich nochmal.'
+          : 'There is a technical problem right now. Please try again in a moment.',
+        false
+      );
+      console.error(data);
+      return;
+    }
+
+    addMsg(
+      data.reply || (lang === 'de' ? 'Keine Antwort erhalten.' : 'No reply received.'),
+      false
+    );
+  } catch (error) {
+    if (lastMsg) {
+      lastMsg.remove();
+    }
+
+    addMsg(
+      lang === 'de'
+        ? 'Die Verbindung hat gerade nicht funktioniert. Bitte versuche es erneut.'
+        : 'The connection did not work. Please try again.',
+      false
+    );
+    console.error(error);
+  }
 }
 
 document.addEventListener('keydown',e=>{if(e.key==='Enter'&&document.getElementById('login-screen').style.display!=='none'){doLogin();}});
