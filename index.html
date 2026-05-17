@@ -1,0 +1,1003 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NoRFood AG – Mitarbeiterportal</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --green-dark:#1e4a2e;--green-mid:#2d6b40;--green-light:#e8f0ea;
+  --petrol:#3a6b72;--petrol-light:#e6f0f1;
+  --beige:#f5f2ec;--beige-dark:#e8e3d9;
+  --charcoal:#2c2c2a;--gray:#6b6b68;--gray-light:#f0eeea;
+  --white:#ffffff;--border:#d4cfc6;
+  --amber:#7a5c1e;--amber-bg:#fdf3dc;
+  --red:#8b2e2e;--red-bg:#fdeaea;
+  --success:#1e5c35;--success-bg:#e6f4eb;
+  --radius:8px;--radius-lg:12px;
+  --shadow:0 1px 3px rgba(0,0,0,0.08);
+}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--beige);color:var(--charcoal);font-size:14px;line-height:1.5}
+
+/* LOGIN */
+#login-screen{position:fixed;inset:0;background:var(--green-dark);display:flex;align-items:center;justify-content:center;z-index:1000;flex-direction:column;gap:0}
+.login-box{background:var(--white);border-radius:var(--radius-lg);padding:2.5rem 2rem;width:380px;box-shadow:0 8px 32px rgba(0,0,0,0.18)}
+.login-logo{display:flex;align-items:center;gap:10px;margin-bottom:1.5rem}
+.login-logo .logo-mark{width:40px;height:40px;background:var(--green-dark);border-radius:8px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:18px;font-weight:700}
+.login-logo .logo-text{font-size:20px;font-weight:600;color:var(--green-dark)}
+.login-logo .logo-sub{font-size:11px;color:var(--gray);letter-spacing:.5px;text-transform:uppercase}
+.login-box h2{font-size:16px;font-weight:600;color:var(--charcoal);margin-bottom:.25rem}
+.login-box p{font-size:13px;color:var(--gray);margin-bottom:1.5rem}
+.form-group{margin-bottom:1rem}
+.form-group label{display:block;font-size:12px;font-weight:500;color:var(--gray);margin-bottom:.35rem;text-transform:uppercase;letter-spacing:.4px}
+.form-group input{width:100%;padding:.6rem .85rem;border:1px solid var(--border);border-radius:var(--radius);font-size:14px;background:var(--beige);color:var(--charcoal);outline:none;transition:border .15s}
+.form-group input:focus{border-color:var(--green-mid)}
+.login-btn{width:100%;padding:.7rem;background:var(--green-dark);color:#fff;border:none;border-radius:var(--radius);font-size:14px;font-weight:500;cursor:pointer;margin-top:.5rem;transition:background .15s}
+.login-btn:hover{background:var(--green-mid)}
+.login-hint{margin-top:1rem;padding:.6rem;background:var(--green-light);border-radius:var(--radius);font-size:12px;color:var(--green-dark);text-align:center}
+.login-footer{color:rgba(255,255,255,0.35);font-size:12px;margin-top:1.5rem}
+
+/* LAYOUT */
+#app{display:none;height:100vh;flex-direction:column}
+#app.active{display:flex}
+.topbar{background:var(--green-dark);color:#fff;height:52px;display:flex;align-items:center;padding:0 1.25rem;gap:1rem;flex-shrink:0;border-bottom:2px solid var(--green-mid)}
+.topbar .logo{display:flex;align-items:center;gap:8px;font-weight:600;font-size:15px;min-width:200px}
+.topbar .logo-mark{width:30px;height:30px;background:rgba(255,255,255,0.15);border-radius:6px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px}
+.topbar .search{flex:1;max-width:320px}
+.topbar .search input{width:100%;padding:.4rem .8rem;background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.2);border-radius:20px;color:#fff;font-size:13px;outline:none}
+.topbar .search input::placeholder{color:rgba(255,255,255,0.5)}
+.topbar-right{margin-left:auto;display:flex;align-items:center;gap:1rem}
+.lang-switch{display:flex;gap:2px;background:rgba(255,255,255,0.12);border-radius:6px;padding:2px}
+.lang-btn{padding:.25rem .6rem;border-radius:4px;border:none;background:none;color:rgba(255,255,255,0.7);font-size:12px;font-weight:500;cursor:pointer;transition:all .15s}
+.lang-btn.active{background:rgba(255,255,255,0.2);color:#fff}
+.user-badge{display:flex;align-items:center;gap:.5rem;font-size:13px}
+.user-avatar{width:28px;height:28px;border-radius:50%;background:var(--petrol);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600}
+.body{display:flex;flex:1;overflow:hidden}
+.sidebar{width:210px;background:var(--white);border-right:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0;overflow-y:auto}
+.sidebar-section{padding:.75rem .75rem .25rem;font-size:10px;font-weight:600;color:var(--gray);text-transform:uppercase;letter-spacing:.6px}
+.nav-item{display:flex;align-items:center;gap:.6rem;padding:.55rem .75rem;font-size:13px;color:var(--gray);cursor:pointer;border-radius:6px;margin:1px .4rem;transition:all .15s;border:none;background:none;width:calc(100% - .8rem);text-align:left}
+.nav-item:hover{background:var(--green-light);color:var(--green-dark)}
+.nav-item.active{background:var(--green-light);color:var(--green-dark);font-weight:500}
+.nav-item .nav-icon{font-size:16px;width:20px;text-align:center}
+.sidebar-footer{margin-top:auto;padding:.75rem;border-top:1px solid var(--border)}
+.main{flex:1;overflow-y:auto;padding:1.5rem}
+
+/* SECTIONS */
+.section{display:none}
+.section.active{display:block}
+.page-header{margin-bottom:1.25rem}
+.page-header h1{font-size:20px;font-weight:600;color:var(--charcoal)}
+.page-header p{font-size:13px;color:var(--gray);margin-top:.2rem}
+
+/* CARDS */
+.card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.1rem 1.25rem}
+.card-title{font-size:13px;font-weight:600;color:var(--charcoal);margin-bottom:.75rem;display:flex;align-items:center;gap:.4rem}
+.card-title .ct-icon{color:var(--green-mid)}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem}
+.grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:.75rem}
+
+/* DASHBOARD */
+.welcome-card{background:linear-gradient(135deg,var(--green-dark) 0%,var(--green-mid) 100%);color:#fff;border-radius:var(--radius-lg);padding:1.25rem 1.5rem;display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem}
+.welcome-card .wc-text h2{font-size:17px;font-weight:600}
+.welcome-card .wc-text p{font-size:13px;opacity:.8;margin-top:.2rem}
+.welcome-card .wc-badge{background:rgba(255,255,255,0.15);border-radius:8px;padding:.5rem 1rem;text-align:center;font-size:12px}
+.welcome-card .wc-badge .day{font-size:22px;font-weight:700}
+
+.stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:.75rem;margin-bottom:1rem}
+.stat-card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius-lg);padding:.9rem 1rem}
+.stat-card .stat-val{font-size:22px;font-weight:600;color:var(--charcoal)}
+.stat-card .stat-lbl{font-size:11px;color:var(--gray);margin-top:.15rem;text-transform:uppercase;letter-spacing:.4px}
+.stat-card .stat-dot{width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:.3rem}
+
+/* PROGRESS */
+.progress-bar{height:6px;background:var(--beige-dark);border-radius:3px;margin:.5rem 0}
+.progress-fill{height:100%;border-radius:3px;background:var(--green-mid);transition:width .3s}
+.progress-steps{display:flex;gap:.5rem;margin:.75rem 0}
+.prog-step{flex:1;padding:.4rem .5rem;background:var(--beige);border-radius:var(--radius);text-align:center;font-size:11px;border:1px solid var(--border)}
+.prog-step.done{background:var(--success-bg);border-color:var(--success);color:var(--success)}
+.prog-step.current{background:var(--green-light);border-color:var(--green-mid);color:var(--green-dark);font-weight:500}
+.prog-step.future{color:var(--gray)}
+
+/* TASKS */
+.task-item{display:flex;align-items:flex-start;gap:.6rem;padding:.6rem 0;border-bottom:1px solid var(--beige-dark)}
+.task-item:last-child{border-bottom:none}
+.task-cb{width:16px;height:16px;border-radius:4px;border:1.5px solid var(--border);flex-shrink:0;margin-top:2px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:10px}
+.task-cb.checked{background:var(--green-mid);border-color:var(--green-mid);color:#fff}
+.task-text{flex:1;font-size:13px}
+.task-text .task-sub{font-size:11px;color:var(--gray);margin-top:.15rem}
+.task-badge{font-size:10px;padding:2px 7px;border-radius:10px;font-weight:500;flex-shrink:0}
+.badge-open{background:var(--amber-bg);color:var(--amber)}
+.badge-done{background:var(--success-bg);color:var(--success)}
+.badge-late{background:var(--red-bg);color:var(--red)}
+.badge-info{background:var(--petrol-light);color:var(--petrol)}
+.badge-neutral{background:var(--beige-dark);color:var(--gray)}
+
+/* QUICK LINKS */
+.quick-link{display:flex;align-items:center;gap:.6rem;padding:.55rem .6rem;background:var(--beige);border:1px solid var(--border);border-radius:var(--radius);font-size:13px;color:var(--charcoal);cursor:pointer;transition:all .15s}
+.quick-link:hover{background:var(--green-light);border-color:var(--green-mid);color:var(--green-dark)}
+.quick-link .ql-icon{color:var(--green-mid);font-size:16px}
+.quick-links-grid{display:grid;grid-template-columns:1fr 1fr;gap:.5rem}
+
+/* CONTACTS */
+.contact-item{display:flex;align-items:center;gap:.7rem;padding:.5rem 0;border-bottom:1px solid var(--beige-dark)}
+.contact-item:last-child{border-bottom:none}
+.contact-avatar{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;flex-shrink:0}
+.ca-green{background:var(--green-light);color:var(--green-dark)}
+.ca-petrol{background:var(--petrol-light);color:var(--petrol)}
+.ca-amber{background:var(--amber-bg);color:var(--amber)}
+.contact-info .ci-name{font-size:13px;font-weight:500}
+.contact-info .ci-role{font-size:11px;color:var(--gray)}
+.contact-info .ci-email{font-size:11px;color:var(--petrol);margin-top:.1rem}
+
+/* ONBOARDING */
+.phase-tabs{display:flex;gap:.5rem;margin-bottom:1rem}
+.phase-tab{padding:.4rem .9rem;border-radius:20px;font-size:12px;font-weight:500;cursor:pointer;border:1px solid var(--border);background:var(--white);color:var(--gray);transition:all .15s}
+.phase-tab.active{background:var(--green-dark);color:#fff;border-color:var(--green-dark)}
+.milestone-list{display:flex;flex-direction:column;gap:.5rem}
+.milestone-item{display:flex;align-items:center;gap:.75rem;padding:.7rem .9rem;background:var(--white);border:1px solid var(--border);border-radius:var(--radius);transition:all .15s}
+.milestone-item:hover{border-color:var(--green-mid)}
+.mi-dot{width:12px;height:12px;border-radius:50%;flex-shrink:0}
+.dot-done{background:var(--green-mid)}
+.dot-current{background:var(--petrol)}
+.dot-future{background:var(--beige-dark);border:1.5px solid var(--border)}
+.mi-text{flex:1}
+.mi-text .mi-title{font-size:13px;font-weight:500}
+.mi-text .mi-sub{font-size:11px;color:var(--gray);margin-top:.1rem}
+.mi-date{font-size:11px;color:var(--gray)}
+
+/* CHECKLIST */
+.checklist-filters{display:flex;gap:.4rem;margin-bottom:1rem}
+.filter-btn{padding:.3rem .75rem;border-radius:20px;font-size:12px;cursor:pointer;border:1px solid var(--border);background:var(--white);color:var(--gray);transition:all .15s}
+.filter-btn.active{background:var(--charcoal);color:#fff;border-color:var(--charcoal)}
+
+/* DOCUMENTS */
+.doc-item{display:flex;align-items:center;gap:.75rem;padding:.65rem .75rem;background:var(--white);border:1px solid var(--border);border-radius:var(--radius);cursor:pointer;transition:all .15s}
+.doc-item:hover{border-color:var(--petrol);background:var(--petrol-light)}
+.doc-icon{width:34px;height:34px;background:var(--green-light);border-radius:6px;display:flex;align-items:center;justify-content:center;color:var(--green-dark);font-size:17px;flex-shrink:0}
+.doc-info .di-title{font-size:13px;font-weight:500}
+.doc-info .di-sub{font-size:11px;color:var(--gray);margin-top:.1rem}
+.doc-arrow{margin-left:auto;color:var(--gray);font-size:14px}
+.doc-grid{display:flex;flex-direction:column;gap:.4rem}
+
+/* TEAM */
+.team-card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1rem;text-align:center}
+.team-avatar{width:50px;height:50px;border-radius:50%;margin:0 auto .6rem;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:600}
+.team-name{font-size:13px;font-weight:500;margin-bottom:.15rem}
+.team-role{font-size:11px;color:var(--gray)}
+.team-role-badge{font-size:10px;padding:2px 8px;border-radius:10px;margin-top:.4rem;display:inline-block}
+
+/* BUDDY CHAT */
+.buddy-layout{display:grid;grid-template-columns:1fr 320px;gap:1rem;height:calc(100vh - 160px)}
+.chat-area{background:var(--white);border:1px solid var(--border);border-radius:var(--radius-lg);display:flex;flex-direction:column;overflow:hidden}
+.chat-header{padding:.8rem 1rem;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:.6rem;background:var(--green-dark);color:#fff;border-radius:var(--radius-lg) var(--radius-lg) 0 0}
+.chat-buddy-icon{width:32px;height:32px;background:rgba(255,255,255,0.2);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:15px}
+.chat-header .ch-title{font-size:14px;font-weight:500}
+.chat-header .ch-sub{font-size:11px;opacity:.7}
+.chat-mode-toggle{margin-left:auto;display:flex;gap:2px;background:rgba(255,255,255,0.12);border-radius:6px;padding:2px}
+.mode-btn{padding:.2rem .6rem;border-radius:4px;border:none;background:none;color:rgba(255,255,255,0.7);font-size:11px;cursor:pointer}
+.mode-btn.active{background:rgba(255,255,255,0.2);color:#fff}
+.chat-messages{flex:1;overflow-y:auto;padding:1rem;display:flex;flex-direction:column;gap:.75rem}
+.msg{max-width:80%}
+.msg-user{align-self:flex-end}
+.msg-buddy{align-self:flex-start}
+.msg-bubble{padding:.6rem .85rem;border-radius:var(--radius);font-size:13px;line-height:1.5}
+.msg-user .msg-bubble{background:var(--green-dark);color:#fff;border-radius:var(--radius) var(--radius) 2px var(--radius)}
+.msg-buddy .msg-bubble{background:var(--beige);border:1px solid var(--border);color:var(--charcoal);border-radius:var(--radius) var(--radius) var(--radius) 2px}
+.msg-buddy .msg-bubble strong{color:var(--green-dark)}
+.msg-buddy .msg-bubble ul{margin:.4rem 0 .4rem .9rem}
+.msg-buddy .msg-bubble li{margin:.2rem 0}
+.msg-meta{font-size:10px;color:var(--gray);margin-top:.25rem}
+.msg-user .msg-meta{text-align:right}
+.chat-input-area{padding:.75rem;border-top:1px solid var(--border);display:flex;gap:.5rem}
+.chat-input-area input{flex:1;padding:.55rem .85rem;border:1px solid var(--border);border-radius:20px;font-size:13px;outline:none;background:var(--beige)}
+.chat-input-area input:focus{border-color:var(--green-mid)}
+.chat-send-btn{padding:.5rem .85rem;background:var(--green-dark);color:#fff;border:none;border-radius:20px;font-size:13px;cursor:pointer}
+.chat-panel{display:flex;flex-direction:column;gap:.75rem}
+.quick-actions{background:var(--white);border:1px solid var(--border);border-radius:var(--radius-lg);padding:.9rem}
+.qa-title{font-size:12px;font-weight:600;color:var(--gray);text-transform:uppercase;letter-spacing:.4px;margin-bottom:.6rem}
+.qa-btn{display:block;width:100%;text-align:left;padding:.45rem .65rem;border:1px solid var(--border);border-radius:var(--radius);background:var(--beige);color:var(--charcoal);font-size:12px;cursor:pointer;margin-bottom:.35rem;transition:all .15s;line-height:1.4}
+.qa-btn:hover{background:var(--green-light);border-color:var(--green-mid);color:var(--green-dark)}
+
+/* HR WORKSPACE */
+.hr-tool-card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1rem;cursor:pointer;transition:all .15s}
+.hr-tool-card:hover{border-color:var(--petrol);box-shadow:0 2px 8px rgba(58,107,114,0.1)}
+.hr-tool-icon{width:38px;height:38px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px;margin-bottom:.6rem}
+.hr-tool-card .ht-title{font-size:13px;font-weight:500;margin-bottom:.25rem}
+.hr-tool-card .ht-desc{font-size:12px;color:var(--gray);line-height:1.4}
+.status-table{width:100%;border-collapse:collapse;font-size:13px}
+.status-table th{text-align:left;padding:.5rem .6rem;font-size:11px;font-weight:600;color:var(--gray);text-transform:uppercase;letter-spacing:.4px;border-bottom:1px solid var(--border)}
+.status-table td{padding:.55rem .6rem;border-bottom:1px solid var(--beige-dark);vertical-align:middle}
+.status-table tr:last-child td{border-bottom:none}
+
+/* UPDATES */
+.update-item{display:flex;gap:.7rem;padding:.55rem 0;border-bottom:1px solid var(--beige-dark)}
+.update-item:last-child{border-bottom:none}
+.update-dot{width:8px;height:8px;border-radius:50%;background:var(--green-mid);flex-shrink:0;margin-top:5px}
+.update-text{font-size:12px;color:var(--charcoal)}
+.update-time{font-size:11px;color:var(--gray);margin-top:.1rem}
+
+/* LOCATION PILLS */
+.loc-pill{display:inline-flex;align-items:center;gap:.4rem;padding:.25rem .65rem;background:var(--petrol-light);border-radius:20px;font-size:11px;color:var(--petrol);margin:.2rem}
+
+/* SECTION ALERT */
+.info-banner{padding:.65rem 1rem;background:var(--amber-bg);border:1px solid #e8c97a;border-radius:var(--radius);font-size:12px;color:var(--amber);margin-bottom:1rem;display:flex;align-items:center;gap:.5rem}
+
+/* RESPONSIVE */
+@media(max-width:900px){
+  .stat-grid{grid-template-columns:repeat(2,1fr)}
+  .buddy-layout{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="login-screen">
+  <div class="login-box">
+    <div class="login-logo">
+      <div class="logo-mark">N</div>
+      <div><div class="logo-text">NoRFood AG</div><div class="logo-sub">Mitarbeiterportal · Internal Portal</div></div>
+    </div>
+    <h2 id="lbl-welcome">Willkommen zurück</h2>
+    <p id="lbl-welcome-sub">Bitte melde dich mit deinen Zugangsdaten an.</p>
+    <div class="form-group">
+      <label id="lbl-email">E-Mail / Personalnummer</label>
+      <input type="text" value="s.hofer@norfood.at" id="login-email">
+    </div>
+    <div class="form-group">
+      <label id="lbl-pw">Passwort</label>
+      <input type="password" value="••••••••" id="login-pw">
+    </div>
+    <button class="login-btn" onclick="doLogin()" id="lbl-login-btn">Anmelden</button>
+    <div class="login-hint" id="lbl-hint">🔐 Demo-Zugangsdaten sind bereits eingetragen</div>
+  </div>
+  <div class="login-footer" id="lbl-footer">© 2025 NoRFood AG · Internes System · Nur für autorisierte Mitarbeitende</div>
+</div>
+
+<!-- APP -->
+<div id="app">
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div class="logo">
+      <div class="logo-mark">N</div>
+      <span>NoRFood AG</span>
+    </div>
+    <div class="search"><input type="text" id="search-input" placeholder="Suchen…"></div>
+    <div class="topbar-right">
+      <div class="lang-switch">
+        <button class="lang-btn active" onclick="setLang('de')">DE</button>
+        <button class="lang-btn" onclick="setLang('en')">EN</button>
+      </div>
+      <div class="user-badge">
+        <div class="user-avatar">SH</div>
+        <span id="user-name">Sandra Hofer</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="body">
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+      <div style="padding:.75rem .75rem .25rem">
+        <div class="sidebar-section" data-key="nav-main">Hauptmenü</div>
+        <button class="nav-item active" onclick="showSection('dashboard')">
+          <span class="nav-icon">🏠</span><span data-key="nav-dashboard">Dashboard</span>
+        </button>
+        <button class="nav-item" onclick="showSection('onboarding')">
+          <span class="nav-icon">🚀</span><span data-key="nav-onboarding">Mein Onboarding</span>
+        </button>
+        <button class="nav-item" onclick="showSection('checklists')">
+          <span class="nav-icon">✅</span><span data-key="nav-checklists">Checklisten</span>
+        </button>
+        <button class="nav-item" onclick="showSection('documents')">
+          <span class="nav-icon">📄</span><span data-key="nav-documents">Dokumente & Richtlinien</span>
+        </button>
+        <button class="nav-item" onclick="showSection('team')">
+          <span class="nav-icon">👥</span><span data-key="nav-team">Team & Kontakte</span>
+        </button>
+        <div class="sidebar-section" data-key="nav-tools">Assistenz & Tools</div>
+        <button class="nav-item" onclick="showSection('buddy')">
+          <span class="nav-icon">💬</span><span data-key="nav-buddy">NoRFood Buddy</span>
+        </button>
+        <button class="nav-item" onclick="showSection('hr')">
+          <span class="nav-icon">🗂️</span><span data-key="nav-hr">HR Workspace</span>
+        </button>
+      </div>
+      <div class="sidebar-footer">
+        <div style="font-size:11px;color:var(--gray)" id="sidebar-loc">📍 Standort: Salzburg</div>
+        <div style="font-size:11px;color:var(--gray);margin-top:.2rem" id="sidebar-dept">Abteilung: Qualitätssicherung</div>
+      </div>
+    </div>
+
+    <!-- MAIN -->
+    <div class="main">
+
+      <!-- DASHBOARD -->
+      <div id="section-dashboard" class="section active">
+        <div class="welcome-card">
+          <div class="wc-text">
+            <h2 id="wc-title">Guten Morgen, Sandra 👋</h2>
+            <p id="wc-sub">Du bist seit 23 Tagen bei NoRFood AG. Du machst das großartig!</p>
+          </div>
+          <div class="wc-badge">
+            <div class="day">23</div>
+            <div style="font-size:10px;opacity:.8" data-key="wc-day">Tag im Unternehmen</div>
+          </div>
+        </div>
+
+        <div class="stat-grid">
+          <div class="stat-card">
+            <div class="stat-val">8</div>
+            <div class="stat-lbl" data-key="stat-open">Offene Aufgaben</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-val" style="color:var(--success)">14</div>
+            <div class="stat-lbl" data-key="stat-done">Erledigt</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-val" style="color:var(--red)">2</div>
+            <div class="stat-lbl" data-key="stat-late">Überfällig</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-val">38%</div>
+            <div class="stat-lbl" data-key="stat-progress">Onboarding-Fortschritt</div>
+          </div>
+        </div>
+
+        <div class="grid-2" style="margin-bottom:1rem">
+          <div class="card">
+            <div class="card-title"><span class="ct-icon">🚀</span><span data-key="card-progress">Onboarding-Fortschritt</span></div>
+            <div class="progress-steps">
+              <div class="prog-step done" data-key="prog-w1">Woche 1</div>
+              <div class="prog-step done" data-key="prog-w2">Woche 2</div>
+              <div class="prog-step current" data-key="prog-w3">Woche 3</div>
+              <div class="prog-step future" data-key="prog-30">30 Tage</div>
+            </div>
+            <div class="progress-bar"><div class="progress-fill" style="width:38%"></div></div>
+            <div style="font-size:12px;color:var(--gray);margin-top:.4rem" data-key="prog-status">14 von 36 Meilensteinen abgeschlossen</div>
+          </div>
+          <div class="card">
+            <div class="card-title"><span class="ct-icon">📌</span><span data-key="card-next">Nächste Meilensteine</span></div>
+            <div class="task-item">
+              <div class="task-cb"><span>✓</span></div>
+              <div class="task-text"><div data-key="m1">Hygieneschulung Modul 2</div><div class="task-sub">Heute · 14:00 Uhr</div></div>
+              <span class="task-badge badge-open" data-key="b-open">Offen</span>
+            </div>
+            <div class="task-item">
+              <div class="task-cb"></div>
+              <div class="task-text"><div data-key="m2">Mentor-Gespräch: Woche 3</div><div class="task-sub">Do, 22.05.2025</div></div>
+              <span class="task-badge badge-info" data-key="b-plan">Geplant</span>
+            </div>
+            <div class="task-item">
+              <div class="task-cb"></div>
+              <div class="task-text"><div data-key="m3">IT-Berechtigungen: ERP-Zugang</div><div class="task-sub" data-key="late-since">Überfällig seit 2 Tagen</div></div>
+              <span class="task-badge badge-late" data-key="b-late">Überfällig</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <div class="card">
+            <div class="card-title"><span class="ct-icon">⚡</span><span data-key="card-quick">Schnellzugriff</span></div>
+            <div class="quick-links-grid">
+              <div class="quick-link" onclick="showSection('buddy')"><span class="ql-icon">💬</span><span data-key="ql-buddy">NoRFood Buddy</span></div>
+              <div class="quick-link" onclick="showSection('documents')"><span class="ql-icon">📄</span><span data-key="ql-docs">Richtlinien</span></div>
+              <div class="quick-link" onclick="showSection('checklists')"><span class="ql-icon">✅</span><span data-key="ql-check">Checklisten</span></div>
+              <div class="quick-link" onclick="showSection('team')"><span class="ql-icon">👥</span><span data-key="ql-team">Mein Team</span></div>
+              <div class="quick-link"><span class="ql-icon">🏖️</span><span data-key="ql-vacation">Urlaub beantragen</span></div>
+              <div class="quick-link"><span class="ql-icon">🤒</span><span data-key="ql-sick">Krankmeldung</span></div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-title"><span class="ct-icon">🔔</span><span data-key="card-updates">Aktuelle Meldungen</span></div>
+            <div class="update-item"><div class="update-dot"></div><div><div class="update-text" data-key="u1">Neue Hygienerichtlinie (HACCP 2025) veröffentlicht</div><div class="update-time" data-key="u1-t">Heute · Qualitätssicherung</div></div></div>
+            <div class="update-item"><div class="update-dot" style="background:var(--petrol)"></div><div><div class="update-text" data-key="u2">Betriebsversammlung: 28.05. · Halle B · Salzburg</div><div class="update-time" data-key="u2-t">Gestern · Betriebsrat</div></div></div>
+            <div class="update-item"><div class="update-dot" style="background:var(--amber)"></div><div><div class="update-text" data-key="u3">Erinnerung: Arbeitssicherheitsunterweisung bis 31.05.</div><div class="update-time" data-key="u3-t">20.05.2025 · HR</div></div></div>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top:1rem">
+          <div class="card-title"><span class="ct-icon">👤</span><span data-key="card-contacts">Meine Kontakte</span></div>
+          <div class="grid-3">
+            <div class="contact-item" style="border:none;padding:.3rem 0">
+              <div class="contact-avatar ca-green">MK</div>
+              <div class="contact-info"><div class="ci-name">Mag. Michael Kögler</div><div class="ci-role" data-key="role-manager">Direktvorgesetzte/r</div><div class="ci-email">m.koegler@norfood.at</div></div>
+            </div>
+            <div class="contact-item" style="border:none;padding:.3rem 0">
+              <div class="contact-avatar ca-petrol">AS</div>
+              <div class="contact-info"><div class="ci-name">Anna Steinberger</div><div class="ci-role" data-key="role-mentor">Mentorin</div><div class="ci-email">a.steinberger@norfood.at</div></div>
+            </div>
+            <div class="contact-item" style="border:none;padding:.3rem 0">
+              <div class="contact-avatar ca-amber">TR</div>
+              <div class="contact-info"><div class="ci-name">Thomas Radler</div><div class="ci-role" data-key="role-hr">HR Business Partner</div><div class="ci-email">t.radler@norfood.at</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ONBOARDING -->
+      <div id="section-onboarding" class="section">
+        <div class="page-header">
+          <h1 data-key="ob-title">Mein Onboarding</h1>
+          <p data-key="ob-sub">30/60/90-Tage-Plan · Qualitätssicherung · Standort Salzburg</p>
+        </div>
+        <div class="phase-tabs">
+          <div class="phase-tab active" onclick="setPhase('welcome',this)" data-key="phase-welcome">Willkommenstag</div>
+          <div class="phase-tab" onclick="setPhase('30',this)" data-key="phase-30">Erste 30 Tage</div>
+          <div class="phase-tab" onclick="setPhase('60',this)" data-key="phase-60">31–60 Tage</div>
+          <div class="phase-tab" onclick="setPhase('90',this)" data-key="phase-90">61–90 Tage</div>
+        </div>
+
+        <div id="phase-welcome-content">
+          <div class="card" style="margin-bottom:1rem">
+            <div class="card-title">🎉 <span data-key="wday-title">Willkommenstag – 29. April 2025</span></div>
+            <div class="milestone-list">
+              <div class="milestone-item"><div class="mi-dot dot-done"></div><div class="mi-text"><div class="mi-title" data-key="wd1">Empfang & Ausweis-Ausgabe</div><div class="mi-sub" data-key="wd1s">Sicherheitsabteilung · 08:00 Uhr</div></div><span class="task-badge badge-done" data-key="b-done">Erledigt</span></div>
+              <div class="milestone-item"><div class="mi-dot dot-done"></div><div class="mi-text"><div class="mi-title" data-key="wd2">HR-Begrüßungsgespräch</div><div class="mi-sub" data-key="wd2s">Thomas Radler · HR Salzburg</div></div><span class="task-badge badge-done" data-key="b-done2">Erledigt</span></div>
+              <div class="milestone-item"><div class="mi-dot dot-done"></div><div class="mi-text"><div class="mi-title" data-key="wd3">Betriebsrundgang & Sicherheitsunterweisung</div><div class="mi-sub" data-key="wd3s">Produktionshallen A–C · Hygienebereich</div></div><span class="task-badge badge-done" data-key="b-done3">Erledigt</span></div>
+              <div class="milestone-item"><div class="mi-dot dot-done"></div><div class="mi-text"><div class="mi-title" data-key="wd4">IT-Setup & Laptop-Ausgabe</div><div class="mi-sub" data-key="wd4s">IT-Helpdesk · Raum 204</div></div><span class="task-badge badge-done" data-key="b-done4">Erledigt</span></div>
+              <div class="milestone-item"><div class="mi-dot dot-done"></div><div class="mi-text"><div class="mi-title" data-key="wd5">Kennenlernen Abteilung & Mentorin</div><div class="mi-sub" data-key="wd5s">Anna Steinberger · QS-Team</div></div><span class="task-badge badge-done" data-key="b-done5">Erledigt</span></div>
+            </div>
+          </div>
+        </div>
+        <div id="phase-30-content" style="display:none">
+          <div class="card" style="margin-bottom:1rem">
+            <div class="card-title">📅 <span data-key="p30-title">Erste 30 Tage – Einarbeitung & Grundlagen</span></div>
+            <div class="milestone-list">
+              <div class="milestone-item"><div class="mi-dot dot-done"></div><div class="mi-text"><div class="mi-title" data-key="p30-1">Hygieneschulung Modul 1 (HACCP Grundlagen)</div><div class="mi-sub">08.05.2025</div></div><span class="task-badge badge-done" data-key="b-d1">Erledigt</span></div>
+              <div class="milestone-item"><div class="mi-dot dot-current"></div><div class="mi-text"><div class="mi-title" data-key="p30-2">Hygieneschulung Modul 2 (Produktionsprozesse)</div><div class="mi-sub" data-key="p30-2s">Heute · 14:00 Uhr</div></div><span class="task-badge badge-open" data-key="b-o1">Offen</span></div>
+              <div class="milestone-item"><div class="mi-dot dot-future"></div><div class="mi-text"><div class="mi-title" data-key="p30-3">ERP-Systemschulung (SAP QM)</div><div class="mi-sub">26.05.2025</div></div><span class="task-badge badge-neutral" data-key="b-plan2">Geplant</span></div>
+              <div class="milestone-item"><div class="mi-dot dot-future"></div><div class="mi-text"><div class="mi-title" data-key="p30-4">Erstgespräch 30-Tage-Feedback mit Vorgesetztem</div><div class="mi-sub">29.05.2025</div></div><span class="task-badge badge-neutral" data-key="b-plan3">Geplant</span></div>
+            </div>
+          </div>
+        </div>
+        <div id="phase-60-content" style="display:none">
+          <div class="card">
+            <div class="card-title">📈 <span data-key="p60-title">31–60 Tage – Vertiefung & Integration</span></div>
+            <div class="milestone-list">
+              <div class="milestone-item"><div class="mi-dot dot-future"></div><div class="mi-text"><div class="mi-title" data-key="p60-1">Übernahme erster eigener Auditaufgaben</div><div class="mi-sub">Ab 01.06.2025</div></div><span class="task-badge badge-neutral" data-key="b-fut">Zukünftig</span></div>
+              <div class="milestone-item"><div class="mi-dot dot-future"></div><div class="mi-text"><div class="mi-title" data-key="p60-2">Shadowing: Lieferantenaudit Graz</div><div class="mi-sub">09.06.2025</div></div><span class="task-badge badge-neutral" data-key="b-fut2">Zukünftig</span></div>
+              <div class="milestone-item"><div class="mi-dot dot-future"></div><div class="mi-text"><div class="mi-title" data-key="p60-3">60-Tage-Gespräch mit HR & Vorgesetztem</div><div class="mi-sub">28.06.2025</div></div><span class="task-badge badge-neutral" data-key="b-fut3">Zukünftig</span></div>
+            </div>
+          </div>
+        </div>
+        <div id="phase-90-content" style="display:none">
+          <div class="card">
+            <div class="card-title">🎯 <span data-key="p90-title">61–90 Tage – Eigenständigkeit & Probezeit-Review</span></div>
+            <div class="milestone-list">
+              <div class="milestone-item"><div class="mi-dot dot-future"></div><div class="mi-text"><div class="mi-title" data-key="p90-1">Selbstständige Durchführung QS-Audits</div><div class="mi-sub">Ab 01.07.2025</div></div><span class="task-badge badge-neutral" data-key="b-f1">Zukünftig</span></div>
+              <div class="milestone-item"><div class="mi-dot dot-future"></div><div class="mi-text"><div class="mi-title" data-key="p90-2">Probezeit-Gespräch Vorbereitung & Review</div><div class="mi-sub">25.07.2025</div></div><span class="task-badge badge-neutral" data-key="b-f2">Zukünftig</span></div>
+              <div class="milestone-item"><div class="mi-dot dot-future"></div><div class="mi-text"><div class="mi-title" data-key="p90-3">Zielsetzung Q3 & Entwicklungsgespräch</div><div class="mi-sub">28.07.2025</div></div><span class="task-badge badge-neutral" data-key="b-f3">Zukünftig</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CHECKLISTS -->
+      <div id="section-checklists" class="section">
+        <div class="page-header">
+          <h1 data-key="cl-title">Checklisten</h1>
+          <p data-key="cl-sub">Verwalte deine Aufgaben nach Status und Zeitraum</p>
+        </div>
+        <div class="checklist-filters">
+          <div class="filter-btn active" onclick="filterTasks('all',this)" data-key="f-all">Alle</div>
+          <div class="filter-btn" onclick="filterTasks('open',this)" data-key="f-open">Offen</div>
+          <div class="filter-btn" onclick="filterTasks('done',this)" data-key="f-done">Erledigt</div>
+          <div class="filter-btn" onclick="filterTasks('late',this)" data-key="f-late">Überfällig</div>
+        </div>
+        <div class="grid-2">
+          <div class="card">
+            <div class="card-title">📋 <span data-key="cl-w1">Woche 1 Checkliste</span></div>
+            <div id="cl-list-1">
+              <div class="task-item" data-status="done"><div class="task-cb checked">✓</div><div class="task-text"><div data-key="cl1-1">Mitarbeiterausweis & Zugangskarte erhalten</div></div><span class="task-badge badge-done" data-key="bd1">Erledigt</span></div>
+              <div class="task-item" data-status="done"><div class="task-cb checked">✓</div><div class="task-text"><div data-key="cl1-2">Laptop & IT-Zugangsdaten eingerichtet</div></div><span class="task-badge badge-done" data-key="bd2">Erledigt</span></div>
+              <div class="task-item" data-status="done"><div class="task-cb checked">✓</div><div class="task-text"><div data-key="cl1-3">Abteilungsrundgang abgeschlossen</div></div><span class="task-badge badge-done" data-key="bd3">Erledigt</span></div>
+              <div class="task-item" data-status="done"><div class="task-cb checked">✓</div><div class="task-text"><div data-key="cl1-4">Notfallkontakte & Evakuierungsplan bekannt</div></div><span class="task-badge badge-done" data-key="bd4">Erledigt</span></div>
+              <div class="task-item" data-status="late"><div class="task-cb"></div><div class="task-text"><div data-key="cl1-5">ERP-Systemzugang (SAP) beantragt</div><div class="task-sub" data-key="cl1-5s">Fällig: 16.05. · Überfällig</div></div><span class="task-badge badge-late" data-key="bl1">Überfällig</span></div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-title">📅 <span data-key="cl-30">Erste 30 Tage</span></div>
+            <div id="cl-list-2">
+              <div class="task-item" data-status="done"><div class="task-cb checked">✓</div><div class="task-text"><div data-key="cl2-1">Hygieneschulung Modul 1 abgeschlossen</div></div><span class="task-badge badge-done" data-key="bd5">Erledigt</span></div>
+              <div class="task-item" data-status="open"><div class="task-cb"></div><div class="task-text"><div data-key="cl2-2">Hygieneschulung Modul 2</div><div class="task-sub" data-key="cl2-2s">Heute · 14:00</div></div><span class="task-badge badge-open" data-key="bo1">Offen</span></div>
+              <div class="task-item" data-status="open"><div class="task-cb"></div><div class="task-text"><div data-key="cl2-3">Mentor-Gespräch Woche 3</div><div class="task-sub">22.05.2025</div></div><span class="task-badge badge-open" data-key="bo2">Offen</span></div>
+              <div class="task-item" data-status="late"><div class="task-cb"></div><div class="task-text"><div data-key="cl2-4">Arbeitssicherheitsunterweisung</div><div class="task-sub" data-key="cl2-4s">Fällig: 15.05. · Überfällig</div></div><span class="task-badge badge-late" data-key="bl2">Überfällig</span></div>
+              <div class="task-item" data-status="open"><div class="task-cb"></div><div class="task-text"><div data-key="cl2-5">30-Tage-Feedbackgespräch vorbereiten</div><div class="task-sub">29.05.2025</div></div><span class="task-badge badge-open" data-key="bo3">Offen</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- DOCUMENTS -->
+      <div id="section-documents" class="section">
+        <div class="page-header">
+          <h1 data-key="doc-title">Dokumente & Richtlinien</h1>
+          <p data-key="doc-sub">Interne Richtlinien, Prozesse und Formulare für Mitarbeitende</p>
+        </div>
+        <div class="grid-2">
+          <div>
+            <div style="font-size:12px;font-weight:600;color:var(--gray);text-transform:uppercase;letter-spacing:.4px;margin-bottom:.5rem" data-key="doc-cat-hr">HR & Arbeitsrecht</div>
+            <div class="doc-grid">
+              <div class="doc-item"><div class="doc-icon">🤒</div><div class="doc-info"><div class="di-title" data-key="d1">Krankmeldung & Krankschreibung</div><div class="di-sub" data-key="d1s">Prozess · Meldepflicht · Formulare</div></div><div class="doc-arrow">›</div></div>
+              <div class="doc-item"><div class="doc-icon">🏖️</div><div class="doc-info"><div class="di-title" data-key="d2">Urlaubsantrag & Genehmigung</div><div class="di-sub" data-key="d2s">Antragsprozess · Resturlaub · Fristen</div></div><div class="doc-arrow">›</div></div>
+              <div class="doc-item"><div class="doc-icon">🏠</div><div class="doc-info"><div class="di-title" data-key="d3">Homeoffice-Regelung 2025</div><div class="di-sub" data-key="d3s">Anspruch · Vereinbarung · Ausstattung</div></div><div class="doc-arrow">›</div></div>
+              <div class="doc-item"><div class="doc-icon">❓</div><div class="doc-info"><div class="di-title" data-key="d4">Mitarbeiter-FAQ</div><div class="di-sub" data-key="d4s">Häufige Fragen & Antworten</div></div><div class="doc-arrow">›</div></div>
+            </div>
+          </div>
+          <div>
+            <div style="font-size:12px;font-weight:600;color:var(--gray);text-transform:uppercase;letter-spacing:.4px;margin-bottom:.5rem" data-key="doc-cat-prod">Produktion & Lebensmittelsicherheit</div>
+            <div class="doc-grid">
+              <div class="doc-item"><div class="doc-icon">🔬</div><div class="doc-info"><div class="di-title" data-key="d5">Lebensmittelsicherheit & HACCP</div><div class="di-sub" data-key="d5s">Grundlagen · Protokolle · Schulungspflichten</div></div><div class="doc-arrow">›</div></div>
+              <div class="doc-item"><div class="doc-icon">🧤</div><div class="doc-info"><div class="di-title" data-key="d6">Hygiene & PSA-Vorschriften</div><div class="di-sub" data-key="d6s">Schutzausrüstung · Zonenregeln · Reinigung</div></div><div class="doc-arrow">›</div></div>
+              <div class="doc-item"><div class="doc-icon">🔒</div><div class="doc-info"><div class="di-title" data-key="d7">Datenschutz & IT-Nutzungsrichtlinie</div><div class="di-sub" data-key="d7s">DSGVO · Passwörter · Systemzugang</div></div><div class="doc-arrow">›</div></div>
+              <div class="doc-item"><div class="doc-icon">⚠️</div><div class="doc-info"><div class="di-title" data-key="d8">Arbeitssicherheit & Unfallmeldung</div><div class="di-sub" data-key="d8s">Meldeprozess · AUVA · Ersthelfer</div></div><div class="doc-arrow">›</div></div>
+            </div>
+          </div>
+        </div>
+        <div class="info-banner" style="margin-top:1rem">
+          ℹ️ <span data-key="doc-info">Alle Dokumente sind auf dem Stand Mai 2025. Bei Fragen wende dich an deinen HR Business Partner.</span>
+        </div>
+      </div>
+
+      <!-- TEAM -->
+      <div id="section-team" class="section">
+        <div class="page-header">
+          <h1 data-key="team-title">Team & Kontakte</h1>
+          <p data-key="team-sub">Dein direktes Umfeld bei NoRFood AG · Standort Salzburg</p>
+        </div>
+        <div class="card" style="margin-bottom:1rem">
+          <div class="card-title">👤 <span data-key="team-my">Meine Schlüsselkontakte</span></div>
+          <div class="grid-3">
+            <div class="team-card">
+              <div class="team-avatar ca-green" style="width:50px;height:50px;margin:0 auto .6rem">MK</div>
+              <div class="team-name">Mag. Michael Kögler</div>
+              <div class="team-role" data-key="tm-manager">Direktvorgesetzter</div>
+              <div class="team-role-badge badge-info" data-key="tm-manager-dept">Leitung QS · Salzburg</div>
+              <div style="font-size:11px;color:var(--petrol);margin-top:.5rem">m.koegler@norfood.at</div>
+              <div style="font-size:11px;color:var(--gray)">+43 662 123-456</div>
+            </div>
+            <div class="team-card">
+              <div class="team-avatar ca-petrol" style="width:50px;height:50px;margin:0 auto .6rem">AS</div>
+              <div class="team-name">Anna Steinberger</div>
+              <div class="team-role" data-key="tm-mentor">Mentorin</div>
+              <div class="team-role-badge badge-done" data-key="tm-mentor-dept">QS-Spezialistin · Salzburg</div>
+              <div style="font-size:11px;color:var(--petrol);margin-top:.5rem">a.steinberger@norfood.at</div>
+            </div>
+            <div class="team-card">
+              <div class="team-avatar ca-amber" style="width:50px;height:50px;margin:0 auto .6rem">TR</div>
+              <div class="team-name">Thomas Radler</div>
+              <div class="team-role" data-key="tm-hr">HR Business Partner</div>
+              <div class="team-role-badge badge-neutral" data-key="tm-hr-dept">People & Org · Salzburg</div>
+              <div style="font-size:11px;color:var(--petrol);margin-top:.5rem">t.radler@norfood.at</div>
+            </div>
+          </div>
+        </div>
+        <div class="grid-2">
+          <div class="card">
+            <div class="card-title">🏭 <span data-key="team-dept">Abteilung Qualitätssicherung</span></div>
+            <div class="contact-item"><div class="contact-avatar ca-green">MK</div><div class="contact-info"><div class="ci-name">Mag. Michael Kögler</div><div class="ci-role" data-key="tm-r1">Abteilungsleiter QS</div></div></div>
+            <div class="contact-item"><div class="contact-avatar ca-petrol">AS</div><div class="contact-info"><div class="ci-name">Anna Steinberger</div><div class="ci-role" data-key="tm-r2">QS-Spezialistin / Audits</div></div></div>
+            <div class="contact-item"><div class="contact-avatar" style="background:var(--beige-dark);color:var(--gray)">FW</div><div class="contact-info"><div class="ci-name">Felix Wagner</div><div class="ci-role" data-key="tm-r3">QS-Analyst / Laborkoordination</div></div></div>
+            <div class="contact-item"><div class="contact-avatar" style="background:var(--beige-dark);color:var(--gray)">LB</div><div class="contact-info"><div class="ci-name">Lena Bauer</div><div class="ci-role" data-key="tm-r4">QS-Trainee (Parallelonboarding)</div></div></div>
+          </div>
+          <div class="card">
+            <div class="card-title">📍 <span data-key="team-locs">NoRFood AG Standorte</span></div>
+            <div style="margin-bottom:.6rem;font-size:12px;color:var(--gray)" data-key="team-locs-sub">7 Standorte · ca. 6.000 Mitarbeitende</div>
+            <div>
+              <span class="loc-pill" style="font-weight:600">📍 Salzburg (HQ)</span>
+              <span class="loc-pill">Wien</span>
+              <span class="loc-pill">Graz</span>
+              <span class="loc-pill">Linz</span>
+              <span class="loc-pill">Innsbruck</span>
+              <span class="loc-pill">Klagenfurt</span>
+              <span class="loc-pill">St. Pölten</span>
+            </div>
+            <div style="margin-top:.75rem;font-size:12px;color:var(--gray)" data-key="team-support">Zentrale Support-Funktionen:</div>
+            <div class="contact-item" style="margin-top:.4rem"><div class="contact-avatar" style="background:#f0f0ec;color:var(--gray);font-size:11px">IT</div><div class="contact-info"><div class="ci-name">IT-Helpdesk</div><div class="ci-role">helpdesk@norfood.at · Int. 5000</div></div></div>
+            <div class="contact-item"><div class="contact-avatar" style="background:#f0f0ec;color:var(--gray);font-size:11px">HR</div><div class="contact-info"><div class="ci-name" data-key="tm-hrhot">HR-Hotline</div><div class="ci-role">hr@norfood.at · Int. 5100</div></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- BUDDY -->
+      <div id="section-buddy" class="section">
+        <div class="page-header">
+          <h1 data-key="buddy-title">NoRFood Buddy</h1>
+          <p data-key="buddy-sub">Dein KI-Assistent für Onboarding, HR-Fragen und Prozesssupport</p>
+        </div>
+        <div class="buddy-layout">
+          <div class="chat-area">
+            <div class="chat-header">
+              <div class="chat-buddy-icon">🤝</div>
+              <div><div class="ch-title">NoRFood Buddy</div><div class="ch-sub" data-key="buddy-online">Online · Bereit zur Unterstützung</div></div>
+              <div class="chat-mode-toggle">
+                <button class="mode-btn active" onclick="setChatMode('employee',this)" data-key="mode-emp">Mitarbeiter</button>
+                <button class="mode-btn" onclick="setChatMode('hr',this)" data-key="mode-hr">HR</button>
+              </div>
+            </div>
+            <div class="chat-messages" id="chat-messages">
+              <div class="msg msg-buddy">
+                <div class="msg-bubble" id="buddy-greeting">Hallo Sandra! 👋 Ich bin dein <strong>NoRFood Buddy</strong> – dein persönlicher Assistent für die ersten 90 Tage und darüber hinaus.<br><br>Ich kann dir bei Onboarding-Fragen, HR-Prozessen, Checklisten und internen Richtlinien helfen. Was kann ich für dich tun?</div>
+                <div class="msg-meta" data-key="chat-now">Jetzt</div>
+              </div>
+            </div>
+            <div class="chat-input-area">
+              <input type="text" id="chat-input" data-key-placeholder="chat-placeholder" placeholder="Frage stellen…" onkeydown="if(event.key==='Enter')sendChat()">
+              <button class="chat-send-btn" onclick="sendChat()" data-key="chat-send">Senden</button>
+            </div>
+          </div>
+          <div class="chat-panel">
+            <div class="quick-actions">
+              <div class="qa-title" data-key="qa-title">Schnellaktionen</div>
+              <button class="qa-btn" onclick="quickAction('plan90')" data-key="qa1">🗓️ Meinen 90-Tage-Plan erstellen</button>
+              <button class="qa-btn" onclick="quickAction('tasks')" data-key="qa2">✅ Meine offenen Aufgaben anzeigen</button>
+              <button class="qa-btn" onclick="quickAction('sick')" data-key="qa3">🤒 Was muss ich bei Krankheit tun?</button>
+              <button class="qa-btn" onclick="quickAction('checklist')" data-key="qa4">📋 Erste-Woche-Checkliste erstellen</button>
+              <button class="qa-btn" onclick="quickAction('sickprocess')" data-key="qa5">📄 Krankmeldungsprozess anzeigen</button>
+              <button class="qa-btn" onclick="quickAction('feedback')" data-key="qa6">📝 30-Tage-Feedbackformular vorbereiten</button>
+              <button class="qa-btn" onclick="quickAction('hrcheck')" data-key="qa7">🗂️ HR-Onboarding-Checkliste: Quality Manager Salzburg</button>
+            </div>
+            <div class="card">
+              <div class="card-title" style="font-size:12px">ℹ️ <span data-key="buddy-info-title">Buddy-Info</span></div>
+              <div style="font-size:12px;color:var(--gray);line-height:1.6" data-key="buddy-info-text">Der NoRFood Buddy greift auf interne Richtlinien und deinen persönlichen Onboarding-Plan zu. Antworten ersetzen keine offizielle HR-Auskunft.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- HR WORKSPACE -->
+      <div id="section-hr" class="section">
+        <div class="page-header">
+          <h1 data-key="hr-title">HR Workspace</h1>
+          <p data-key="hr-sub">Onboarding-Builder, Vorlagen und Statusübersicht für HR-Teams</p>
+        </div>
+        <div class="info-banner">
+          🔐 <span data-key="hr-restricted">Dieser Bereich ist nur für HR Business Partner und Teamleitungen zugänglich.</span>
+        </div>
+        <div class="grid-4" style="margin-bottom:1.25rem">
+          <div class="hr-tool-card">
+            <div class="hr-tool-icon" style="background:var(--green-light)">🗓️</div>
+            <div class="ht-title" data-key="hr-t1">Onboarding-Plan Builder</div>
+            <div class="ht-desc" data-key="hr-t1d">30/60/90-Tage-Pläne nach Rolle & Standort generieren</div>
+          </div>
+          <div class="hr-tool-card">
+            <div class="hr-tool-icon" style="background:var(--petrol-light)">📋</div>
+            <div class="ht-title" data-key="hr-t2">Checklisten-Generator</div>
+            <div class="ht-desc" data-key="hr-t2d">Rollenspezifische Checklisten automatisch erstellen</div>
+          </div>
+          <div class="hr-tool-card">
+            <div class="hr-tool-icon" style="background:var(--amber-bg)">📝</div>
+            <div class="ht-title" data-key="hr-t3">Feedback-Vorlagen</div>
+            <div class="ht-desc" data-key="hr-t3d">30/60/90-Tage-Feedbackbögen & Probezeit-Reviews</div>
+          </div>
+          <div class="hr-tool-card">
+            <div class="hr-tool-icon" style="background:var(--beige-dark)">📊</div>
+            <div class="ht-title" data-key="hr-t4">Statusübersicht</div>
+            <div class="ht-desc" data-key="hr-t4d">Alle aktiven Onboardings & Fortschritte im Überblick</div>
+          </div>
+        </div>
+
+        <div class="card" style="margin-bottom:1rem">
+          <div class="card-title">📊 <span data-key="hr-status">Aktive Onboardings – Salzburg</span></div>
+          <table class="status-table">
+            <thead>
+              <tr>
+                <th data-key="hr-col-name">Name</th>
+                <th data-key="hr-col-role">Rolle</th>
+                <th data-key="hr-col-start">Start</th>
+                <th data-key="hr-col-phase">Phase</th>
+                <th data-key="hr-col-prog">Fortschritt</th>
+                <th data-key="hr-col-status">Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Sandra Hofer</strong></td>
+                <td data-key="hr-r1">QS-Spezialistin</td>
+                <td>29.04.2025</td>
+                <td data-key="hr-p1">Woche 3</td>
+                <td><div class="progress-bar" style="margin:.3rem 0"><div class="progress-fill" style="width:38%"></div></div><span style="font-size:11px">38%</span></td>
+                <td><span class="task-badge badge-open" data-key="hr-s1">Aktiv</span></td>
+              </tr>
+              <tr>
+                <td><strong>Lena Bauer</strong></td>
+                <td data-key="hr-r2">QS-Trainee</td>
+                <td>05.05.2025</td>
+                <td data-key="hr-p2">Woche 2</td>
+                <td><div class="progress-bar" style="margin:.3rem 0"><div class="progress-fill" style="width:22%"></div></div><span style="font-size:11px">22%</span></td>
+                <td><span class="task-badge badge-open" data-key="hr-s2">Aktiv</span></td>
+              </tr>
+              <tr>
+                <td><strong>Peter Gruber</strong></td>
+                <td data-key="hr-r3">Schichtleiter Produktion</td>
+                <td>14.04.2025</td>
+                <td data-key="hr-p3">Tag 35</td>
+                <td><div class="progress-bar" style="margin:.3rem 0"><div class="progress-fill" style="width:61%"></div></div><span style="font-size:11px">61%</span></td>
+                <td><span class="task-badge badge-done" data-key="hr-s3">Im Plan</span></td>
+              </tr>
+              <tr>
+                <td><strong>Sabine Müller</strong></td>
+                <td data-key="hr-r4">HR Assistenz</td>
+                <td>01.03.2025</td>
+                <td data-key="hr-p4">Tag 78</td>
+                <td><div class="progress-bar" style="margin:.3rem 0"><div class="progress-fill" style="width:87%"></div></div><span style="font-size:11px">87%</span></td>
+                <td><span class="task-badge" style="background:#e8f4eb;color:#1e5c35" data-key="hr-s4">Abschlussphase</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="grid-2">
+          <div class="card">
+            <div class="card-title">🗂️ <span data-key="hr-templates">Rollenvorlagen</span></div>
+            <div class="doc-grid">
+              <div class="doc-item"><div class="doc-icon">🔬</div><div class="doc-info"><div class="di-title" data-key="hr-tpl1">Quality Manager (Produktion)</div><div class="di-sub" data-key="hr-tpl1s">Salzburg · Graz · Linz</div></div><div class="doc-arrow">›</div></div>
+              <div class="doc-item"><div class="doc-icon">🏭</div><div class="doc-info"><div class="di-title" data-key="hr-tpl2">Schichtleiter Produktion</div><div class="di-sub" data-key="hr-tpl2s">Alle Standorte · Schichtbetrieb</div></div><div class="doc-arrow">›</div></div>
+              <div class="doc-item"><div class="doc-icon">📊</div><div class="doc-info"><div class="di-title" data-key="hr-tpl3">HR Business Partner</div><div class="di-sub" data-key="hr-tpl3s">Zentralfunktion · Wien / Salzburg</div></div><div class="doc-arrow">›</div></div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-title">📝 <span data-key="hr-process">HR-Prozesskarten</span></div>
+            <div class="doc-grid">
+              <div class="doc-item"><div class="doc-icon">🤝</div><div class="doc-info"><div class="di-title" data-key="hr-pc1">Einstellungsprozess End-to-End</div><div class="di-sub" data-key="hr-pc1s">Anforderung → Vertragsunterzeichnung</div></div><div class="doc-arrow">›</div></div>
+              <div class="doc-item"><div class="doc-icon">📋</div><div class="doc-info"><div class="di-title" data-key="hr-pc2">Probezeit-Review Leitfaden</div><div class="di-sub" data-key="hr-pc2s">Vorbereitung · Gespräch · Dokumentation</div></div><div class="doc-arrow">›</div></div>
+              <div class="doc-item"><div class="doc-icon">🔄</div><div class="doc-info"><div class="di-title" data-key="hr-pc3">Offboarding-Checkliste</div><div class="di-sub" data-key="hr-pc3s">Austrittsprozess · IT-Rückgabe · Zeugnis</div></div><div class="doc-arrow">›</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /main -->
+  </div><!-- /body -->
+</div><!-- /app -->
+
+<script>
+const T={
+de:{
+  "nav-main":"Hauptmenü","nav-dashboard":"Dashboard","nav-onboarding":"Mein Onboarding","nav-checklists":"Checklisten","nav-documents":"Dokumente & Richtlinien","nav-team":"Team & Kontakte","nav-tools":"Assistenz & Tools","nav-buddy":"NoRFood Buddy","nav-hr":"HR Workspace",
+  "wc-day":"Tag im Unternehmen","stat-open":"Offene Aufgaben","stat-done":"Erledigt","stat-late":"Überfällig","stat-progress":"Onboarding-Fortschritt",
+  "card-progress":"Onboarding-Fortschritt","card-next":"Nächste Meilensteine","card-quick":"Schnellzugriff","card-updates":"Aktuelle Meldungen","card-contacts":"Meine Kontakte",
+  "prog-w1":"Woche 1","prog-w2":"Woche 2","prog-w3":"Woche 3","prog-30":"30 Tage","prog-status":"14 von 36 Meilensteinen abgeschlossen",
+  "m1":"Hygieneschulung Modul 2","m2":"Mentor-Gespräch: Woche 3","m3":"IT-Berechtigungen: ERP-Zugang","late-since":"Überfällig seit 2 Tagen",
+  "b-open":"Offen","b-plan":"Geplant","b-late":"Überfällig","b-done":"Erledigt","b-done2":"Erledigt","b-done3":"Erledigt","b-done4":"Erledigt","b-done5":"Erledigt",
+  "ql-buddy":"NoRFood Buddy","ql-docs":"Richtlinien","ql-check":"Checklisten","ql-team":"Mein Team","ql-vacation":"Urlaub beantragen","ql-sick":"Krankmeldung",
+  "u1":"Neue Hygienerichtlinie (HACCP 2025) veröffentlicht","u1-t":"Heute · Qualitätssicherung","u2":"Betriebsversammlung: 28.05. · Halle B · Salzburg","u2-t":"Gestern · Betriebsrat","u3":"Erinnerung: Arbeitssicherheitsunterweisung bis 31.05.","u3-t":"20.05.2025 · HR",
+  "role-manager":"Direktvorgesetzte/r","role-mentor":"Mentorin","role-hr":"HR Business Partner",
+  "ob-title":"Mein Onboarding","ob-sub":"30/60/90-Tage-Plan · Qualitätssicherung · Standort Salzburg",
+  "phase-welcome":"Willkommenstag","phase-30":"Erste 30 Tage","phase-60":"31–60 Tage","phase-90":"61–90 Tage",
+  "wday-title":"Willkommenstag – 29. April 2025",
+  "wd1":"Empfang & Ausweis-Ausgabe","wd1s":"Sicherheitsabteilung · 08:00 Uhr","wd2":"HR-Begrüßungsgespräch","wd2s":"Thomas Radler · HR Salzburg","wd3":"Betriebsrundgang & Sicherheitsunterweisung","wd3s":"Produktionshallen A–C · Hygienebereich","wd4":"IT-Setup & Laptop-Ausgabe","wd4s":"IT-Helpdesk · Raum 204","wd5":"Kennenlernen Abteilung & Mentorin","wd5s":"Anna Steinberger · QS-Team",
+  "p30-title":"Erste 30 Tage – Einarbeitung & Grundlagen","p30-1":"Hygieneschulung Modul 1 (HACCP Grundlagen)","p30-2":"Hygieneschulung Modul 2 (Produktionsprozesse)","p30-2s":"Heute · 14:00 Uhr","p30-3":"ERP-Systemschulung (SAP QM)","p30-4":"Erstgespräch 30-Tage-Feedback mit Vorgesetztem","b-d1":"Erledigt","b-o1":"Offen","b-plan2":"Geplant","b-plan3":"Geplant",
+  "p60-title":"31–60 Tage – Vertiefung & Integration","p60-1":"Übernahme erster eigener Auditaufgaben","p60-2":"Shadowing: Lieferantenaudit Graz","p60-3":"60-Tage-Gespräch mit HR & Vorgesetztem","b-fut":"Zukünftig","b-fut2":"Zukünftig","b-fut3":"Zukünftig",
+  "p90-title":"61–90 Tage – Eigenständigkeit & Probezeit-Review","p90-1":"Selbstständige Durchführung QS-Audits","p90-2":"Probezeit-Gespräch Vorbereitung & Review","p90-3":"Zielsetzung Q3 & Entwicklungsgespräch","b-f1":"Zukünftig","b-f2":"Zukünftig","b-f3":"Zukünftig",
+  "cl-title":"Checklisten","cl-sub":"Verwalte deine Aufgaben nach Status und Zeitraum","f-all":"Alle","f-open":"Offen","f-done":"Erledigt","f-late":"Überfällig",
+  "cl-w1":"Woche 1 Checkliste","cl-30":"Erste 30 Tage",
+  "cl1-1":"Mitarbeiterausweis & Zugangskarte erhalten","cl1-2":"Laptop & IT-Zugangsdaten eingerichtet","cl1-3":"Abteilungsrundgang abgeschlossen","cl1-4":"Notfallkontakte & Evakuierungsplan bekannt","cl1-5":"ERP-Systemzugang (SAP) beantragt","cl1-5s":"Fällig: 16.05. · Überfällig",
+  "cl2-1":"Hygieneschulung Modul 1 abgeschlossen","cl2-2":"Hygieneschulung Modul 2","cl2-2s":"Heute · 14:00","cl2-3":"Mentor-Gespräch Woche 3","cl2-4":"Arbeitssicherheitsunterweisung","cl2-4s":"Fällig: 15.05. · Überfällig","cl2-5":"30-Tage-Feedbackgespräch vorbereiten",
+  "bd1":"Erledigt","bd2":"Erledigt","bd3":"Erledigt","bd4":"Erledigt","bd5":"Erledigt","bo1":"Offen","bo2":"Offen","bo3":"Offen","bl1":"Überfällig","bl2":"Überfällig",
+  "doc-title":"Dokumente & Richtlinien","doc-sub":"Interne Richtlinien, Prozesse und Formulare für Mitarbeitende",
+  "doc-cat-hr":"HR & Arbeitsrecht","doc-cat-prod":"Produktion & Lebensmittelsicherheit",
+  "d1":"Krankmeldung & Krankschreibung","d1s":"Prozess · Meldepflicht · Formulare","d2":"Urlaubsantrag & Genehmigung","d2s":"Antragsprozess · Resturlaub · Fristen","d3":"Homeoffice-Regelung 2025","d3s":"Anspruch · Vereinbarung · Ausstattung","d4":"Mitarbeiter-FAQ","d4s":"Häufige Fragen & Antworten",
+  "d5":"Lebensmittelsicherheit & HACCP","d5s":"Grundlagen · Protokolle · Schulungspflichten","d6":"Hygiene & PSA-Vorschriften","d6s":"Schutzausrüstung · Zonenregeln · Reinigung","d7":"Datenschutz & IT-Nutzungsrichtlinie","d7s":"DSGVO · Passwörter · Systemzugang","d8":"Arbeitssicherheit & Unfallmeldung","d8s":"Meldeprozess · AUVA · Ersthelfer",
+  "doc-info":"Alle Dokumente sind auf dem Stand Mai 2025. Bei Fragen wende dich an deinen HR Business Partner.",
+  "team-title":"Team & Kontakte","team-sub":"Dein direktes Umfeld bei NoRFood AG · Standort Salzburg","team-my":"Meine Schlüsselkontakte",
+  "tm-manager":"Direktvorgesetzter","tm-manager-dept":"Leitung QS · Salzburg","tm-mentor":"Mentorin","tm-mentor-dept":"QS-Spezialistin · Salzburg","tm-hr":"HR Business Partner","tm-hr-dept":"People & Org · Salzburg",
+  "team-dept":"Abteilung Qualitätssicherung","tm-r1":"Abteilungsleiter QS","tm-r2":"QS-Spezialistin / Audits","tm-r3":"QS-Analyst / Laborkoordination","tm-r4":"QS-Trainee (Parallelonboarding)",
+  "team-locs":"NoRFood AG Standorte","team-locs-sub":"7 Standorte · ca. 6.000 Mitarbeitende","team-support":"Zentrale Support-Funktionen:","tm-hrhot":"HR-Hotline",
+  "buddy-title":"NoRFood Buddy","buddy-sub":"Dein KI-Assistent für Onboarding, HR-Fragen und Prozesssupport","buddy-online":"Online · Bereit zur Unterstützung",
+  "mode-emp":"Mitarbeiter","mode-hr":"HR",
+  "qa-title":"Schnellaktionen","qa1":"🗓️ Meinen 90-Tage-Plan erstellen","qa2":"✅ Meine offenen Aufgaben anzeigen","qa3":"🤒 Was muss ich bei Krankheit tun?","qa4":"📋 Erste-Woche-Checkliste erstellen","qa5":"📄 Krankmeldungsprozess anzeigen","qa6":"📝 30-Tage-Feedbackformular vorbereiten","qa7":"🗂️ HR-Onboarding-Checkliste: Quality Manager Salzburg",
+  "buddy-info-title":"Buddy-Info","buddy-info-text":"Der NoRFood Buddy greift auf interne Richtlinien und deinen persönlichen Onboarding-Plan zu. Antworten ersetzen keine offizielle HR-Auskunft.",
+  "chat-now":"Jetzt","chat-send":"Senden","chat-placeholder":"Frage stellen…",
+  "hr-title":"HR Workspace","hr-sub":"Onboarding-Builder, Vorlagen und Statusübersicht für HR-Teams",
+  "hr-restricted":"Dieser Bereich ist nur für HR Business Partner und Teamleitungen zugänglich.",
+  "hr-t1":"Onboarding-Plan Builder","hr-t1d":"30/60/90-Tage-Pläne nach Rolle & Standort generieren","hr-t2":"Checklisten-Generator","hr-t2d":"Rollenspezifische Checklisten automatisch erstellen","hr-t3":"Feedback-Vorlagen","hr-t3d":"30/60/90-Tage-Feedbackbögen & Probezeit-Reviews","hr-t4":"Statusübersicht","hr-t4d":"Alle aktiven Onboardings & Fortschritte im Überblick",
+  "hr-status":"Aktive Onboardings – Salzburg","hr-col-name":"Name","hr-col-role":"Rolle","hr-col-start":"Start","hr-col-phase":"Phase","hr-col-prog":"Fortschritt","hr-col-status":"Status",
+  "hr-r1":"QS-Spezialistin","hr-r2":"QS-Trainee","hr-r3":"Schichtleiter Produktion","hr-r4":"HR Assistenz","hr-p1":"Woche 3","hr-p2":"Woche 2","hr-p3":"Tag 35","hr-p4":"Tag 78","hr-s1":"Aktiv","hr-s2":"Aktiv","hr-s3":"Im Plan","hr-s4":"Abschlussphase",
+  "hr-templates":"Rollenvorlagen","hr-tpl1":"Quality Manager (Produktion)","hr-tpl1s":"Salzburg · Graz · Linz","hr-tpl2":"Schichtleiter Produktion","hr-tpl2s":"Alle Standorte · Schichtbetrieb","hr-tpl3":"HR Business Partner","hr-tpl3s":"Zentralfunktion · Wien / Salzburg",
+  "hr-process":"HR-Prozesskarten","hr-pc1":"Einstellungsprozess End-to-End","hr-pc1s":"Anforderung → Vertragsunterzeichnung","hr-pc2":"Probezeit-Review Leitfaden","hr-pc2s":"Vorbereitung · Gespräch · Dokumentation","hr-pc3":"Offboarding-Checkliste","hr-pc3s":"Austrittsprozess · IT-Rückgabe · Zeugnis",
+  "lbl-welcome":"Willkommen zurück","lbl-welcome-sub":"Bitte melde dich mit deinen Zugangsdaten an.","lbl-email":"E-Mail / Personalnummer","lbl-pw":"Passwort","lbl-login-btn":"Anmelden","lbl-hint":"🔐 Demo-Zugangsdaten sind bereits eingetragen","lbl-footer":"© 2025 NoRFood AG · Internes System · Nur für autorisierte Mitarbeitende",
+  "sidebar-loc":"📍 Standort: Salzburg","sidebar-dept":"Abteilung: Qualitätssicherung",
+  "wc-title":"Guten Morgen, Sandra 👋","wc-sub":"Du bist seit 23 Tagen bei NoRFood AG. Du machst das großartig!",
+  "user-name":"Sandra Hofer","search-placeholder":"Suchen…"
+},
+en:{
+  "nav-main":"Main Menu","nav-dashboard":"Dashboard","nav-onboarding":"My Onboarding","nav-checklists":"Checklists","nav-documents":"Documents & Policies","nav-team":"Team & Contacts","nav-tools":"Assistant & Tools","nav-buddy":"NoRFood Buddy","nav-hr":"HR Workspace",
+  "wc-day":"Days at the company","stat-open":"Open tasks","stat-done":"Completed","stat-late":"Overdue","stat-progress":"Onboarding progress",
+  "card-progress":"Onboarding Progress","card-next":"Next Milestones","card-quick":"Quick Access","card-updates":"Recent Updates","card-contacts":"My Contacts",
+  "prog-w1":"Week 1","prog-w2":"Week 2","prog-w3":"Week 3","prog-30":"30 days","prog-status":"14 of 36 milestones completed",
+  "m1":"Hygiene Training Module 2","m2":"Mentor Meeting: Week 3","m3":"IT Access: ERP System","late-since":"Overdue by 2 days",
+  "b-open":"Open","b-plan":"Planned","b-late":"Overdue","b-done":"Done","b-done2":"Done","b-done3":"Done","b-done4":"Done","b-done5":"Done",
+  "ql-buddy":"NoRFood Buddy","ql-docs":"Policies","ql-check":"Checklists","ql-team":"My Team","ql-vacation":"Request leave","ql-sick":"Report sick",
+  "u1":"New hygiene policy (HACCP 2025) published","u1-t":"Today · Quality Assurance","u2":"Works meeting: 28 May · Hall B · Salzburg","u2-t":"Yesterday · Works Council","u3":"Reminder: Safety briefing due by 31 May","u3-t":"20 May 2025 · HR",
+  "role-manager":"Line Manager","role-mentor":"Mentor","role-hr":"HR Business Partner",
+  "ob-title":"My Onboarding","ob-sub":"30/60/90-day plan · Quality Assurance · Salzburg",
+  "phase-welcome":"Welcome Day","phase-30":"First 30 Days","phase-60":"Days 31–60","phase-90":"Days 61–90",
+  "wday-title":"Welcome Day – 29 April 2025",
+  "wd1":"Reception & Badge Collection","wd1s":"Security · 08:00","wd2":"HR Welcome Meeting","wd2s":"Thomas Radler · HR Salzburg","wd3":"Site Tour & Safety Briefing","wd3s":"Production Halls A–C · Hygiene Areas","wd4":"IT Setup & Laptop Collection","wd4s":"IT Helpdesk · Room 204","wd5":"Meet Department & Mentor","wd5s":"Anna Steinberger · QA Team",
+  "p30-title":"First 30 Days – Integration & Foundations","p30-1":"Hygiene Training Module 1 (HACCP Basics)","p30-2":"Hygiene Training Module 2 (Production Processes)","p30-2s":"Today · 14:00","p30-3":"ERP System Training (SAP QM)","p30-4":"30-day feedback meeting with manager","b-d1":"Done","b-o1":"Open","b-plan2":"Planned","b-plan3":"Planned",
+  "p60-title":"Days 31–60 – Deepening & Integration","p60-1":"Taking on first independent audit tasks","p60-2":"Shadowing: Supplier audit Graz","p60-3":"60-day review with HR & manager","b-fut":"Upcoming","b-fut2":"Upcoming","b-fut3":"Upcoming",
+  "p90-title":"Days 61–90 – Independence & Probation Review","p90-1":"Independent QA audit execution","p90-2":"Probation review preparation & meeting","p90-3":"Q3 goal setting & development talk","b-f1":"Upcoming","b-f2":"Upcoming","b-f3":"Upcoming",
+  "cl-title":"Checklists","cl-sub":"Manage your tasks by status and timeframe","f-all":"All","f-open":"Open","f-done":"Completed","f-late":"Overdue",
+  "cl-w1":"Week 1 Checklist","cl-30":"First 30 Days",
+  "cl1-1":"Employee badge & access card received","cl1-2":"Laptop & IT credentials set up","cl1-3":"Department walkthrough completed","cl1-4":"Emergency contacts & evacuation plan known","cl1-5":"ERP system access (SAP) requested","cl1-5s":"Due: 16 May · Overdue",
+  "cl2-1":"Hygiene training module 1 completed","cl2-2":"Hygiene training module 2","cl2-2s":"Today · 14:00","cl2-3":"Mentor meeting week 3","cl2-4":"Safety briefing","cl2-4s":"Due: 15 May · Overdue","cl2-5":"Prepare 30-day feedback meeting",
+  "bd1":"Done","bd2":"Done","bd3":"Done","bd4":"Done","bd5":"Done","bo1":"Open","bo2":"Open","bo3":"Open","bl1":"Overdue","bl2":"Overdue",
+  "doc-title":"Documents & Policies","doc-sub":"Internal policies, processes and forms for employees",
+  "doc-cat-hr":"HR & Employment","doc-cat-prod":"Production & Food Safety",
+  "d1":"Sick Leave & Medical Certificate","d1s":"Process · Reporting obligation · Forms","d2":"Annual Leave Request & Approval","d2s":"Application process · Remaining leave · Deadlines","d3":"Home Office Policy 2025","d3s":"Eligibility · Agreement · Equipment","d4":"Employee FAQ","d4s":"Frequently asked questions & answers",
+  "d5":"Food Safety & HACCP","d5s":"Basics · Protocols · Training obligations","d6":"Hygiene & PPE Regulations","d6s":"Protective equipment · Zone rules · Cleaning","d7":"Data Privacy & IT Usage Policy","d7s":"GDPR · Passwords · System access","d8":"Occupational Safety & Accident Reporting","d8s":"Reporting process · AUVA · First aiders",
+  "doc-info":"All documents are current as of May 2025. For questions, contact your HR Business Partner.",
+  "team-title":"Team & Contacts","team-sub":"Your immediate contacts at NoRFood AG · Salzburg","team-my":"My Key Contacts",
+  "tm-manager":"Line Manager","tm-manager-dept":"QA Lead · Salzburg","tm-mentor":"Mentor","tm-mentor-dept":"QA Specialist · Salzburg","tm-hr":"HR Business Partner","tm-hr-dept":"People & Org · Salzburg",
+  "team-dept":"Quality Assurance Department","tm-r1":"QA Department Head","tm-r2":"QA Specialist / Audits","tm-r3":"QA Analyst / Lab Coordination","tm-r4":"QA Trainee (Parallel onboarding)",
+  "team-locs":"NoRFood AG Locations","team-locs-sub":"7 locations · approx. 6,000 employees","team-support":"Central Support Functions:","tm-hrhot":"HR Hotline",
+  "buddy-title":"NoRFood Buddy","buddy-sub":"Your AI assistant for onboarding, HR questions and process support","buddy-online":"Online · Ready to assist",
+  "mode-emp":"Employee","mode-hr":"HR",
+  "qa-title":"Quick Actions","qa1":"🗓️ Create my 90-day onboarding plan","qa2":"✅ Show my open onboarding tasks","qa3":"🤒 What do I need to do if I'm sick?","qa4":"📋 Create a checklist for my first week","qa5":"📄 Show the sickness reporting process","qa6":"📝 Prepare a 30-day feedback form","qa7":"🗂️ HR onboarding checklist: Quality Manager Salzburg",
+  "buddy-info-title":"About Buddy","buddy-info-text":"NoRFood Buddy draws on internal policies and your personal onboarding plan. Responses do not replace official HR advice.",
+  "chat-now":"Just now","chat-send":"Send","chat-placeholder":"Ask a question…",
+  "hr-title":"HR Workspace","hr-sub":"Onboarding builder, templates and status overview for HR teams",
+  "hr-restricted":"This area is accessible to HR Business Partners and team leads only.",
+  "hr-t1":"Onboarding Plan Builder","hr-t1d":"Generate 30/60/90-day plans by role & location","hr-t2":"Checklist Generator","hr-t2d":"Automatically create role-specific checklists","hr-t3":"Feedback Templates","hr-t3d":"30/60/90-day feedback forms & probation reviews","hr-t4":"Status Overview","hr-t4d":"All active onboardings & progress at a glance",
+  "hr-status":"Active Onboardings – Salzburg","hr-col-name":"Name","hr-col-role":"Role","hr-col-start":"Start Date","hr-col-phase":"Phase","hr-col-prog":"Progress","hr-col-status":"Status",
+  "hr-r1":"QA Specialist","hr-r2":"QA Trainee","hr-r3":"Production Shift Lead","hr-r4":"HR Assistant","hr-p1":"Week 3","hr-p2":"Week 2","hr-p3":"Day 35","hr-p4":"Day 78","hr-s1":"Active","hr-s2":"Active","hr-s3":"On track","hr-s4":"Final phase",
+  "hr-templates":"Role Templates","hr-tpl1":"Quality Manager (Production)","hr-tpl1s":"Salzburg · Graz · Linz","hr-tpl2":"Production Shift Lead","hr-tpl2s":"All locations · Shift operations","hr-tpl3":"HR Business Partner","hr-tpl3s":"Central function · Vienna / Salzburg",
+  "hr-process":"HR Process Cards","hr-pc1":"End-to-End Hiring Process","hr-pc1s":"Requisition → Contract signing","hr-pc2":"Probation Review Guide","hr-pc2s":"Preparation · Meeting · Documentation","hr-pc3":"Offboarding Checklist","hr-pc3s":"Exit process · IT return · Reference letter",
+  "lbl-welcome":"Welcome back","lbl-welcome-sub":"Please sign in with your credentials.","lbl-email":"Email / Staff number","lbl-pw":"Password","lbl-login-btn":"Sign in","lbl-hint":"🔐 Demo credentials are pre-filled","lbl-footer":"© 2025 NoRFood AG · Internal system · Authorised users only",
+  "sidebar-loc":"📍 Location: Salzburg","sidebar-dept":"Department: Quality Assurance",
+  "wc-title":"Good morning, Sandra 👋","wc-sub":"You've been with NoRFood AG for 23 days. You're doing great!",
+  "user-name":"Sandra Hofer","search-placeholder":"Search…"
+}};
+
+let lang='de';
+
+function setLang(l){
+  lang=l;
+  document.querySelectorAll('.lang-btn').forEach(b=>b.classList.toggle('active',b.textContent===l.toUpperCase()));
+  document.querySelectorAll('[data-key]').forEach(el=>{
+    const k=el.getAttribute('data-key');
+    if(T[l][k])el.textContent=T[l][k];
+  });
+  document.querySelectorAll('[data-key-placeholder]').forEach(el=>{
+    const k=el.getAttribute('data-key-placeholder');
+    if(T[l][k])el.placeholder=T[l][k];
+  });
+  const si=document.getElementById('search-input');
+  if(si)si.placeholder=T[l]['search-placeholder']||'Search…';
+  document.getElementById('sidebar-loc').textContent=T[l]['sidebar-loc'];
+  document.getElementById('sidebar-dept').textContent=T[l]['sidebar-dept'];
+  document.getElementById('wc-title').textContent=T[l]['wc-title'];
+  document.getElementById('wc-sub').textContent=T[l]['wc-sub'];
+  document.getElementById('user-name').textContent=T[l]['user-name'];
+  updateBuddyGreeting();
+  updateLoginLabels();
+}
+
+function updateLoginLabels(){
+  const l=lang;
+  ['lbl-welcome','lbl-welcome-sub','lbl-email','lbl-pw','lbl-login-btn','lbl-hint','lbl-footer'].forEach(k=>{
+    const el=document.getElementById(k);
+    if(el&&T[l][k])el.textContent=T[l][k];
+  });
+}
+
+function doLogin(){
+  document.getElementById('login-screen').style.display='none';
+  document.getElementById('app').classList.add('active');
+}
+
+function showSection(id){
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  document.getElementById('section-'+id).classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(n=>{
+    if(n.getAttribute('onclick')&&n.getAttribute('onclick').includes("'"+id+"'"))n.classList.add('active');
+  });
+}
+
+function setPhase(phase,btn){
+  ['welcome','30','60','90'].forEach(p=>{
+    document.getElementById('phase-'+p+'-content').style.display=p===phase?'block':'none';
+  });
+  document.querySelectorAll('.phase-tab').forEach(t=>t.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+function filterTasks(status,btn){
+  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.task-item[data-status]').forEach(item=>{
+    item.style.display=(status==='all'||item.dataset.status===status)?'flex':'none';
+  });
+}
+
+function setChatMode(mode,btn){
+  document.querySelectorAll('.mode-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+function updateBuddyGreeting(){
+  const el=document.getElementById('buddy-greeting');
+  if(lang==='en'){
+    el.innerHTML="Hello Sandra! 👋 I'm your <strong>NoRFood Buddy</strong> – your personal assistant for the first 90 days and beyond.<br><br>I can help you with onboarding questions, HR processes, checklists and internal policies. What can I do for you?";
+  } else {
+    el.innerHTML="Hallo Sandra! 👋 Ich bin dein <strong>NoRFood Buddy</strong> – dein persönlicher Assistent für die ersten 90 Tage und darüber hinaus.<br><br>Ich kann dir bei Onboarding-Fragen, HR-Prozessen, Checklisten und internen Richtlinien helfen. Was kann ich für dich tun?";
+  }
+}
+
+const responses={
+  plan90:{
+    de:"<strong>Dein 90-Tage-Onboarding-Plan · QS-Spezialistin · Salzburg</strong><br><br><strong>Tage 1–30: Grundlagen & Orientierung</strong><ul><li>Hygieneschulungen Modul 1 & 2 abschließen</li><li>SAP QM-Systemzugang einrichten</li><li>Mentor-Gespräche Woche 1–3</li><li>HACCP-Grundlagen absolvieren</li><li>30-Tage-Feedbackgespräch mit Michael Kögler</li></ul><strong>Tage 31–60: Vertiefung</strong><ul><li>Erste eigene Auditaufgaben übernehmen</li><li>Lieferantenaudit Graz (Shadowing)</li><li>60-Tage-Review mit HR & Vorgesetztem</li></ul><strong>Tage 61–90: Eigenverantwortung</strong><ul><li>Selbstständige QS-Audits durchführen</li><li>Probezeit-Gespräch vorbereiten & führen</li><li>Q3-Ziele vereinbaren</li></ul>",
+    en:"<strong>Your 90-Day Onboarding Plan · QA Specialist · Salzburg</strong><br><br><strong>Days 1–30: Foundations & Orientation</strong><ul><li>Complete hygiene training modules 1 & 2</li><li>Set up SAP QM system access</li><li>Mentor meetings weeks 1–3</li><li>Complete HACCP basics</li><li>30-day feedback meeting with Michael Kögler</li></ul><strong>Days 31–60: Deepening</strong><ul><li>Take on first independent audit tasks</li><li>Supplier audit Graz (shadowing)</li><li>60-day review with HR & manager</li></ul><strong>Days 61–90: Independence</strong><ul><li>Conduct QA audits independently</li><li>Prepare & hold probation review meeting</li><li>Agree Q3 goals</li></ul>"
+  },
+  tasks:{
+    de:"<strong>Deine offenen Aufgaben</strong><br><br>🔴 <strong>Überfällig (2)</strong><ul><li>ERP-Systemzugang (SAP) beantragen – fällig 16.05.</li><li>Arbeitssicherheitsunterweisung absolvieren – fällig 15.05.</li></ul>🟡 <strong>Offen (3)</strong><ul><li>Hygieneschulung Modul 2 – heute 14:00 Uhr</li><li>Mentor-Gespräch Woche 3 – Do, 22.05.</li><li>30-Tage-Feedbackgespräch vorbereiten – bis 29.05.</li></ul>Soll ich für eine dieser Aufgaben eine Erinnerung setzen?",
+    en:"<strong>Your Open Tasks</strong><br><br>🔴 <strong>Overdue (2)</strong><ul><li>Request ERP system access (SAP) – due 16 May</li><li>Complete safety briefing – due 15 May</li></ul>🟡 <strong>Open (3)</strong><ul><li>Hygiene training module 2 – today 14:00</li><li>Mentor meeting week 3 – Thu, 22 May</li><li>Prepare 30-day feedback meeting – by 29 May</li></ul>Would you like me to set a reminder for any of these?"
+  },
+  sick:{
+    de:"<strong>Krankmeldung bei NoRFood AG</strong><br><br><strong>Was du tun musst:</strong><ul><li>Vor Beginn der Arbeitszeit deinen Vorgesetzten <strong>telefonisch</strong> informieren (nicht per E-Mail/WhatsApp)</li><li>Ab dem <strong>3. Kranktag</strong> ärztliche Bestätigung (Krankenstandsbestätigung) einreichen</li><li>Dokument an HR-Postfach senden: <em>hr-salzburg@norfood.at</em></li></ul><strong>Wichtige Kontakte:</strong><ul><li>Vorgesetzter: Michael Kögler · +43 662 123-456</li><li>HR Salzburg: Thomas Radler · hr-salzburg@norfood.at</li></ul>Bei längerer Abwesenheit (ab 5 Tagen) meldet sich HR automatisch bei dir.",
+    en:"<strong>Reporting Sick at NoRFood AG</strong><br><br><strong>What you need to do:</strong><ul><li>Call your line manager <strong>by phone</strong> before your shift starts (not by email/WhatsApp)</li><li>From the <strong>3rd day</strong> of sick leave, submit a medical certificate</li><li>Send documents to: <em>hr-salzburg@norfood.at</em></li></ul><strong>Key contacts:</strong><ul><li>Manager: Michael Kögler · +43 662 123-456</li><li>HR Salzburg: Thomas Radler · hr-salzburg@norfood.at</li></ul>For absences of 5+ days, HR will reach out to you directly."
+  },
+  checklist:{
+    de:"<strong>Checkliste: Erste Woche · Sandra Hofer · QS-Spezialistin</strong><br><br>✅ Mitarbeiterausweis & Zugangskarte erhalten<br>✅ Laptop & IT-Zugangsdaten eingerichtet<br>✅ Abteilungsrundgang mit Mentorin Anna<br>✅ Notfallkontakte & Evakuierungsplan bekannt<br>✅ HR-Begrüßungsgespräch mit Thomas Radler<br>⬜ ERP-Systemzugang (SAP) beantragen <em>← Überfällig!</em><br>⬜ Hygieneschulung Modul 1 absolvieren<br>⬜ Erstgespräch mit Mentor (formell) führen<br>⬜ Erste Teamrunde mit QS-Abteilung<br><br>Soll ich diese Liste als PDF-Export vorbereiten?",
+    en:"<strong>Checklist: First Week · Sandra Hofer · QA Specialist</strong><br><br>✅ Employee badge & access card received<br>✅ Laptop & IT credentials set up<br>✅ Department walkthrough with mentor Anna<br>✅ Emergency contacts & evacuation plan known<br>✅ HR welcome meeting with Thomas Radler<br>⬜ Request ERP system access (SAP) <em>← Overdue!</em><br>⬜ Complete hygiene training module 1<br>⬜ Formal first meeting with mentor<br>⬜ First team round with QA department<br><br>Should I prepare this list for PDF export?"
+  },
+  sickprocess:{
+    de:"<strong>Krankmeldungsprozess · NoRFood AG</strong><br><br><strong>Schritt 1:</strong> Telefonisch vor Arbeitsbeginn beim Vorgesetzten melden<br><strong>Schritt 2:</strong> Ab Tag 3 – ärztliche Bestätigung einholen<br><strong>Schritt 3:</strong> Dokument per E-Mail an HR senden: hr-salzburg@norfood.at<br><strong>Schritt 4:</strong> Rückkehrgespräch nach mehr als 3 Kranktagen<br><br><strong>Fristen:</strong><ul><li>Meldung: vor Schichtbeginn</li><li>Krankenstandsbestätigung: innerhalb von 24h nach Tag 3</li><li>Folgebescheinigung: bei Verlängerung umgehend</li></ul>",
+    en:"<strong>Sickness Reporting Process · NoRFood AG</strong><br><br><strong>Step 1:</strong> Call your manager by phone before your shift starts<br><strong>Step 2:</strong> From day 3 – obtain a medical certificate<br><strong>Step 3:</strong> Email document to HR: hr-salzburg@norfood.at<br><strong>Step 4:</strong> Return-to-work conversation after 3+ days of absence<br><br><strong>Deadlines:</strong><ul><li>Notification: before shift start</li><li>Medical certificate: within 24h after day 3</li><li>Follow-up certificate: immediately upon extension</li></ul>"
+  },
+  feedback:{
+    de:"<strong>30-Tage-Feedbackformular · Sandra Hofer</strong><br><br><strong>Allgemein</strong><br>Eintrittsdatum: 29.04.2025 · Abteilung: Qualitätssicherung · Standort: Salzburg<br><br><strong>Fragen für Vorgesetzten (Michael Kögler)</strong><ul><li>Wie bewertest du die fachliche Einarbeitung der Mitarbeiterin?</li><li>Wurden alle Pflichtschulungen abgeschlossen? (Hygiene, Sicherheit)</li><li>Gibt es offene IT-/Systemzugänge?</li><li>Wie ist das Teamgefüge?</li></ul><strong>Fragen für Mitarbeiterin (Sandra)</strong><ul><li>Wie erlebst du die Einarbeitungsphase?</li><li>Welche Unterstützung wünschst du dir?</li><li>Gibt es offene Fragen zu Prozessen oder Richtlinien?</li></ul>Soll ich dieses Formular als Word-Vorlage exportieren?",
+    en:"<strong>30-Day Feedback Form · Sandra Hofer</strong><br><br><strong>General</strong><br>Start date: 29 Apr 2025 · Department: Quality Assurance · Location: Salzburg<br><br><strong>Questions for manager (Michael Kögler)</strong><ul><li>How do you rate the employee's professional onboarding?</li><li>Have all mandatory trainings been completed? (Hygiene, Safety)</li><li>Are there any outstanding IT/system access requests?</li><li>How is team integration progressing?</li></ul><strong>Questions for employee (Sandra)</strong><ul><li>How are you experiencing the onboarding phase?</li><li>What additional support would you find helpful?</li><li>Are there open questions about processes or policies?</li></ul>Should I export this form as a Word template?"
+  },
+  hrcheck:{
+    de:"<strong>HR-Onboarding-Checkliste: Quality Manager · Salzburg</strong><br><br><strong>Vor dem ersten Arbeitstag (HR)</strong><ul><li>Arbeitsvertrag unterzeichnet & archiviert</li><li>Lohnsteuer- & Sozialversicherungsanmeldung</li><li>IT-Konto & E-Mail-Adresse anlegen (IT-Helpdesk)</li><li>SAP-Zugang (QM-Modul) beantragen</li><li>Mentorin / Ansprechpartner zuweisen</li></ul><strong>Tag 1 (HR & Führungskraft)</strong><ul><li>Empfang & Hausausweis</li><li>HR-Begrüßungsgespräch (Konditionen, Benefits, Portal-Einführung)</li><li>Betriebsrundgang mit Hygieneeinweisung</li></ul><strong>Woche 1 (Führungskraft)</strong><ul><li>Hygieneschulung Modul 1 buchen & bestätigen</li><li>Arbeitssicherheitsunterweisung organisieren</li><li>30-Tage-Ziele besprechen</li></ul>",
+    en:"<strong>HR Onboarding Checklist: Quality Manager · Salzburg</strong><br><br><strong>Before day one (HR)</strong><ul><li>Employment contract signed & filed</li><li>Payroll & social insurance registration</li><li>IT account & email address created (IT Helpdesk)</li><li>SAP access (QM module) requested</li><li>Assign mentor / point of contact</li></ul><strong>Day 1 (HR & line manager)</strong><ul><li>Reception & staff badge</li><li>HR welcome meeting (terms, benefits, portal intro)</li><li>Site tour with hygiene briefing</li></ul><strong>Week 1 (line manager)</strong><ul><li>Book & confirm hygiene training module 1</li><li>Organise safety briefing</li><li>Discuss 30-day goals</li></ul>"
+  }
+};
+
+function addMsg(text,isUser){
+  const msgs=document.getElementById('chat-messages');
+  const div=document.createElement('div');
+  div.className='msg '+(isUser?'msg-user':'msg-buddy');
+  const now=T[lang]['chat-now']||'Jetzt';
+  div.innerHTML=`<div class="msg-bubble">${isUser?text:'<span>'+text+'</span>'}</div><div class="msg-meta">${now}</div>`;
+  msgs.appendChild(div);
+  msgs.scrollTop=msgs.scrollHeight;
+}
+
+function quickAction(key){
+  const labels={
+    plan90:{de:'Meinen 90-Tage-Plan erstellen',en:'Create my 90-day plan'},
+    tasks:{de:'Meine offenen Aufgaben anzeigen',en:'Show my open tasks'},
+    sick:{de:'Was muss ich bei Krankheit tun?',en:"What do I do if I'm sick?"},
+    checklist:{de:'Erste-Woche-Checkliste erstellen',en:'Create first week checklist'},
+    sickprocess:{de:'Krankmeldungsprozess anzeigen',en:'Show sickness reporting process'},
+    feedback:{de:'30-Tage-Feedbackformular vorbereiten',en:'Prepare 30-day feedback form'},
+    hrcheck:{de:'HR-Onboarding-Checkliste: Quality Manager Salzburg',en:'HR onboarding checklist: Quality Manager Salzburg'}
+  };
+  showSection('buddy');
+  addMsg(labels[key][lang],true);
+  setTimeout(()=>{addMsg(responses[key][lang],false);},600);
+}
+
+function sendChat(){
+  const inp=document.getElementById('chat-input');
+  const txt=inp.value.trim();
+  if(!txt)return;
+  addMsg(txt,true);
+  inp.value='';
+  const reply=lang==='de'
+    ?'Danke für deine Frage! Ich suche in den internen Richtlinien von NoRFood AG nach einer passenden Antwort. Für komplexe HR-Themen empfehle ich dir, dich direkt an Thomas Radler (HR Salzburg) zu wenden: <strong>t.radler@norfood.at</strong>'
+    :'Thanks for your question! I\'m searching NoRFood AG\'s internal policies for a relevant answer. For complex HR topics, I recommend contacting Thomas Radler (HR Salzburg) directly: <strong>t.radler@norfood.at</strong>';
+  setTimeout(()=>{addMsg(reply,false);},700);
+}
+
+document.addEventListener('keydown',e=>{if(e.key==='Enter'&&document.getElementById('login-screen').style.display!=='none'){doLogin();}});
+</script>
+</body>
+</html>
