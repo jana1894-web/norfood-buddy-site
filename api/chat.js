@@ -44,10 +44,12 @@ export default async function handler(req, res) {
         }
       );
 
-      const needleData = await needleResponse.json();
+const needleData = await needleResponse.json();
+console.log('NEEDLE STATUS:', needleResponse.status);
+console.log('NEEDLE DATA:', JSON.stringify(needleData));
 
-      if (needleResponse.ok) {
-        const results = needleData?.results || needleData?.matches || needleData?.documents || [];
+if (needleResponse.ok) {
+  const results = needleData?.results || needleData?.matches || needleData?.documents || [];
 
         needleContext = results
           .map((item, index) => {
