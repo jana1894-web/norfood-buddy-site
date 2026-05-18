@@ -30,7 +30,7 @@ export default async function handler(req, res) {
 
     try {
       const needleResponse = await fetch(
-        `https://api.needle-ai.com/v1/collections/${needleCollectionId}/search`,
+   `https://api.needle.app/api/v1/collections/${needleCollectionId}/search`,
         {
           method: 'POST',
           headers: {
