@@ -29,7 +29,7 @@ export default async function handler(req, res) {
     let needleContext = '';
 
     try {
-      const needleUrl = `https://api.needle.app/v1/collections/${needleCollectionId}/search`;
+      const needleUrl = `https://search.needle.app/api/v1/collections/${needleCollectionId}/search`;
       console.log('NEEDLE URL:', needleUrl);
 
       const needleResponse = await fetch(needleUrl, {
@@ -39,8 +39,7 @@ export default async function handler(req, res) {
           'x-api-key': needleApiKey
         },
         body: JSON.stringify({
-          query: message,
-          top_k: 6
+          text: message
         })
       });
 
@@ -63,9 +62,10 @@ export default async function handler(req, res) {
           needleData?.matches ||
           needleData?.documents ||
           needleData?.data ||
+          needleData ||
           [];
 
-        needleContext = results
+        needleContext = (Array.isArray(results) ? results : [])
           .map((item, index) => {
             const text =
               item?.content ||
