@@ -6,7 +6,7 @@ export default async function handler(req, res) {
   try {
     const { message, language = 'de' } = req.body || {};
 
-    if (!message) {
+    if (!message || typeof message !== 'string') {
       return res.status(400).json({ error: 'Message is required' });
     }
 
@@ -58,14 +58,16 @@ export default async function handler(req, res) {
 
       if (needleResponse.ok) {
         const results =
+          needleData?.result ||
           needleData?.results ||
           needleData?.matches ||
           needleData?.documents ||
           needleData?.data ||
-          needleData ||
           [];
 
-        needleContext = (Array.isArray(results) ? results : [])
+        const normalizedResults = Array.isArray(results) ? results : [];
+
+        needleContext = normalizedResults
           .map((item, index) => {
             const text =
               item?.content ||
@@ -87,6 +89,8 @@ export default async function handler(req, res) {
           })
           .filter(Boolean)
           .join('\n\n---\n\n');
+
+        console.log('NEEDLE CONTEXT LENGTH:', needleContext.length);
       }
     } catch (needleError) {
       console.error('Needle search failed:', needleError);
