@@ -30,12 +30,12 @@ export default async function handler(req, res) {
 
     try {
       const needleResponse = await fetch(
-   `https://api.needle.app/api/v1/collections/${needleCollectionId}/search`,
+        `https://api.needle.app/api/v1/collections/${needleCollectionId}/search`,
         {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${needleApiKey}`
+            'x-api-key': needleApiKey
           },
           body: JSON.stringify({
             query: message,
@@ -44,12 +44,26 @@ export default async function handler(req, res) {
         }
       );
 
-const needleData = await needleResponse.json();
-console.log('NEEDLE STATUS:', needleResponse.status);
-console.log('NEEDLE DATA:', JSON.stringify(needleData));
+      const needleText = await needleResponse.text();
+      console.log('NEEDLE STATUS:', needleResponse.status);
+      console.log('NEEDLE RAW:', needleText);
 
-if (needleResponse.ok) {
-  const results = needleData?.results || needleData?.matches || needleData?.documents || [];
+      let needleData = {};
+      try {
+        needleData = JSON.parse(needleText);
+      } catch (e) {
+        needleData = {};
+      }
+
+      console.log('NEEDLE DATA:', JSON.stringify(needleData));
+
+      if (needleResponse.ok) {
+        const results =
+          needleData?.results ||
+          needleData?.matches ||
+          needleData?.documents ||
+          needleData?.data ||
+          [];
 
         needleContext = results
           .map((item, index) => {
@@ -59,12 +73,14 @@ if (needleResponse.ok) {
               item?.chunk ||
               item?.document ||
               item?.metadata?.text ||
+              item?.fields?.text ||
               '';
 
             const title =
               item?.title ||
               item?.name ||
               item?.metadata?.title ||
+              item?.fields?.title ||
               `Dokument ${index + 1}`;
 
             return text ? `[${title}]\n${text}` : '';
@@ -109,10 +125,9 @@ ${message}`
 
     const response = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
-headers: {
-  'Content-Type': 'application/json',
-  'x-api-key': needleApiKey
-},
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': anthropicApiKey,
         'anthropic-version': '2023-06-01'
       },
       body: JSON.stringify({
@@ -137,8 +152,7 @@ headers: {
       });
     }
 
-    const reply =
-      data?.content?.[0]?.text || 'Keine Antwort erhalten.';
+    const reply = data?.content?.[0]?.text || 'Keine Antwort erhalten.';
 
     return res.status(200).json({
       reply,
