@@ -29,20 +29,20 @@ export default async function handler(req, res) {
     let needleContext = '';
 
     try {
-      const needleResponse = await fetch(
-        `https://api.needle.app/api/v1/collections/${needleCollectionId}/search`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'x-api-key': needleApiKey
-          },
-          body: JSON.stringify({
-            query: message,
-            top_k: 6
-          })
-        }
-      );
+      const needleUrl = `https://api.needle.app/v1/collections/${needleCollectionId}/search`;
+      console.log('NEEDLE URL:', needleUrl);
+
+      const needleResponse = await fetch(needleUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-api-key': needleApiKey
+        },
+        body: JSON.stringify({
+          query: message,
+          top_k: 6
+        })
+      });
 
       const needleText = await needleResponse.text();
       console.log('NEEDLE STATUS:', needleResponse.status);
