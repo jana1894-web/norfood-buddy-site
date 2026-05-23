@@ -190,6 +190,20 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);font-size:13
 .msg-u .bubble{background:var(--green2);color:#fff;border-bottom-right-radius:3px}
 .msg-b .bubble{background:var(--surface2);color:var(--text);border-bottom-left-radius:3px;border:1px solid var(--border)}
 .msg-time{font-size:9.5px;color:var(--t5);margin-top:3px}.msg-u .msg-time{text-align:right}
+  .bubble-md{white-space:normal}
+.bubble-md>*:first-child{margin-top:0}
+.bubble-md>*:last-child{margin-bottom:0}
+.bubble-md p{margin:0 0 8px}
+.bubble-md ul,.bubble-md ol{margin:6px 0 8px 18px;padding:0}
+.bubble-md li{margin:0 0 4px}
+.bubble-md strong{font-weight:700}
+.bubble-md code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:11.5px;background:rgba(0,0,0,.05);padding:1px 5px;border-radius:4px}
+.bubble-md pre{margin:8px 0;padding:10px 12px;border-radius:8px;overflow-x:auto;background:rgba(0,0,0,.05);border:1px solid var(--border)}
+.bubble-md pre code{background:transparent;padding:0;border-radius:0}
+.msg-b .bubble.bubble-md h1,.msg-b .bubble.bubble-md h2,.msg-b .bubble.bubble-md h3,.msg-b .bubble.bubble-md h4{font-size:12.5px;line-height:1.35;margin:0 0 8px;color:var(--charcoal)}
+.msg-b .bubble.bubble-md a{color:var(--green);text-decoration:underline}
+.msg-b .bubble.bubble-md hr{border:0;border-top:1px solid var(--border);margin:10px 0}
+.msg-b .bubble.bubble-md blockquote{margin:8px 0;padding-left:10px;border-left:2px solid var(--border2);color:var(--t3)}
 .chat-quick{padding:8px 11px;border-top:1px solid var(--border);display:flex;flex-wrap:wrap;gap:5px;background:var(--surface2)}
 .qp{padding:5px 10px;background:var(--surface);border:1px solid var(--border);border-radius:12px;font-size:10.5px;color:var(--t2);cursor:pointer;transition:.15s;font-family:var(--font);white-space:nowrap}
 .qp:hover{background:var(--green-lt);border-color:var(--green2);color:var(--green)}
@@ -215,6 +229,8 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);font-size:13
 ::-webkit-scrollbar-track{background:transparent}
 ::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
 </style>
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js">
+  </script>
 </head>
 <body>
 
