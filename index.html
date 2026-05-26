@@ -991,32 +991,37 @@ function addUmsg(t) {
   cm.appendChild(d);
   cm.scrollTop = cm.scrollHeight;
 }
-
-function simReply(t) {
-  if (typing) return;
+function simReply(t){
+  if(typing) return;
   typing = true;
+
   const cm = document.getElementById('cm');
   const ti = document.createElement('div');
   ti.className = 'msg-b';
   ti.id = 'ti';
-  ti.innerHTML = '<div class="bubble"><div class="tdots"><span></span><span></span><span></span></div></div>';
+  ti.innerHTML = `<div class="bubble"><div class="tdots"><span></span><span></span><span></span></div></div>`;
   cm.appendChild(ti);
   cm.scrollTop = cm.scrollHeight;
-  setTimeout(function() {
+
+  setTimeout(function(){
     const old = document.getElementById('ti');
-    if (old) old.remove();
+    if(old) old.remove();
+
     const now = new Date();
     const d = document.createElement('div');
     d.className = 'msg-b';
-    d.innerHTML = '<div class="bubble" style="white-space:pre-wrap">' + fmt(t) + '</div><div class="msg-time">' + now.getHours() + ':' + String(now.getMinutes()).padStart(2, '0') + '</div>';
+    d.innerHTML = `
+      <div class="bubble bubble-md">${renderBuddyMarkdown(t)}</div>
+      <div class="msg-time">${now.getHours()}:${String(now.getMinutes()).padStart(2, '0')}</div>
+    `;
     cm.appendChild(d);
     cm.scrollTop = cm.scrollHeight;
     typing = false;
   }, 1100 + Math.random() * 500);
 }
-
-function fmt(t) { return esc(t).replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>'); }
-function esc(s) { return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+function esc(s) {
+  return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
 
 async function sm(){
   const ci = document.getElementById('ci');
@@ -1092,6 +1097,7 @@ function playBuddy() {
   const ds = document.getElementById('vid-dash-status');
   if (ds) { ds.setAttribute('data-de', 'Angesehen ✓'); ds.setAttribute('data-en', 'Watched ✓'); ds.textContent = lang === 'de' ? 'Angesehen ✓' : 'Watched ✓'; }
 }
+
 marked.setOptions({
   breaks: true,
   gfm: true
@@ -1099,7 +1105,7 @@ marked.setOptions({
 
 function renderBuddyMarkdown(text){
   const raw = String(text || '').trim();
-  return marked.parse(raw);
+  return marked.parse(raw, { async: false });
 }
 
 function simReply(t){
@@ -1130,6 +1136,7 @@ function simReply(t){
     typing = false;
   }, 1100 + Math.random() * 500);
 }
+
 function replayBuddy() {
   const v = document.getElementById('vid-buddy');
   const o = document.getElementById('vid-buddy-overlay');
@@ -1138,6 +1145,8 @@ function replayBuddy() {
   v.controls = true;
   v.play().catch(function(){});
 }
+
+document.addEventListener('DOMContentLoaded', function() { applyLang('de'); });
 
 document.addEventListener('DOMContentLoaded', function() { applyLang('de'); });
 </script>
