@@ -1018,15 +1018,51 @@ function simReply(t) {
 function fmt(t) { return esc(t).replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>'); }
 function esc(s) { return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
 
-function sm() {
+async function sm(){
   const ci = document.getElementById('ci');
   const t = ci.value.trim();
-  if (!t) return;
+  if(!t) return;
+
   ci.value = '';
   addUmsg(t);
-  simReply(lang === 'de'
-    ? 'Danke für deine Nachricht! Als NoRFood Buddy bin ich hier für alle Fragen rund um dein Onboarding, HR-Prozesse und Kontakte. Kann ich noch etwas für dich tun?'
-    : 'Thanks for your message! As your NoRFood Buddy I\'m here for onboarding, HR processes and contacts. Can I help with anything else?');
+
+  try {
+    const response = await fetch('/api/chat', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        message: t,
+        language: lang
+      })
+    });
+
+    if(!response.ok){
+      throw new Error('API error: ' + response.status);
+    }
+
+    const data = await response.json();
+
+    const reply =
+      data.reply ||
+      data.message ||
+      data.text ||
+      (lang === 'de'
+        ? 'Ich konnte gerade keine Antwort laden. Bitte versuche es noch einmal.'
+        : 'I could not load a reply right now. Please try again.');
+
+    simReply(reply);
+
+  } catch (error) {
+    console.error('Buddy chat error:', error);
+
+    simReply(
+      lang === 'de'
+        ? 'Ich konnte gerade keine Antwort vom Buddy laden. Bitte versuche es noch einmal oder kontaktiere bei dringenden HR-Themen direkt deine Ansprechperson.'
+        : 'I could not load a Buddy response right now. Please try again or contact your responsible HR contact directly for urgent topics.'
+    );
+  }
 }
 
 function hck(e) {
