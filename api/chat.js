@@ -592,7 +592,24 @@ If one or more topic modules apply, include every mandatory step for those modul
       });
     }
 
-    const reply = data?.content?.[0]?.text || 'No response received.';
+    const reply =
+  Array.isArray(data?.content)
+    ? data.content
+        .filter(block => block?.type === 'text' && typeof block?.text === 'string')
+        .map(block => block.text)
+        .join('\n\n')
+        .trim()
+    : '';
+
+const finalReply = reply || (detectedLanguage === 'de'
+  ? 'Ich konnte gerade keine inhaltliche Antwort erzeugen. Bitte versuche es noch einmal.'
+  : 'I could not generate a content response right now. Please try again.');
+
+return res.status(200).json({
+  reply: finalReply,
+  usedKnowledge: Boolean(needleContext),
+  language: detectedLanguage
+});
 
     return res.status(200).json({
       reply,
