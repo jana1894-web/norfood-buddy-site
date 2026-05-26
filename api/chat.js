@@ -4,7 +4,7 @@ export default async function handler(req, res) {
   }
 
   try {
-    const { message, language } = req.body || {};
+    const { message, messages = [], employee, language } = req.body || {};
 
     if (!message || typeof message !== 'string') {
       return res.status(400).json({ error: 'Message is required' });
@@ -14,23 +14,15 @@ export default async function handler(req, res) {
     const needleCollectionId = process.env.NEEDLE_COLLECTION_ID;
     const anthropicApiKey = process.env.ANTHROPIC_API_KEY;
 
-    if (!needleApiKey) {
-      return res.status(500).json({ error: 'Missing NEEDLE_API_KEY' });
-    }
-
-    if (!needleCollectionId) {
-      return res.status(500).json({ error: 'Missing NEEDLE_COLLECTION_ID' });
-    }
-
-    if (!anthropicApiKey) {
-      return res.status(500).json({ error: 'Missing ANTHROPIC_API_KEY' });
-    }
+    if (!needleApiKey) return res.status(500).json({ error: 'Missing NEEDLE_API_KEY' });
+    if (!needleCollectionId) return res.status(500).json({ error: 'Missing NEEDLE_COLLECTION_ID' });
+    if (!anthropicApiKey) return res.status(500).json({ error: 'Missing ANTHROPIC_API_KEY' });
 
     const trimmedMessage = message.trim();
 
+    // ─── Language Detection ────────────────────────────────────────────────
     const containsGerman =
       /[äöüß]|\b(ich|bin|krank|urlaub|homeoffice|hilfe|hallo|danke|bitte|schicht|krankmeldung|abwesenheit|mobbing|belästigung|unfall|gehalt|probezeit|datenschutz)\b/i.test(trimmedMessage);
-
     const containsEnglish =
       /\b(i|am|sick|vacation|holiday|home office|help|hello|thanks|please|shift|absence|bullying|harassment|accident|salary|probation|privacy|data protection)\b/i.test(trimmedMessage);
 
@@ -41,81 +33,101 @@ export default async function handler(req, res) {
           ? 'de'
           : 'en';
 
+    // ─── Needle RAG Search ─────────────────────────────────────────────────
     let needleContext = '';
-
     try {
       const needleUrl = `https://search.needle.app/api/v1/collections/${needleCollectionId}/search`;
-      console.log('NEEDLE URL:', needleUrl);
-
       const needleResponse = await fetch(needleUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'x-api-key': needleApiKey
         },
-        body: JSON.stringify({
-          text: trimmedMessage
-        })
+        body: JSON.stringify({ text: trimmedMessage })
       });
 
       const needleText = await needleResponse.text();
-      console.log('NEEDLE STATUS:', needleResponse.status);
-      console.log('NEEDLE RAW:', needleText);
-
       let needleData = {};
-      try {
-        needleData = JSON.parse(needleText);
-      } catch (e) {
-        needleData = {};
-      }
-
-      console.log('NEEDLE DATA:', JSON.stringify(needleData));
+      try { needleData = JSON.parse(needleText); } catch (e) { needleData = {}; }
 
       if (needleResponse.ok) {
-        const results =
-          needleData?.result ||
-          needleData?.results ||
-          needleData?.matches ||
-          needleData?.documents ||
-          needleData?.data ||
-          [];
+        const results = Array.isArray(
+          needleData?.result || needleData?.results || needleData?.matches ||
+          needleData?.documents || needleData?.data || []
+        )
+          ? (needleData?.result || needleData?.results || needleData?.matches ||
+             needleData?.documents || needleData?.data || [])
+          : [];
 
-        const normalizedResults = Array.isArray(results) ? results : [];
-
-        needleContext = normalizedResults
+        needleContext = results
           .slice(0, 8)
           .map((item, index) => {
             const text =
-              item?.content ||
-              item?.text ||
-              item?.chunk ||
-              item?.document ||
-              item?.metadata?.text ||
-              item?.fields?.text ||
-              '';
-
+              item?.content || item?.text || item?.chunk ||
+              item?.document || item?.metadata?.text || item?.fields?.text || '';
             const title =
-              item?.title ||
-              item?.name ||
-              item?.metadata?.title ||
-              item?.fields?.title ||
-              `Dokument ${index + 1}`;
-
-            const shortenedText = String(text).slice(0, 3000);
-
-            return shortenedText ? `[${title}]\n${shortenedText}` : '';
+              item?.title || item?.name ||
+              item?.metadata?.title || item?.fields?.title || `Dokument ${index + 1}`;
+            return String(text).slice(0, 3000)
+              ? `[${title}]\n${String(text).slice(0, 3000)}`
+              : '';
           })
           .filter(Boolean)
           .join('\n\n---\n\n');
-
-        console.log('NEEDLE CONTEXT LENGTH:', needleContext.length);
       }
     } catch (needleError) {
       console.error('Needle search failed:', needleError);
     }
 
-    const systemPrompt = detectedLanguage === 'de'
-      ? `
+    // ─── Employee Context Block ────────────────────────────────────────────
+    // Injected at the top of the system prompt so the Buddy always knows
+    // who it is talking to, their role, location and current onboarding state.
+    const buildEmployeeContext = (emp, lang) => {
+      if (!emp) return '';
+      if (lang === 'de') {
+        return `
+AKTUELLER MITARBEITER (immer berücksichtigen)
+- Name: ${emp.name || '–'}
+- Rolle / Position: ${emp.role || emp.position || '–'}
+- Abteilung: ${emp.department || '–'}
+- Standort: ${emp.location || '–'}
+- Onboarding-Tag: ${emp.day ?? '–'} von 90
+- Startdatum: ${emp.startDate || '–'}
+- Probezeit-Ende: ${emp.probationEnd || '–'}
+- Offene Aufgaben: ${emp.openTasks ?? '–'}
+- Überfällige Aufgaben: ${emp.overdueTasks ?? '–'}
+- Nächstes Feedback: ${emp.nextFeedback || '–'}
+- Direkter Vorgesetzter: ${emp.manager || '–'}
+- HR Business Partner: ${emp.hrBP || '–'}
+- Mentor: ${emp.mentor || '–'}
+
+Rede diese Person immer mit ihrem Vornamen an. Passe alle Empfehlungen an ihre Rolle, Abteilung und ihren Standort an.
+`;
+      }
+      return `
+CURRENT EMPLOYEE (always take into account)
+- Name: ${emp.name || '–'}
+- Role / Position: ${emp.role || emp.position || '–'}
+- Department: ${emp.department || '–'}
+- Location: ${emp.location || '–'}
+- Onboarding day: ${emp.day ?? '–'} of 90
+- Start date: ${emp.startDate || '–'}
+- Probation end: ${emp.probationEnd || '–'}
+- Open tasks: ${emp.openTasks ?? '–'}
+- Overdue tasks: ${emp.overdueTasks ?? '–'}
+- Next feedback: ${emp.nextFeedback || '–'}
+- Direct manager: ${emp.manager || '–'}
+- HR Business Partner: ${emp.hrBP || '–'}
+- Mentor: ${emp.mentor || '–'}
+
+Always address this person by their first name. Tailor all recommendations to their role, department and location.
+`;
+    };
+
+    const employeeContext = buildEmployeeContext(employee, detectedLanguage);
+
+    // ─── System Prompt ─────────────────────────────────────────────────────
+    const baseSystemPromptDE = `
 Du bist der Onboarding Buddy von NoRFood AG, einem österreichischen Lebensmittelproduktionsunternehmen mit rund 6.000 Mitarbeitenden an 7 Standorten.
 
 ROLLE UND GELTUNGSBEREICH
@@ -151,12 +163,7 @@ GRUNDREGELN
 - Nutze den bereitgestellten Wissenskontext als primäre Grundlage, wenn er relevant ist.
 - Antworte direkt und natürlich, als würdest du die internen Abläufe kennen.
 - Nenne niemals Dateien, Dokumente, Knowledge Base, Quellen, Suchvorgänge oder Mitarbeiterakten.
-- Sage niemals Dinge wie:
-  - "Laut den FAQs ..."
-  - "In der Datei steht ..."
-  - "Das Dokument sagt ..."
-  - "Ich habe das in den Unterlagen gefunden ..."
-  - "Basierend auf Mitarbeiterdaten ..."
+- Sage niemals Dinge wie "Laut den FAQs ...", "In der Datei steht ...", "Das Dokument sagt ...", "Ich habe das in den Unterlagen gefunden ...", "Basierend auf Mitarbeiterdaten ...".
 - Erfinde niemals Namen, Telefonnummern, Policies, Diagnosen, Fristen oder personenbezogene Details.
 - Wenn etwas nicht klar im Wissenskontext gestützt ist, sage das offen und vorsichtig, ohne zu raten.
 - Verweise bei Unsicherheit lieber an HR oder die zuständige Stelle, statt Vermutungen zu äußern.
@@ -331,8 +338,9 @@ ANTWORTQUALITÄT
 - Sei menschlich und kollegial.
 - Lass keine Pflichtschritte weg, wenn ein Themenmodul zutrifft.
 - Wenn mehrere Themen zutreffen, kombiniere die relevanten Pflichtschritte sinnvoll.
-`
-      : `
+`;
+
+    const baseSystemPromptEN = `
 You are the Onboarding Buddy for NoRFood AG, an Austrian food production company with around 6,000 employees across 7 locations.
 
 ROLE AND SCOPE
@@ -367,11 +375,7 @@ CORE RULES
 - Use the provided knowledge context as the primary basis when relevant.
 - Answer directly and naturally as if you know the internal processes.
 - Never mention files, documents, knowledge bases, searches, or employee records.
-- Never say things like:
-  - "According to the FAQ ..."
-  - "The document says ..."
-  - "I found this in the file ..."
-  - "Based on employee records ..."
+- Never say things like "According to the FAQ ...", "The document says ...", "I found this in the file ...", "Based on employee records ...".
 - Never invent names, phone numbers, policies, diagnoses, timelines, or personal details.
 - If something is not clearly supported by the knowledge context, say so briefly and cautiously without guessing.
 - When unsure, route to HR or the responsible contact instead of speculating.
@@ -548,21 +552,31 @@ RESPONSE QUALITY
 - If multiple topics apply, combine the relevant mandatory steps sensibly.
 `;
 
+    const baseSystemPrompt = detectedLanguage === 'de' ? baseSystemPromptDE : baseSystemPromptEN;
+    const systemPrompt = employeeContext
+      ? `${employeeContext}\n\n${baseSystemPrompt}`
+      : baseSystemPrompt;
+
+    // ─── Conversation History ──────────────────────────────────────────────
+    // Keep the last 10 turns (20 messages) to cap token usage.
+    // Each entry must be { role: 'user' | 'assistant', content: string }.
+    const trimmedHistory = Array.isArray(messages)
+      ? messages
+          .filter(m => m && (m.role === 'user' || m.role === 'assistant') && typeof m.content === 'string')
+          .slice(-20)
+      : [];
+
+    // Build the final user message, optionally enriched with RAG context
     const userContent = needleContext
-      ? `Knowledge context:
-${needleContext}
+      ? `Knowledge context:\n${needleContext}\n\nEmployee message:\n${trimmedMessage}\n\nInstruction:\nUse the knowledge context where relevant. If one or more topic modules apply, include every mandatory step for those modules. Never mention documents, files, records, or search.`
+      : `Employee message:\n${trimmedMessage}\n\nInstruction:\nIf one or more topic modules apply, include every mandatory step for those modules. Never mention documents, files, records, or search.`;
 
-Employee message:
-${trimmedMessage}
+    const conversationMessages = [
+      ...trimmedHistory,
+      { role: 'user', content: userContent }
+    ];
 
-Instruction:
-Use the knowledge context where relevant. If one or more topic modules apply, include every mandatory step for those modules. Never mention documents, files, records, or search.`
-      : `Employee message:
-${trimmedMessage}
-
-Instruction:
-If one or more topic modules apply, include every mandatory step for those modules. Never mention documents, files, records, or search.`;
-
+    // ─── Claude API Call ───────────────────────────────────────────────────
     const response = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
       headers: {
@@ -572,14 +586,9 @@ If one or more topic modules apply, include every mandatory step for those modul
       },
       body: JSON.stringify({
         model: 'claude-sonnet-4-6',
-        max_tokens: 1100,
+        max_tokens: 1500,
         system: systemPrompt,
-        messages: [
-          {
-            role: 'user',
-            content: userContent
-          }
-        ]
+        messages: conversationMessages
       })
     });
 
@@ -592,31 +601,26 @@ If one or more topic modules apply, include every mandatory step for those modul
       });
     }
 
-    const reply =
-  Array.isArray(data?.content)
-    ? data.content
-        .filter(block => block?.type === 'text' && typeof block?.text === 'string')
-        .map(block => block.text)
-        .join('\n\n')
-        .trim()
-    : '';
+    const reply = Array.isArray(data?.content)
+      ? data.content
+          .filter(block => block?.type === 'text' && typeof block?.text === 'string')
+          .map(block => block.text)
+          .join('\n\n')
+          .trim()
+      : '';
 
-const finalReply = reply || (detectedLanguage === 'de'
-  ? 'Ich konnte gerade keine inhaltliche Antwort erzeugen. Bitte versuche es noch einmal.'
-  : 'I could not generate a content response right now. Please try again.');
-
-return res.status(200).json({
-  reply: finalReply,
-  usedKnowledge: Boolean(needleContext),
-  language: detectedLanguage
-});
+    const finalReply = reply || (detectedLanguage === 'de'
+      ? 'Ich konnte gerade keine inhaltliche Antwort erzeugen. Bitte versuche es noch einmal.'
+      : 'I could not generate a content response right now. Please try again.');
 
     return res.status(200).json({
-      reply,
+      reply: finalReply,
       usedKnowledge: Boolean(needleContext),
       language: detectedLanguage
     });
+
   } catch (error) {
+    console.error('Handler error:', error);
     return res.status(500).json({
       error: 'Server error',
       details: error.message
