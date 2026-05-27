@@ -190,7 +190,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);font-size:13
 .msg-u .bubble{background:var(--green2);color:#fff;border-bottom-right-radius:3px}
 .msg-b .bubble{background:var(--surface2);color:var(--text);border-bottom-left-radius:3px;border:1px solid var(--border)}
 .msg-time{font-size:9.5px;color:var(--t5);margin-top:3px}.msg-u .msg-time{text-align:right}
-  .bubble-md{white-space:normal}
+.bubble-md{white-space:normal}
 .bubble-md>*:first-child{margin-top:0}
 .bubble-md>*:last-child{margin-bottom:0}
 .bubble-md p{margin:0 0 8px}
@@ -229,11 +229,41 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);font-size:13
 ::-webkit-scrollbar-track{background:transparent}
 ::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
 </style>
-  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js">
-  </script>
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 </head>
 <body>
-
+ 
+<!-- VIDEO MODAL -->
+<div id="vid-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:9000;align-items:center;justify-content:center;padding:16px;">
+  <div style="background:#fff;border-radius:14px;width:100%;max-width:580px;overflow:hidden;box-shadow:0 24px 72px rgba(0,0,0,.3);">
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid var(--border);">
+      <div>
+        <div style="font-size:14px;font-weight:600;color:var(--charcoal)" data-de="NoRFood Buddy – Einführungsvideo" data-en="NoRFood Buddy – Introduction Video">NoRFood Buddy – Einführungsvideo</div>
+        <div style="font-size:11px;color:var(--t3);margin-top:2px" data-de="So unterstützt dich der Buddy in den ersten 90 Tagen" data-en="How Buddy supports you in the first 90 days">So unterstützt dich der Buddy in den ersten 90 Tagen</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:9px;">
+        <span style="font-size:10px;font-weight:600;padding:2px 8px;border-radius:8px;background:var(--green-lt);color:var(--green);border:1px solid #C2DBCA">3:24 Min.</span>
+        <button onclick="closeVidModal()" style="width:30px;height:30px;border-radius:50%;border:1px solid var(--border);background:var(--bg);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;color:var(--t3);font-family:var(--font)">✕</button>
+      </div>
+    </div>
+    <div style="background:#1A2820;aspect-ratio:16/9;position:relative;cursor:pointer;" onclick="playModalVid()">
+      <video id="vid-modal-player" style="width:100%;height:100%;display:block;object-fit:cover;" preload="metadata" poster="./assets/norfood-buddy-poster.jpg" src="./assets/norfood-buddy-intro.mp4"></video>
+      <div id="vid-modal-overlay" style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;">
+        <div style="width:56px;height:56px;border-radius:50%;background:rgba(255,255,255,0.12);border:2px solid rgba(255,255,255,0.3);display:flex;align-items:center;justify-content:center;">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="white" style="margin-left:3px"><path d="M8 5v14l11-7z"/></svg>
+        </div>
+        <div style="font-size:13px;font-weight:600;color:rgba(255,255,255,0.9)" data-de="Video abspielen" data-en="Play video">Video abspielen</div>
+        <div style="font-size:11px;color:rgba(255,255,255,0.4)">NoRFood Buddy · 3:24 Min.</div>
+      </div>
+    </div>
+    <div style="padding:12px 18px;display:flex;align-items:center;gap:10px;border-top:1px solid var(--border);">
+      <span style="font-size:13px">ℹ️</span>
+      <span style="font-size:11.5px;color:var(--t3);flex:1" data-de="Schau dieses Video an, bevor du mit dem Buddy chattest – es erklärt alle Funktionen." data-en="Watch this video before chatting with Buddy – it explains all features.">Schau dieses Video an, bevor du mit dem Buddy chattest – es erklärt alle Funktionen.</span>
+      <button onclick="closeVidModal()" class="btn-out" style="font-size:11px;padding:5px 11px;white-space:nowrap" data-de="Später ansehen" data-en="Watch later">Später ansehen</button>
+    </div>
+  </div>
+</div>
+ 
 <!-- LOGIN -->
 <div id="login-screen">
 <div class="lc">
@@ -245,14 +275,14 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);font-size:13
   <p class="lc-sub" id="ls">Demo-Konto auswählen und fortfahren</p>
   <div class="lc-accounts">
     <div class="lc-acct sel" onclick="selAcc(0)">
-      <div class="av" style="background:#E2EEF4;color:#163845">SK</div>
-      <div class="lc-info"><div class="lc-nm">Sarah Koller</div><div class="lc-rl">Quality Managerin · Salzburg · Tag 18</div></div>
-      <span class="tag" style="background:#E6F1EB;color:#1E5C32">Mitarbeiterin</span>
+      <div class="av" style="background:#E8F2EE;color:#1C4A29">MH</div>
+      <div class="lc-info"><div class="lc-nm">Markus Huber</div><div class="lc-rl">Produktionsmitarbeiter Bäckerei · Linz · Tag 23</div></div>
+      <span class="tag" style="background:#E6F1EB;color:#1E5C32">Mitarbeiter</span>
     </div>
     <div class="lc-acct" onclick="selAcc(1)">
-      <div class="av" style="background:#E8F2EE;color:#1C4A29">MH</div>
-      <div class="lc-info"><div class="lc-nm">Markus Huber</div><div class="lc-rl">Produktionsmitarbeiter · Linz · Tag 9</div></div>
-      <span class="tag" style="background:#E4EEF8;color:#144F8F">Mitarbeiter</span>
+      <div class="av" style="background:#E2EEF4;color:#163845">SK</div>
+      <div class="lc-info"><div class="lc-nm">Sarah Koller</div><div class="lc-rl">Marketing Koordinatorin · Salzburg · Tag 3</div></div>
+      <span class="tag" style="background:#E4EEF8;color:#144F8F">Mitarbeiterin</span>
     </div>
     <div class="lc-acct" onclick="selAcc(2)">
       <div class="av" style="background:#FAF0E2;color:#7A470A">LW</div>
@@ -263,7 +293,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);font-size:13
   <button class="lc-btn" onclick="doLogin()">Anmelden &amp; Demo starten</button>
 </div>
 </div>
-
+ 
 <!-- PLATFORM -->
 <div id="platform">
   <div class="hdr">
@@ -286,12 +316,12 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);font-size:13
       <div class="hdr-icon">🔔<span class="ndot"></span></div>
       <div class="hdr-icon">⚙️</div>
       <div class="upill">
-        <div class="av" id="uav" style="width:24px;height:24px;font-size:9px;background:#E2EEF4;color:#163845">SK</div>
-        <span class="upill-name" id="unm">Sarah Koller</span>
+        <div class="av" id="uav" style="width:24px;height:24px;font-size:9px;background:#E8F2EE;color:#1C4A29">MH</div>
+        <span class="upill-name" id="unm">Markus Huber</span>
       </div>
     </div>
   </div>
-
+ 
   <div class="body">
     <div class="sb">
       <div class="sb-sec">
@@ -320,138 +350,64 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);font-size:13
       </div>
       <div class="sb-footer"><div class="sb-foot-text">NoRFood AG · Portal v2.1<br>© 2025 NoRFood AG</div></div>
     </div>
-
+ 
     <div class="main">
-
+ 
 <!-- DASHBOARD -->
 <div class="page on" id="p-dash">
   <div class="ph">
     <div class="ph-left">
-      <div class="pt" id="dw">Guten Morgen, Sarah 👋</div>
-      <div class="ps" id="ds">Quality Managerin · Standort Salzburg · <strong>Tag 18</strong> von 90 · Montag, 20. Januar 2025</div>
+      <div class="pt" id="dw">Guten Morgen, Markus 👋</div>
+      <div class="ps" id="ds">Produktionsmitarbeiter Bäckerei · Standort Linz · <strong>Tag 23</strong> von 90</div>
     </div>
     <div class="ph-actions">
-      <span class="loc">📍 Salzburg</span>
+      <span class="loc" id="dash-loc">📍 Linz</span>
       <button class="btn-out" onclick="nav('buddy')" data-de="Buddy fragen" data-en="Ask Buddy">Buddy fragen</button>
       <button class="btn" onclick="nav('req')">+ <span data-de="Neue Anfrage" data-en="New Request">Neue Anfrage</span></button>
     </div>
   </div>
-  <!-- WEEKLY FOCUS CARD (replaces red alert banner) -->
   <div style="background:var(--green-lt);border:1px solid #C6DECA;border-radius:var(--r8);padding:11px 16px;display:flex;align-items:center;gap:14px;margin-bottom:14px">
     <div style="width:32px;height:32px;border-radius:50%;background:var(--green-md);border:1px solid #B0D4BA;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:15px">📌</div>
     <div style="flex:1">
-      <div style="font-size:12.5px;font-weight:600;color:var(--green)" data-de="Dein Fokus diese Woche" data-en="Your focus this week">Dein Fokus diese Woche</div>
-      <div style="font-size:11.5px;color:var(--t3);margin-top:2px" data-de="Sicherheitsunterweisung abschließen · SAP-Zugang klären (Ticket #IT-2241) · Mentor-Meeting planen" data-en="Complete safety briefing · Resolve SAP access (Ticket #IT-2241) · Schedule mentor meeting">Sicherheitsunterweisung abschließen · SAP-Zugang klären (Ticket #IT-2241) · Mentor-Meeting planen</div>
+      <div style="font-size:12.5px;font-weight:600;color:var(--green)" id="focus-title">Dein Fokus diese Woche</div>
+      <div style="font-size:11.5px;color:var(--t3);margin-top:2px" id="focus-text">Sicherheitsunterweisung abschließen · PSA-Ausgabe klären · Hygieneschulung bestätigen</div>
     </div>
     <button class="btn-ghost" style="color:var(--green2);font-size:11px;flex-shrink:0" onclick="nav('ob')" data-de="Zum Plan →" data-en="View plan →">Zum Plan →</button>
   </div>
   <div class="g5 mb12" style="margin-bottom:12px">
     <div class="kpi" style="background:var(--green-md);border-color:#C2DBCA">
       <div class="kpi-lbl" style="color:var(--green)" data-de="Onboarding-Fortschritt" data-en="Onboarding Progress">Onboarding-Fortschritt</div>
-      <div class="kpi-val" style="color:var(--green)">38%</div>
-      <div class="pb" style="margin:6px 0 4px"><div class="pf" style="width:38%"></div></div>
-      <div class="kpi-foot" data-de="Tag 18 von 90" data-en="Day 18 of 90">Tag 18 von 90</div>
+      <div class="kpi-val" id="dash-progress" style="color:var(--green)">26%</div>
+      <div class="pb" style="margin:6px 0 4px"><div class="pf" id="dash-pf" style="width:26%"></div></div>
+      <div class="kpi-foot" id="dash-day">Tag 23 von 90</div>
     </div>
-    <div class="kpi"><div class="kpi-lbl" data-de="Offene Aufgaben" data-en="Open Tasks">Offene Aufgaben</div><div class="kpi-val">7</div><div class="kpi-foot" style="color:var(--amber)">⚠ 2 überfällig</div></div>
-    <div class="kpi"><div class="kpi-lbl" data-de="Schulungen" data-en="Trainings">Schulungen</div><div class="kpi-val">3<span style="font-size:14px;font-weight:400;color:var(--t4)">/7</span></div><div class="pb" style="margin:6px 0 4px"><div class="pf" style="width:43%"></div></div><div class="kpi-foot">43% abgeschlossen</div></div>
-    <div class="kpi"><div class="kpi-lbl" data-de="Nächstes Feedback" data-en="Next Feedback">Nächstes Feedback</div><div class="kpi-val" style="font-size:20px">12 d</div><div class="kpi-foot" data-de="30-Tage-Review · 01.02." data-en="30-Day Review · 01.02.">30-Tage-Review · 01.02.</div></div>
-    <div class="kpi"><div class="kpi-lbl" data-de="Offene Anfragen" data-en="Open Requests">Offene Anfragen</div><div class="kpi-val">2</div><div class="kpi-foot" data-de="1 wartet auf Aktion" data-en="1 waiting for action">1 wartet auf Aktion</div></div>
-  </div>
-  <div class="card" style="margin-bottom:12px;padding:14px 18px">
-    <div class="card-hd" style="margin-bottom:8px"><div class="card-t" data-de="90-Tage Meilensteine" data-en="90-Day Milestones">90-Tage Meilensteine</div><button class="btn-ghost" onclick="nav('ob')">Vollständiger Plan →</button></div>
-    <div class="ms-row">
-      <div class="ms-step done"><div class="ms-dot">✓</div><div class="ms-lbl" data-de="Willkommenstag" data-en="Welcome Day">Willkommenstag</div></div>
-      <div class="ms-step done"><div class="ms-dot">✓</div><div class="ms-lbl">IT Setup</div></div>
-      <div class="ms-step done"><div class="ms-dot">✓</div><div class="ms-lbl" data-de="Hygieneschulung" data-en="Hygiene Training">Hygieneschulung</div></div>
-      <div class="ms-step act"><div class="ms-dot">●</div><div class="ms-lbl" data-de="Sicherheitsunterweisung" data-en="Safety Briefing">Sicherheitsunterweisung</div></div>
-      <div class="ms-step"><div class="ms-dot" style="font-size:9px">W3</div><div class="ms-lbl" data-de="Abt.-Einführung" data-en="Dept. Intro">Abt.-Einführung</div></div>
-      <div class="ms-step"><div class="ms-dot" style="font-size:9px">30d</div><div class="ms-lbl" data-de="30-Tage Review" data-en="30-Day Review">30-Tage Review</div></div>
-      <div class="ms-step"><div class="ms-dot" style="font-size:9px">60d</div><div class="ms-lbl" data-de="60-Tage Review" data-en="60-Day Review">60-Tage Review</div></div>
-      <div class="ms-step"><div class="ms-dot" style="font-size:9px">PGM</div><div class="ms-lbl" data-de="Probezeit" data-en="Probation">Probezeit</div></div>
-    </div>
+    <div class="kpi"><div class="kpi-lbl" data-de="Offene Aufgaben" data-en="Open Tasks">Offene Aufgaben</div><div class="kpi-val" id="dash-tasks">6</div><div class="kpi-foot" id="dash-overdue" style="color:var(--amber)">⚠ 2 überfällig</div></div>
+    <div class="kpi"><div class="kpi-lbl" data-de="Schulungen" data-en="Trainings">Schulungen</div><div class="kpi-val">2<span style="font-size:14px;font-weight:400;color:var(--t4)">/6</span></div><div class="pb" style="margin:6px 0 4px"><div class="pf" style="width:33%"></div></div><div class="kpi-foot">33% abgeschlossen</div></div>
+    <div class="kpi"><div class="kpi-lbl" data-de="Nächstes Feedback" data-en="Next Feedback">Nächstes Feedback</div><div class="kpi-val" style="font-size:20px" id="dash-feedback-days">10 d</div><div class="kpi-foot" id="dash-feedback-label">30-Tage-Review · 02.02.</div></div>
+    <div class="kpi"><div class="kpi-lbl" data-de="Offene Anfragen" data-en="Open Requests">Offene Anfragen</div><div class="kpi-val">1</div><div class="kpi-foot" data-de="in Bearbeitung" data-en="in progress">in Bearbeitung</div></div>
   </div>
   <div class="g2" style="margin-bottom:12px">
-    <!-- TODAY PRIORITIES (replaces overloaded task stack) -->
     <div class="card">
       <div class="card-hd">
         <div>
           <div class="card-t" data-de="Prioritäten diese Woche" data-en="This Week's Priorities">Prioritäten diese Woche</div>
-          <div class="card-sub" data-de="Tag 18 · 3 nächste Schritte" data-en="Day 18 · 3 next steps">Tag 18 · 3 nächste Schritte</div>
+          <div class="card-sub" id="dash-prio-sub">Tag 23 · 3 nächste Schritte</div>
         </div>
-        <span class="badge b-open" data-de="3 offen" data-en="3 open">3 offen</span>
+        <span class="badge b-open">3 offen</span>
       </div>
-      <!-- Priority 1 -->
-      <div style="display:flex;align-items:flex-start;gap:10px;padding:9px 0;border-bottom:1px solid var(--border)">
-        <div style="width:20px;height:20px;border-radius:50%;background:var(--amb-bg);border:1px solid var(--amb-bd);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:var(--amber);flex-shrink:0;margin-top:1px">1</div>
-        <div style="flex:1">
-          <div style="font-size:12.5px;font-weight:500;color:var(--text)" data-de="Sicherheitsunterweisung HSQE vereinbaren" data-en="Schedule HSQE safety briefing">Sicherheitsunterweisung HSQE vereinbaren</div>
-          <div style="font-size:10.5px;color:var(--t4);margin-top:2px" data-de="Kontakt: HSQE-Team Salzburg · p.eder@norfood.at" data-en="Contact: HSQE Team Salzburg · p.eder@norfood.at">Kontakt: HSQE-Team Salzburg · p.eder@norfood.at</div>
-        </div>
-        <span class="badge b-review" data-de="In Klärung" data-en="Pending">In Klärung</span>
-      </div>
-      <!-- Priority 2 -->
-      <div style="display:flex;align-items:flex-start;gap:10px;padding:9px 0;border-bottom:1px solid var(--border)">
-        <div style="width:20px;height:20px;border-radius:50%;background:var(--blue-bg);border:1px solid var(--blue-bd);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:var(--blue);flex-shrink:0;margin-top:1px">2</div>
-        <div style="flex:1">
-          <div style="font-size:12.5px;font-weight:500;color:var(--text)" data-de="SAP QS-Vollzugang klären (Ticket #IT-2241)" data-en="Resolve SAP QS access (Ticket #IT-2241)">SAP QS-Vollzugang klären (Ticket #IT-2241)</div>
-          <div style="font-size:10.5px;color:var(--t4);margin-top:2px" data-de="IT Helpdesk SBG · it-sbg@norfood.at" data-en="IT Helpdesk SBG · it-sbg@norfood.at">IT Helpdesk SBG · it-sbg@norfood.at</div>
-        </div>
-        <span class="badge b-review" data-de="In Klärung" data-en="Pending">In Klärung</span>
-      </div>
-      <!-- Priority 3 -->
-      <div style="display:flex;align-items:flex-start;gap:10px;padding:9px 0">
-        <div style="width:20px;height:20px;border-radius:50%;background:var(--surface3);border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:var(--t3);flex-shrink:0;margin-top:1px">3</div>
-        <div style="flex:1">
-          <div style="font-size:12.5px;font-weight:500;color:var(--text)" data-de="Mentor-Meeting Woche 3 planen" data-en="Plan mentor meeting Week 3">Mentor-Meeting Woche 3 planen</div>
-          <div style="font-size:10.5px;color:var(--t4);margin-top:2px" data-de="Mentor: Ing. Peter Eder · Fällig 22.01." data-en="Mentor: Ing. Peter Eder · Due 22.01.">Mentor: Ing. Peter Eder · Fällig 22.01.</div>
-        </div>
-        <span class="badge b-open" data-de="Offen" data-en="Open">Offen</span>
-      </div>
+      <div id="dash-priorities"></div>
       <div style="padding-top:9px;border-top:1px solid var(--border);margin-top:2px;display:flex;align-items:center;justify-content:space-between">
-        <span style="font-size:10.5px;color:var(--t4)" data-de="+ 4 weitere Aufgaben im Onboarding-Plan" data-en="+ 4 more tasks in your onboarding plan">+ 4 weitere Aufgaben im Onboarding-Plan</span>
+        <span style="font-size:10.5px;color:var(--t4)" data-de="+ weitere Aufgaben im Onboarding-Plan" data-en="+ more tasks in your onboarding plan">+ weitere Aufgaben im Onboarding-Plan</span>
         <button class="btn-ghost" style="font-size:11px;color:var(--green)" onclick="nav('cl')" data-de="Alle Checklisten →" data-en="All checklists →">Alle Checklisten →</button>
       </div>
     </div>
     <div style="display:flex;flex-direction:column;gap:12px">
       <div class="card">
-        <div class="card-hd"><div class="card-t" data-de="Aktuelle Anfragen" data-en="Recent Requests">Aktuelle Anfragen</div><button class="btn-ghost" onclick="nav('req')">Alle →</button></div>
-        <div class="rr"><div class="rr-ico" style="background:var(--blue-bg);color:var(--blue)">🖥️</div><div class="rr-body"><div class="rr-title">IT-Zugangsproblem – SAP QS-Module</div><div class="rr-meta"><span>IT Helpdesk</span><span class="rr-sep">·</span><span>16.01.2025</span></div></div><span class="badge b-review">In Prüfung</span></div>
-        <div class="rr"><div class="rr-ico" style="background:var(--ok-bg);color:var(--ok)">🏠</div><div class="rr-body"><div class="rr-title">Home-Office Antrag – Februar 2025</div><div class="rr-meta"><span>Mag. M. Reiter</span><span class="rr-sep">·</span><span>17.01.2025</span></div></div><span class="badge b-wait">Wt. Manager</span></div>
-        <div class="rr"><div class="rr-ico" style="background:var(--ok-bg);color:var(--ok)">📄</div><div class="rr-body"><div class="rr-title">Fehlende Unterlagen – Dienstvertrag</div><div class="rr-meta"><span>HR Koordination</span><span class="rr-sep">·</span><span>08.01.2025</span></div></div><span class="badge b-done">Erledigt</span></div>
-      </div>
-      <!-- CONTACTS (warmer, more human) -->
-      <div class="card">
         <div class="card-hd"><div class="card-t" data-de="Meine Ansprechpersonen" data-en="My Contact Persons">Meine Ansprechpersonen</div><button class="btn-ghost" onclick="nav('con')" data-de="Alle →" data-en="All →">Alle →</button></div>
-        <div style="display:flex;flex-direction:column;gap:0">
-          <div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border)">
-            <div class="av" style="width:30px;height:30px;font-size:10px;background:#E2EEF4;color:#163845;flex-shrink:0">PE</div>
-            <div style="flex:1">
-              <div style="font-size:12.5px;font-weight:600;color:var(--text)">Ing. Peter Eder</div>
-              <div style="font-size:10.5px;color:var(--t3)" data-de="Mentor · Fachliche Fragen & Check-ins" data-en="Mentor · Technical questions & check-ins">Mentor · Fachliche Fragen & Check-ins</div>
-            </div>
-            <a style="font-size:10px;color:var(--green);text-decoration:none;flex-shrink:0">p.eder@<br>norfood.at</a>
-          </div>
-          <div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border)">
-            <div class="av" style="width:30px;height:30px;font-size:10px;background:#E8F2EE;color:#1C4A29;flex-shrink:0">MR</div>
-            <div style="flex:1">
-              <div style="font-size:12.5px;font-weight:600;color:var(--text)">Mag. Maria Reiter</div>
-              <div style="font-size:10.5px;color:var(--t3)" data-de="HR Business Partner · Onboarding & HR-Fragen" data-en="HR Business Partner · Onboarding & HR questions">HR Business Partner · Onboarding & HR-Fragen</div>
-            </div>
-            <a style="font-size:10px;color:var(--green);text-decoration:none;flex-shrink:0">m.reiter@<br>norfood.at</a>
-          </div>
-          <div style="display:flex;align-items:center;gap:10px;padding:8px 0">
-            <div class="av" style="width:30px;height:30px;font-size:10px;background:#FAF0E2;color:#7A470A;flex-shrink:0">IT</div>
-            <div style="flex:1">
-              <div style="font-size:12.5px;font-weight:600;color:var(--text)">IT Helpdesk Salzburg</div>
-              <div style="font-size:10.5px;color:var(--t3)" data-de="IT Support · Zugänge, Geräte, SAP" data-en="IT Support · Access, devices, SAP">IT Support · Zugänge, Geräte, SAP</div>
-            </div>
-            <a style="font-size:10px;color:var(--green);text-decoration:none;flex-shrink:0">it-sbg@<br>norfood.at</a>
-          </div>
-        </div>
+        <div id="dash-contacts"></div>
       </div>
     </div>
   </div>
-  <!-- BOTTOM ROW -->
   <div class="g2">
     <div class="card" style="padding:12px 16px">
       <div class="card-hd" style="margin-bottom:9px"><div class="card-t" data-de="Schnellaktionen" data-en="Quick Actions">Schnellaktionen</div></div>
@@ -464,156 +420,143 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);font-size:13
         <button class="btn-out" onclick="nav('con')">👥 <span data-de="Kontakte" data-en="Contacts">Kontakte</span></button>
       </div>
     </div>
-    <!-- VIDEO CARD -->
-    <div class="card" style="padding:0;overflow:hidden;display:flex;flex-direction:column">
-      <div style="padding:12px 14px 10px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0">
-        <div><div class="card-t" data-de="NoRFood Buddy – Einführungsvideo" data-en="NoRFood Buddy – Introduction Video">NoRFood Buddy – Einführungsvideo</div><div class="card-sub" data-de="So unterstützt dich der Buddy in den ersten 90 Tagen" data-en="How Buddy supports you in the first 90 days">So unterstützt dich der Buddy in den ersten 90 Tagen</div></div>
-        <span style="font-size:10px;font-weight:600;padding:2px 7px;border-radius:8px;background:var(--green-lt);color:var(--green);border:1px solid #C2DBCA">3:24 Min.</span>
+    <!-- VIDEO TRIGGER CARD -->
+    <div class="card" style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:28px 20px;cursor:pointer;border:1.5px dashed var(--border2);background:var(--green-lt);" onclick="openVidModal()">
+      <div style="width:52px;height:52px;border-radius:50%;background:var(--green-md);border:2px solid #B0D4BA;display:flex;align-items:center;justify-content:center;">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="#1C4A29" style="margin-left:2px"><path d="M8 5v14l11-7z"/></svg>
       </div>
-      <!-- Replace ./assets/norfood-buddy-intro.mp4 and ./assets/norfood-buddy-poster.jpg with your actual file paths -->
-      <div style="position:relative;background:#1A2820;flex:1;min-height:0">
-        <video id="vid-dash" style="width:100%;height:100%;display:block;object-fit:cover;min-height:148px;max-height:168px" controls preload="metadata" poster="./assets/norfood-buddy-poster.jpg" src="./assets/norfood-buddy-intro.mp4"></video>
-        <div id="vid-dash-overlay" style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;background:linear-gradient(160deg,#1C3A28 0%,#0F2218 100%);cursor:pointer" onclick="playDash()">
-          <div style="width:48px;height:48px;border-radius:50%;background:rgba(255,255,255,0.12);border:2px solid rgba(255,255,255,0.3);display:flex;align-items:center;justify-content:center;margin-bottom:10px">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="white" style="margin-left:2px"><path d="M8 5v14l11-7z"/></svg>
-          </div>
-          <div style="font-size:12.5px;font-weight:600;color:rgba(255,255,255,0.9)" data-de="Einführungsvideo ansehen" data-en="Watch introduction video">Einführungsvideo ansehen</div>
-          <div style="font-size:10.5px;color:rgba(255,255,255,0.45);margin-top:3px" data-de="NoRFood Buddy · 3:24 Min." data-en="NoRFood Buddy · 3:24 min.">NoRFood Buddy · 3:24 Min.</div>
-          <div style="position:absolute;bottom:10px;right:12px;font-size:11px;font-weight:700;color:rgba(255,255,255,0.15);letter-spacing:1px">NoRFood AG</div>
-        </div>
+      <div style="text-align:center;">
+        <div style="font-size:13px;font-weight:600;color:var(--green)" data-de="Einführungsvideo ansehen" data-en="Watch introduction video">Einführungsvideo ansehen</div>
+        <div style="font-size:11px;color:var(--t3);margin-top:3px" data-de="NoRFood Buddy · 3:24 Min." data-en="NoRFood Buddy · 3:24 min.">NoRFood Buddy · 3:24 Min.</div>
       </div>
-      <div style="padding:8px 14px;border-top:1px solid var(--border);display:flex;align-items:center;gap:8px;flex-shrink:0">
-        <span style="font-size:10.5px;color:var(--t4)" id="vid-dash-status" data-de="Noch nicht angesehen" data-en="Not yet watched">Noch nicht angesehen</span>
-        <span style="flex:1"></span>
-        <button class="btn-ghost" style="font-size:10.5px;color:var(--green)" onclick="nav('buddy')" data-de="Im Buddy-Bereich öffnen →" data-en="Open in Buddy area →">Im Buddy-Bereich öffnen →</button>
-      </div>
+      <span id="vid-watch-status" style="font-size:10px;font-weight:600;padding:2px 9px;border-radius:8px;background:var(--green-md);color:var(--green);border:1px solid #C2DBCA" data-de="Noch nicht angesehen" data-en="Not yet watched">Noch nicht angesehen</span>
     </div>
   </div>
 </div>
-
+ 
 <!-- ONBOARDING -->
 <div class="page" id="p-ob">
   <div class="ph">
-    <div class="ph-left"><div class="pt" data-de="Mein Onboarding-Plan" data-en="My Onboarding Plan">Mein Onboarding-Plan</div><div class="ps" data-de="Personalisierter 90-Tage-Plan · Quality Managerin · Salzburg · Einstellungsdatum 07.01.2025" data-en="Personalized 90-day plan · Quality Manager · Salzburg · Start date 07.01.2025">Personalisierter 90-Tage-Plan · Quality Managerin · Salzburg · 07.01.2025</div></div>
+    <div class="ph-left"><div class="pt" data-de="Mein Onboarding-Plan" data-en="My Onboarding Plan">Mein Onboarding-Plan</div><div class="ps" id="ob-sub">Personalisierter 90-Tage-Plan · Produktionsmitarbeiter Bäckerei · Linz · 02.01.2025</div></div>
     <div class="ph-actions"><button class="btn-out" onclick="nav('buddy')">Buddy: Plan anpassen</button><button class="btn">📥 <span data-de="Exportieren" data-en="Export">Exportieren</span></button></div>
   </div>
   <div class="g4" style="margin-bottom:14px">
-    <div class="kpi" style="background:var(--green-md);border-color:#C2DBCA"><div class="kpi-lbl" style="color:var(--green)">Phase 1 · 30 Tage</div><div class="kpi-val" style="color:var(--green)">38%</div><div class="pb" style="margin:5px 0 3px"><div class="pf" style="width:38%"></div></div><div class="kpi-foot">8 / 21 Aufgaben</div></div>
+    <div class="kpi" style="background:var(--green-md);border-color:#C2DBCA"><div class="kpi-lbl" style="color:var(--green)">Phase 1 · 30 Tage</div><div class="kpi-val" style="color:var(--green)">26%</div><div class="pb" style="margin:5px 0 3px"><div class="pf" style="width:26%"></div></div><div class="kpi-foot">6 / 21 Aufgaben</div></div>
     <div class="kpi"><div class="kpi-lbl">Phase 2 · 60 Tage</div><div class="kpi-val" style="color:var(--t4)">0%</div><div class="kpi-foot">0 / 18 Aufgaben</div></div>
     <div class="kpi"><div class="kpi-lbl">Phase 3 · 90 Tage</div><div class="kpi-val" style="color:var(--t4)">0%</div><div class="kpi-foot">0 / 14 Aufgaben</div></div>
     <div class="kpi" style="background:var(--red-bg);border-color:var(--red-bd)"><div class="kpi-lbl" style="color:var(--red)">Überfällig</div><div class="kpi-val" style="color:var(--red)">2</div><div class="kpi-foot" style="color:var(--red)">sofortige Aktion</div></div>
   </div>
   <div class="ph-block" style="margin-bottom:10px">
-    <div class="ph-hdr p1" onclick="tog('pb1')"><span>🟢</span><span class="ph-label" data-de="Phase 1 – Erste 30 Tage: Orientierung & Grundlagen" data-en="Phase 1 – First 30 Days: Orientation & Fundamentals">Phase 1 – Erste 30 Tage: Orientierung & Grundlagen</span><span class="ph-prog">8 / 21 · <span style="color:var(--red)">2 überfällig</span></span><span style="color:var(--ch3);font-size:11px;margin-left:6px">▾</span></div>
+    <div class="ph-hdr p1" onclick="tog('pb1')"><span>🟢</span><span class="ph-label" id="ob-phase1-label">Phase 1 – Erste 30 Tage: Grundlagen & Sicherheit</span><span class="ph-prog">6 / 21 · <span style="color:var(--red)">2 überfällig</span></span><span style="color:var(--ch3);font-size:11px;margin-left:6px">▾</span></div>
     <div class="ph-body" id="pb1">
       <div class="wk-hdr">Willkommenstag (Tag 1)</div>
-      <div class="tk-row"><div class="tk-dot" style="background:var(--green2)"></div><div class="tk-body"><div class="tk-title dk">Empfang durch HR &amp; Übergabe Willkommenspaket</div><div class="tk-meta"><span class="tk-own">HR-Team</span><span>✓ 07.01.2025</span></div></div><span class="badge b-done">Erledigt</span></div>
-      <div class="tk-row"><div class="tk-dot" style="background:var(--green2)"></div><div class="tk-body"><div class="tk-title dk">Betriebsrundgang Standort Salzburg</div><div class="tk-meta"><span class="tk-own">Mentor</span><span>✓ 07.01.2025</span></div></div><span class="badge b-done">Erledigt</span></div>
-      <div class="wk-hdr">Woche 1 – IT &amp; Systemzugänge</div>
-      <div class="tk-row"><div class="tk-dot" style="background:var(--green2)"></div><div class="tk-body"><div class="tk-title dk">Laptop, Telefon &amp; Zugangskarte entgegennehmen</div><div class="tk-meta"><span class="tk-own">IT Helpdesk</span><span>✓ 08.01.2025</span></div></div><span class="badge b-done">Erledigt</span></div>
-      <div class="tk-row" style="background:var(--red-bg);margin:0 -13px;padding:8px 13px"><div class="tk-dot" style="background:var(--red)"></div><div class="tk-body"><div class="tk-title" style="color:var(--red)">SAP QS-Vollzugang – Setup fehlgeschlagen</div><div class="tk-meta" style="color:var(--red)"><span class="tk-own" style="border-color:var(--red-bd);color:var(--red)">IT Helpdesk SBG</span><span>Ticket #IT-2241 · Überfällig seit 13.01.2025</span></div></div><span class="badge b-overdue">+7 d</span></div>
-      <div class="wk-hdr">Woche 2 – Hygiene &amp; Sicherheit</div>
-      <div class="tk-row"><div class="tk-dot" style="background:var(--green2)"></div><div class="tk-body"><div class="tk-title dk">Hygieneschulung Lebensmittelproduktion (3h)</div><div class="tk-meta"><span class="tk-own">HSQE-Team</span><span>✓ 14.01.2025</span></div></div><span class="badge b-done">Erledigt</span></div>
-      <div class="tk-row" style="background:var(--red-bg);margin:0 -13px;padding:8px 13px"><div class="tk-dot" style="background:var(--red)"></div><div class="tk-body"><div class="tk-title" style="color:var(--red)">Sicherheitsunterweisung HSQE (Präsenz, 2h)</div><div class="tk-meta" style="color:var(--red)"><span class="tk-own" style="border-color:var(--red-bd);color:var(--red)">HSQE Salzburg</span><span>Überfällig seit 15.01.2025</span></div></div><span class="badge b-overdue">+5 d</span></div>
-      <div class="tk-row"><div class="tk-dot" style="background:var(--border3)"></div><div class="tk-body"><div class="tk-title">Datenschutz-Pflichtschulung (Online, 2h)</div><div class="tk-meta"><span class="tk-own">Online · HR</span><span>Fällig: 25.01.2025</span></div></div><span class="badge b-open">Offen</span></div>
+      <div class="tk-row"><div class="tk-dot" style="background:var(--green2)"></div><div class="tk-body"><div class="tk-title dk">Empfang durch HR & Übergabe Willkommenspaket</div><div class="tk-meta"><span class="tk-own">HR-Team</span><span>✓ 02.01.2025</span></div></div><span class="badge b-done">Erledigt</span></div>
+      <div class="tk-row"><div class="tk-dot" style="background:var(--green2)"></div><div class="tk-body"><div class="tk-title dk">Betriebsrundgang Standort Linz</div><div class="tk-meta"><span class="tk-own">Schichtleiter</span><span>✓ 02.01.2025</span></div></div><span class="badge b-done">Erledigt</span></div>
+      <div class="wk-hdr">Woche 1 – Sicherheit & Hygiene</div>
+      <div class="tk-row"><div class="tk-dot" style="background:var(--green2)"></div><div class="tk-body"><div class="tk-title dk">Schutzkleidung & Zugangskarte entgegennehmen</div><div class="tk-meta"><span class="tk-own">Schichtleiter</span><span>✓ 03.01.2025</span></div></div><span class="badge b-done">Erledigt</span></div>
+      <div class="tk-row" style="background:var(--red-bg);margin:0 -13px;padding:8px 13px"><div class="tk-dot" style="background:var(--red)"></div><div class="tk-body"><div class="tk-title" style="color:var(--red)">Sicherheitsunterweisung HSQE – noch nicht absolviert</div><div class="tk-meta" style="color:var(--red)"><span class="tk-own" style="border-color:var(--red-bd);color:var(--red)">HSQE-Team Linz</span><span>Überfällig seit 10.01.2025</span></div></div><span class="badge b-overdue">+13 d</span></div>
+      <div class="tk-row" style="background:var(--red-bg);margin:0 -13px;padding:8px 13px"><div class="tk-dot" style="background:var(--red)"></div><div class="tk-body"><div class="tk-title" style="color:var(--red)">PSA-Schulung (Persönliche Schutzausrüstung)</div><div class="tk-meta" style="color:var(--red)"><span class="tk-own" style="border-color:var(--red-bd);color:var(--red)">HSQE-Team Linz</span><span>Überfällig seit 10.01.2025</span></div></div><span class="badge b-overdue">+13 d</span></div>
+      <div class="wk-hdr">Woche 2–3 – Hygiene & Produktion</div>
+      <div class="tk-row"><div class="tk-dot" style="background:var(--green2)"></div><div class="tk-body"><div class="tk-title dk">Hygieneschulung Lebensmittelproduktion (3h)</div><div class="tk-meta"><span class="tk-own">HSQE-Team</span><span>✓ 13.01.2025</span></div></div><span class="badge b-done">Erledigt</span></div>
+      <div class="tk-row"><div class="tk-dot" style="background:var(--border3)"></div><div class="tk-body"><div class="tk-title">HACCP-Grundlagen Einführung</div><div class="tk-meta"><span class="tk-own">HSQE / Produktion</span><span>Fällig: 31.01.2025</span></div></div><span class="badge b-open">Offen</span></div>
+      <div class="tk-row"><div class="tk-dot" style="background:var(--border3)"></div><div class="tk-body"><div class="tk-title">Datenschutz-Pflichtschulung (Online, 1h)</div><div class="tk-meta"><span class="tk-own">Online · HR</span><span>Fällig: 28.01.2025</span></div></div><span class="badge b-open">Offen</span></div>
     </div>
   </div>
   <div class="ph-block" style="margin-bottom:10px">
-    <div class="ph-hdr" onclick="tog('pb2')"><span>🔵</span><span class="ph-label" data-de="Phase 2 – Tage 31–60: Vertiefung & Eigenständigkeit" data-en="Phase 2 – Days 31–60: Deepening & Independence">Phase 2 – Tage 31–60: Vertiefung & Eigenständigkeit</span><span class="ph-prog" style="color:var(--t4)">0 / 18 · ab 06.02.2025</span><span style="color:var(--ch3);font-size:11px;margin-left:6px">▾</span></div>
+    <div class="ph-hdr" onclick="tog('pb2')"><span>🔵</span><span class="ph-label">Phase 2 – Tage 31–60: Maschinen & Prozesse</span><span class="ph-prog" style="color:var(--t4)">0 / 18 · ab 01.02.2025</span><span style="color:var(--ch3);font-size:11px;margin-left:6px">▾</span></div>
     <div class="ph-body" id="pb2" style="display:none">
-      <div class="wk-hdr">Monat 2 – Fachliche Vertiefung</div>
-      <div class="tk-row"><div class="tk-dot" style="background:var(--border3)"></div><div class="tk-body"><div class="tk-title">HACCP-Grundlagen Schulung (intern, 4h)</div><div class="tk-meta"><span class="tk-own">HSQE / QM</span><span>Fällig: 14.02.2025</span></div></div><span class="badge b-draft">Ausstehend</span></div>
-      <div class="tk-row"><div class="tk-dot" style="background:var(--border3)"></div><div class="tk-body"><div class="tk-title">60-Tage-Feedbackgespräch vorbereiten</div><div class="tk-meta"><span class="tk-own">HR BP + Vorgesetzte</span><span>Fällig: 01.03.2025</span></div></div><span class="badge b-draft">Ausstehend</span></div>
+      <div class="wk-hdr">Monat 2 – Maschineneinführung & Produktionsprozesse</div>
+      <div class="tk-row"><div class="tk-dot" style="background:var(--border3)"></div><div class="tk-body"><div class="tk-title">Maschineneinführung (Start/Stop/Not-Aus)</div><div class="tk-meta"><span class="tk-own">Schichtleiter</span><span>Fällig: 10.02.2025</span></div></div><span class="badge b-draft">Ausstehend</span></div>
+      <div class="tk-row"><div class="tk-dot" style="background:var(--border3)"></div><div class="tk-body"><div class="tk-title">Teigverarbeitung & Backprozesse verstehen</div><div class="tk-meta"><span class="tk-own">Produktion</span><span>Fällig: 20.02.2025</span></div></div><span class="badge b-draft">Ausstehend</span></div>
+      <div class="tk-row"><div class="tk-dot" style="background:var(--border3)"></div><div class="tk-body"><div class="tk-title">30-Tage-Feedbackgespräch</div><div class="tk-meta"><span class="tk-own">Schichtleiter + HR BP</span><span>Fällig: 02.02.2025</span></div></div><span class="badge b-draft">Ausstehend</span></div>
     </div>
   </div>
   <div class="ph-block">
-    <div class="ph-hdr" onclick="tog('pb3')"><span>⚪</span><span class="ph-label" data-de="Phase 3 – Tage 61–90: Integration & Probezeit-Abschluss" data-en="Phase 3 – Days 61–90: Integration & Probation Completion">Phase 3 – Tage 61–90: Integration & Probezeit-Abschluss</span><span class="ph-prog" style="color:var(--t4)">0 / 14 · ab 09.03.2025</span><span style="color:var(--ch3);font-size:11px;margin-left:6px">▾</span></div>
+    <div class="ph-hdr" onclick="tog('pb3')"><span>⚪</span><span class="ph-label">Phase 3 – Tage 61–90: Selbstständigkeit & Abschluss</span><span class="ph-prog" style="color:var(--t4)">0 / 14 · ab 03.03.2025</span><span style="color:var(--ch3);font-size:11px;margin-left:6px">▾</span></div>
     <div class="ph-body" id="pb3" style="display:none">
       <div class="wk-hdr">Monat 3 – Probezeit-Abschluss</div>
-      <div class="tk-row"><div class="tk-dot" style="background:var(--border3)"></div><div class="tk-body"><div class="tk-title">90-Tage-Probezeitgespräch vorbereiten</div><div class="tk-meta"><span class="tk-own">Vorgesetzte + HR BP</span><span>Fällig: 01.04.2025</span></div></div><span class="badge b-draft">Ausstehend</span></div>
+      <div class="tk-row"><div class="tk-dot" style="background:var(--border3)"></div><div class="tk-body"><div class="tk-title">Praktische Prüfung & Freigabe zur Arbeit</div><div class="tk-meta"><span class="tk-own">Schichtleiter + HSQE</span><span>Fällig: 25.03.2025</span></div></div><span class="badge b-draft">Ausstehend</span></div>
+      <div class="tk-row"><div class="tk-dot" style="background:var(--border3)"></div><div class="tk-body"><div class="tk-title">90-Tage-Probezeitgespräch</div><div class="tk-meta"><span class="tk-own">Schichtleiter + HR BP</span><span>Fällig: 02.04.2025</span></div></div><span class="badge b-draft">Ausstehend</span></div>
     </div>
   </div>
 </div>
-
+ 
 <!-- CHECKLISTS -->
 <div class="page" id="p-cl">
   <div class="ph"><div class="ph-left"><div class="pt" data-de="Checklisten" data-en="Checklists">Checklisten</div><div class="ps" data-de="Alle Onboarding-Checklisten im Überblick" data-en="All onboarding checklists at a glance">Alle Onboarding-Checklisten im Überblick</div></div></div>
   <div class="tabs">
-    <button class="tab on" onclick="swTab(this,'clo')">Offen (5)</button>
-    <button class="tab" onclick="swTab(this,'cld')">Abgeschlossen (8)</button>
+    <button class="tab on" onclick="swTab(this,'clo')">Offen (4)</button>
+    <button class="tab" onclick="swTab(this,'cld')">Abgeschlossen (4)</button>
     <button class="tab" onclick="swTab(this,'clv')">Überfällig (2)</button>
   </div>
   <div id="clo">
     <div class="g2">
       <div class="card">
-        <div class="card-hd"><div><div class="card-t">Woche 3 – Kernaufgaben</div><div class="card-sub">Quality Managerin · Salzburg</div></div><span class="badge b-open">57% (4/7)</span></div>
-        <div class="pb" style="margin-bottom:10px"><div class="pf" style="width:57%"></div></div>
-        <div class="cl-item"><div class="cb done"></div><div class="cl-text"><div class="cl-title dk">Mentor-Meeting terminieren</div></div></div>
-        <div class="cl-item"><div class="cb done"></div><div class="cl-text"><div class="cl-title dk">E-Mail &amp; Abwesenheitsnotiz einrichten</div></div></div>
-        <div class="cl-item"><div class="cb"></div><div class="cl-text"><div class="cl-title">Datenschutz-Schulung starten</div><div class="cl-meta"><span>Fällig: 25.01.2025</span></div></div></div>
-        <div class="cl-item"><div class="cb over"></div><div class="cl-text"><div class="cl-title" style="color:var(--red)">Sicherheitsunterweisung HSQE</div><div class="cl-meta" style="color:var(--red)"><span>Überfällig seit 15.01.2025</span></div></div></div>
+        <div class="card-hd"><div><div class="card-t" id="cl-week-title">Woche 3–4 – Kernaufgaben Bäckerei</div><div class="card-sub" id="cl-week-sub">Produktionsmitarbeiter · Linz</div></div><span class="badge b-open">40% (2/5)</span></div>
+        <div class="pb" style="margin-bottom:10px"><div class="pf" style="width:40%"></div></div>
+        <div class="cl-item"><div class="cb done"></div><div class="cl-text"><div class="cl-title dk">Hygieneschulung abgeschlossen</div></div></div>
+        <div class="cl-item"><div class="cb done"></div><div class="cl-text"><div class="cl-title dk">Schichtplan und Arbeitszeiten bekannt</div></div></div>
+        <div class="cl-item"><div class="cb over"></div><div class="cl-text"><div class="cl-title" style="color:var(--red)">Sicherheitsunterweisung HSQE</div><div class="cl-meta" style="color:var(--red)"><span>Überfällig seit 10.01.2025</span></div></div></div>
+        <div class="cl-item"><div class="cb"></div><div class="cl-text"><div class="cl-title">HACCP-Grundlagen absolvieren</div><div class="cl-meta"><span>Fällig: 31.01.2025</span></div></div></div>
         <div class="cl-item"><div class="cb"></div><div class="cl-text"><div class="cl-title">30-Tage-Feedback-Meeting buchen</div><div class="cl-meta"><span>Fällig: 28.01.2025</span></div></div></div>
       </div>
       <div class="card">
-        <div class="card-hd"><div><div class="card-t">Rolle: Quality Managerin – Pflichten</div><div class="card-sub">Rollenspezifisch · QM-Abteilung</div></div><span class="badge b-open">25% (2/8)</span></div>
+        <div class="card-hd"><div><div class="card-t" id="cl-role-title">Rolle: Produktionsmitarbeiter Bäckerei – Pflichten</div><div class="card-sub">Rollenspezifisch · Produktion</div></div><span class="badge b-open">25% (1/4)</span></div>
         <div class="pb" style="margin-bottom:10px"><div class="pf" style="width:25%"></div></div>
-        <div class="cl-item"><div class="cb done"></div><div class="cl-text"><div class="cl-title dk">QM-Handbuch gelesen</div></div></div>
-        <div class="cl-item"><div class="cb done"></div><div class="cl-text"><div class="cl-title dk">Laborordnung unterzeichnet</div></div></div>
-        <div class="cl-item"><div class="cb"></div><div class="cl-text"><div class="cl-title">HACCP-Grundlagen Schulung</div><div class="cl-meta">Phase 2 · ab 06.02.</div></div></div>
-        <div class="cl-item"><div class="cb"></div><div class="cl-text"><div class="cl-title">ISO 9001 Einführungsschulung</div></div></div>
+        <div class="cl-item"><div class="cb done"></div><div class="cl-text"><div class="cl-title dk">Allergenmanagement Einführung</div></div></div>
+        <div class="cl-item"><div class="cb"></div><div class="cl-text"><div class="cl-title">Maschineneinführung Phase 2</div><div class="cl-meta">ab 01.02.</div></div></div>
+        <div class="cl-item"><div class="cb"></div><div class="cl-text"><div class="cl-title">Qualitätskontrolle & Dokumentation</div><div class="cl-meta">Phase 2 · ab 01.02.</div></div></div>
+        <div class="cl-item"><div class="cb"></div><div class="cl-text"><div class="cl-title">5S-Prinzip & Arbeitsplatzpflege</div></div></div>
       </div>
     </div>
   </div>
   <div id="cld" style="display:none">
     <div class="card">
       <div class="card-hd" style="margin-bottom:10px"><div class="card-t">Abgeschlossene Checklisten</div><span class="badge b-done">4 erledigt</span></div>
-      <div class="cl-item"><div class="cb done"></div><div class="cl-text"><div class="cl-title dk">Tag 1 – Willkommenstag Checkliste</div><div class="cl-meta">Abgeschlossen am 07.01.2025</div></div><span class="badge b-done">Erledigt</span></div>
-      <div class="cl-item"><div class="cb done"></div><div class="cl-text"><div class="cl-title dk">IT Setup &amp; Zugänge – Woche 1</div><div class="cl-meta">Abgeschlossen am 10.01.2025</div></div><span class="badge b-done">Erledigt</span></div>
-      <div class="cl-item"><div class="cb done"></div><div class="cl-text"><div class="cl-title dk">Hygieneschulung Lebensmittelproduktion</div><div class="cl-meta">Abgeschlossen am 14.01.2025</div></div><span class="badge b-done">Erledigt</span></div>
-      <div class="cl-item"><div class="cb done"></div><div class="cl-text"><div class="cl-title dk">HR-Unterlagen vollständig abgegeben</div><div class="cl-meta">Abgeschlossen am 08.01.2025</div></div><span class="badge b-done">Erledigt</span></div>
+      <div class="cl-item"><div class="cb done"></div><div class="cl-text"><div class="cl-title dk">Tag 1 – Willkommenstag Checkliste</div><div class="cl-meta">Abgeschlossen am 02.01.2025</div></div><span class="badge b-done">Erledigt</span></div>
+      <div class="cl-item"><div class="cb done"></div><div class="cl-text"><div class="cl-title dk">Schutzkleidung & Zugangskarte</div><div class="cl-meta">Abgeschlossen am 03.01.2025</div></div><span class="badge b-done">Erledigt</span></div>
+      <div class="cl-item"><div class="cb done"></div><div class="cl-text"><div class="cl-title dk">Hygieneschulung Lebensmittelproduktion</div><div class="cl-meta">Abgeschlossen am 13.01.2025</div></div><span class="badge b-done">Erledigt</span></div>
+      <div class="cl-item"><div class="cb done"></div><div class="cl-text"><div class="cl-title dk">HR-Unterlagen vollständig abgegeben</div><div class="cl-meta">Abgeschlossen am 03.01.2025</div></div><span class="badge b-done">Erledigt</span></div>
     </div>
   </div>
   <div id="clv" style="display:none">
     <div class="card" style="border-color:var(--red-bd)">
       <div class="card-hd" style="margin-bottom:10px"><div class="card-t" style="color:var(--red)">⚠ Überfällige Aufgaben</div></div>
-      <div class="cl-item"><div class="cb over"></div><div class="cl-text"><div class="cl-title" style="color:var(--red)">Sicherheitsunterweisung HSQE (Präsenz, 2h)</div><div class="cl-meta" style="color:var(--red)">Überfällig seit 15.01.2025 · HSQE-Team Salzburg</div></div><span class="badge b-overdue">+5 Tage</span></div>
-      <div class="cl-item"><div class="cb over"></div><div class="cl-text"><div class="cl-title" style="color:var(--red)">SAP QS-Vollzugang (Ticket #IT-2241)</div><div class="cl-meta" style="color:var(--red)">Überfällig seit 13.01.2025 · IT Helpdesk SBG</div></div><span class="badge b-overdue">+7 Tage</span></div>
+      <div class="cl-item"><div class="cb over"></div><div class="cl-text"><div class="cl-title" style="color:var(--red)">Sicherheitsunterweisung HSQE (Präsenz, 2h)</div><div class="cl-meta" style="color:var(--red)">Überfällig seit 10.01.2025 · HSQE-Team Linz</div></div><span class="badge b-overdue">+13 Tage</span></div>
+      <div class="cl-item"><div class="cb over"></div><div class="cl-text"><div class="cl-title" style="color:var(--red)">PSA-Schulung (Persönliche Schutzausrüstung)</div><div class="cl-meta" style="color:var(--red)">Überfällig seit 10.01.2025 · HSQE-Team Linz</div></div><span class="badge b-overdue">+13 Tage</span></div>
       <div style="padding-top:10px;border-top:1px solid var(--border)"><button class="btn" onclick="nav('buddy')">🤖 Buddy: Eskalation vorbereiten</button></div>
     </div>
   </div>
 </div>
-
+ 
 <!-- REQUESTS -->
 <div class="page" id="p-req">
   <div class="ph"><div class="ph-left"><div class="pt" data-de="Service Center – Meine Anfragen" data-en="Service Center – My Requests">Service Center – Meine Anfragen</div><div class="ps" data-de="Anfragen, Meldungen & HR-Services" data-en="Requests, reports & HR services">Anfragen, Meldungen & HR-Services</div></div><div class="ph-actions"><button class="btn">+ <span data-de="Neue Anfrage" data-en="New Request">Neue Anfrage</span></button></div></div>
   <div class="g5" style="margin-bottom:14px">
-    <div class="kpi"><div class="kpi-lbl">Gesamt</div><div class="kpi-val">5</div></div>
-    <div class="kpi" style="background:var(--blue-bg)"><div class="kpi-lbl" style="color:var(--blue)">Offen</div><div class="kpi-val" style="color:var(--blue)">2</div></div>
-    <div class="kpi" style="background:var(--amb-bg)"><div class="kpi-lbl" style="color:var(--amber)">In Prüfung</div><div class="kpi-val" style="color:var(--amber)">2</div></div>
-    <div class="kpi" style="background:var(--ok-bg)"><div class="kpi-lbl" style="color:var(--ok)">Abgeschlossen</div><div class="kpi-val" style="color:var(--ok)">1</div></div>
-    <div class="kpi"><div class="kpi-lbl">Ø Bearbeitungszeit</div><div class="kpi-val" style="font-size:18px">2.4 d</div></div>
+    <div class="kpi"><div class="kpi-lbl">Gesamt</div><div class="kpi-val">2</div></div>
+    <div class="kpi" style="background:var(--blue-bg)"><div class="kpi-lbl" style="color:var(--blue)">Offen</div><div class="kpi-val" style="color:var(--blue)">1</div></div>
+    <div class="kpi" style="background:var(--amb-bg)"><div class="kpi-lbl" style="color:var(--amber)">In Prüfung</div><div class="kpi-val" style="color:var(--amber)">1</div></div>
+    <div class="kpi" style="background:var(--ok-bg)"><div class="kpi-lbl" style="color:var(--ok)">Abgeschlossen</div><div class="kpi-val" style="color:var(--ok)">0</div></div>
+    <div class="kpi"><div class="kpi-lbl">Ø Bearbeitungszeit</div><div class="kpi-val" style="font-size:18px">1.8 d</div></div>
   </div>
   <div class="card">
     <table class="tbl">
       <thead><tr><th>#</th><th>Anfrage</th><th>Typ</th><th>Zuständig</th><th>Erstellt</th><th>Fälligkeit</th><th>Status</th><th>Nächster Schritt</th></tr></thead>
       <tbody>
-        <tr><td style="color:var(--t4)">#REQ-005</td><td style="font-weight:500">IT-Zugangsproblem – SAP QS-Module</td><td><span class="badge b-req">IT</span></td><td>IT Helpdesk SBG</td><td>16.01.</td><td>20.01.</td><td><span class="badge b-review">In Prüfung</span></td><td style="font-size:11px;color:var(--t3)">Ticket #IT-2241 · wt. IT</td></tr>
-        <tr><td style="color:var(--t4)">#REQ-004</td><td style="font-weight:500">Home-Office Antrag – Februar 2025</td><td><span class="badge b-req" style="background:var(--green-lt);color:var(--green);border-color:#B8D9C0">HR</span></td><td>Mag. M. Reiter</td><td>17.01.</td><td>24.01.</td><td><span class="badge b-wait">Wt. Manager</span></td><td style="font-size:11px;color:var(--t3)">Freigabe Dr. Kastner</td></tr>
-        <tr><td style="color:var(--t4)">#REQ-003</td><td style="font-weight:500">Gehaltsabrechnung Jänner – Frage</td><td><span class="badge b-req" style="background:var(--ok-bg);color:var(--ok);border-color:var(--ok-bd)">Payroll</span></td><td>Lohnverrechnung Wien</td><td>18.01.</td><td>21.01.</td><td><span class="badge b-open">Offen</span></td><td style="font-size:11px;color:var(--t3)">Wartet auf Bearbeitung</td></tr>
-        <tr><td style="color:var(--t4)">#REQ-002</td><td style="font-weight:500">Krankmeldung – 13.01.2025</td><td><span class="badge b-req" style="background:var(--red-bg);color:var(--red);border-color:var(--red-bd)">Abwesenheit</span></td><td>HR Business Partner</td><td>13.01.</td><td>13.01.</td><td><span class="badge b-done">Erledigt</span></td><td style="font-size:11px;color:var(--t3)">Abgeschlossen ✓</td></tr>
-        <tr><td style="color:var(--t4)">#REQ-001</td><td style="font-weight:500">Fehlende Unterlagen – Dienstvertrag</td><td><span class="badge b-req" style="background:var(--green-lt);color:var(--green);border-color:#B8D9C0">HR</span></td><td>HR Koordination</td><td>08.01.</td><td>10.01.</td><td><span class="badge b-done">Erledigt</span></td><td style="font-size:11px;color:var(--t3)">Abgeschlossen ✓</td></tr>
+        <tr><td style="color:var(--t4)">#REQ-002</td><td style="font-weight:500">Sicherheitsunterweisung – Terminanfrage</td><td><span class="badge b-req">HSQE</span></td><td>HSQE-Team Linz</td><td>20.01.</td><td>24.01.</td><td><span class="badge b-review">In Prüfung</span></td><td style="font-size:11px;color:var(--t3)">Terminvorschlag ausstehend</td></tr>
+        <tr><td style="color:var(--t4)">#REQ-001</td><td style="font-weight:500">Fehlende Unterlagen – Bankverbindung</td><td><span class="badge b-req" style="background:var(--green-lt);color:var(--green);border-color:#B8D9C0">HR</span></td><td>HR Business Partner</td><td>05.01.</td><td>08.01.</td><td><span class="badge b-open">Offen</span></td><td style="font-size:11px;color:var(--t3)">Wartet auf Einreichung</td></tr>
       </tbody>
     </table>
   </div>
 </div>
-
+ 
 <!-- DOCUMENTS -->
 <div class="page" id="p-doc">
   <div class="ph"><div class="ph-left"><div class="pt" data-de="Dokumente & Richtlinien" data-en="Documents & Policies">Dokumente & Richtlinien</div><div class="ps" data-de="Interne Ressourcen und Unternehmensrichtlinien" data-en="Internal resources and company policies">Interne Ressourcen und Unternehmensrichtlinien</div></div></div>
   <div class="g2">
     <div class="card"><div class="card-hd" style="margin-bottom:10px"><div class="card-t">📘 Einstieg & Orientierung</div></div>
       <div class="dr"><div class="dr-ico">📗</div><div class="dr-body"><div class="dr-name">NoRFood Mitarbeiterhandbuch 2025</div><div class="dr-desc">Unternehmenskultur, Prozesse, Leistungen</div></div><span class="dr-arr">→</span></div>
-      <div class="dr"><div class="dr-ico">📍</div><div class="dr-body"><div class="dr-name">Standortguide Salzburg</div><div class="dr-desc">Lageplan, Zugang, Parkplatz, Kantine</div></div><span class="dr-arr">→</span></div>
+      <div class="dr"><div class="dr-ico">📍</div><div class="dr-body"><div class="dr-name" id="doc-standort">Standortguide Linz</div><div class="dr-desc">Lageplan, Zugang, Parkplatz, Kantine</div></div><span class="dr-arr">→</span></div>
       <div class="dr"><div class="dr-ico">📋</div><div class="dr-body"><div class="dr-name">FAQ Neue Mitarbeitende</div><div class="dr-desc">Häufige Fragen beim Einstieg</div></div><span class="dr-arr">→</span></div>
     </div>
     <div class="card"><div class="card-hd" style="margin-bottom:10px"><div class="card-t">🔒 HR-Prozesse & Richtlinien</div></div>
@@ -628,89 +571,67 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);font-size:13
     </div>
     <div class="card"><div class="card-hd" style="margin-bottom:10px"><div class="card-t">💻 IT & Sicherheit</div></div>
       <div class="dr"><div class="dr-ico" style="background:var(--petrol-lt);color:var(--petrol)">🔐</div><div class="dr-body"><div class="dr-name">IT-Sicherheitsrichtlinie</div><div class="dr-desc">Passwörter, Geräte, Cloud-Nutzung</div></div><span class="dr-arr">→</span></div>
-      <div class="dr"><div class="dr-ico" style="background:var(--petrol-lt);color:var(--petrol)">💻</div><div class="dr-body"><div class="dr-name">SAP-Schnellstart-Guide QM</div><div class="dr-desc">Erste Schritte in SAP für QM-Mitarbeitende</div></div><span class="dr-arr">→</span></div>
+      <div class="dr"><div class="dr-ico" style="background:var(--petrol-lt);color:var(--petrol)">💻</div><div class="dr-body"><div class="dr-name" id="doc-it">Einführung digitale Produktionsprotokolle</div><div class="dr-desc">Erste Schritte im Produktionssystem</div></div><span class="dr-arr">→</span></div>
     </div>
   </div>
 </div>
-
+ 
 <!-- LEARNING -->
 <div class="page" id="p-lrn">
   <div class="ph"><div class="ph-left"><div class="pt" data-de="Lernen & Compliance" data-en="Learning & Compliance">Lernen & Compliance</div><div class="ps" data-de="Pflicht- und optionale Schulungsmodule" data-en="Mandatory and optional training modules">Pflicht- und optionale Schulungsmodule</div></div></div>
   <div class="g4" style="margin-bottom:14px">
-    <div class="kpi"><div class="kpi-lbl">Gesamt</div><div class="kpi-val">7</div></div>
-    <div class="kpi" style="background:var(--ok-bg)"><div class="kpi-lbl" style="color:var(--ok)">Abgeschlossen</div><div class="kpi-val" style="color:var(--ok)">3</div></div>
-    <div class="kpi" style="background:var(--blue-bg)"><div class="kpi-lbl" style="color:var(--blue)">In Bearbeitung</div><div class="kpi-val" style="color:var(--blue)">1</div></div>
-    <div class="kpi" style="background:var(--red-bg)"><div class="kpi-lbl" style="color:var(--red)">Ausstehend</div><div class="kpi-val" style="color:var(--red)">4</div></div>
+    <div class="kpi"><div class="kpi-lbl">Gesamt</div><div class="kpi-val">6</div></div>
+    <div class="kpi" style="background:var(--ok-bg)"><div class="kpi-lbl" style="color:var(--ok)">Abgeschlossen</div><div class="kpi-val" style="color:var(--ok)">2</div></div>
+    <div class="kpi" style="background:var(--red-bg)"><div class="kpi-lbl" style="color:var(--red)">Überfällig</div><div class="kpi-val" style="color:var(--red)">2</div></div>
+    <div class="kpi" style="background:var(--amb-bg)"><div class="kpi-lbl" style="color:var(--amber)">Ausstehend</div><div class="kpi-val" style="color:var(--amber)">2</div></div>
   </div>
   <div class="g2">
     <div class="card"><div class="card-hd" style="margin-bottom:10px"><div class="card-t">🔴 Pflichtmodule</div></div>
-      <div class="lr"><div class="lr-dot" style="background:var(--green2)"></div><div class="lr-body"><div class="lr-title">Hygiene-Grundschulung Lebensmittelproduktion</div><div class="lr-meta">Pflicht · ✓ 14.01.2025 · 3h</div></div><div class="lr-pct" style="color:var(--ok)">100%</div></div>
-      <div class="lr"><div class="lr-dot" style="background:var(--green2)"></div><div class="lr-body"><div class="lr-title">Arbeitssicherheit Grundlagen</div><div class="lr-meta">Pflicht · ✓ 12.01.2025 · 2h</div></div><div class="lr-pct" style="color:var(--ok)">100%</div></div>
-      <div class="lr"><div class="lr-dot" style="background:var(--green2)"></div><div class="lr-body"><div class="lr-title">NoRFood Einführung & Unternehmenskultur</div><div class="lr-meta">Pflicht · ✓ 07.01.2025 · 1h</div></div><div class="lr-pct" style="color:var(--ok)">100%</div></div>
-      <div class="lr"><div class="lr-dot" style="background:var(--blue)"></div><div class="lr-body"><div class="lr-title">IT-Sicherheit & Datenschutz DSGVO</div><div class="lr-meta">Pflicht · In Bearbeitung · Fällig 25.01. · 2h</div><div class="pb" style="margin-top:5px"><div class="pf amb" style="width:45%"></div></div></div><div class="lr-pct" style="color:var(--blue)">45%</div></div>
-      <div class="lr"><div class="lr-dot" style="background:var(--red)"></div><div class="lr-body"><div class="lr-title">PSA – Persönliche Schutzausrüstung</div><div class="lr-meta" style="color:var(--red)">Pflicht · Überfällig seit 15.01.2025 · 1h</div></div><div class="lr-pct" style="color:var(--red)">0%</div></div>
+      <div class="lr"><div class="lr-dot" style="background:var(--green2)"></div><div class="lr-body"><div class="lr-title">Hygiene-Grundschulung Lebensmittelproduktion</div><div class="lr-meta">Pflicht · ✓ 13.01.2025 · 3h</div></div><div class="lr-pct" style="color:var(--ok)">100%</div></div>
+      <div class="lr"><div class="lr-dot" style="background:var(--green2)"></div><div class="lr-body"><div class="lr-title">NoRFood Einführung & Unternehmenskultur</div><div class="lr-meta">Pflicht · ✓ 02.01.2025 · 1h</div></div><div class="lr-pct" style="color:var(--ok)">100%</div></div>
+      <div class="lr"><div class="lr-dot" style="background:var(--red)"></div><div class="lr-body"><div class="lr-title">Arbeitssicherheit & Sicherheitsunterweisung</div><div class="lr-meta" style="color:var(--red)">Pflicht · Überfällig seit 10.01.2025 · 2h</div></div><div class="lr-pct" style="color:var(--red)">0%</div></div>
+      <div class="lr"><div class="lr-dot" style="background:var(--red)"></div><div class="lr-body"><div class="lr-title">PSA – Persönliche Schutzausrüstung</div><div class="lr-meta" style="color:var(--red)">Pflicht · Überfällig seit 10.01.2025 · 1h</div></div><div class="lr-pct" style="color:var(--red)">0%</div></div>
     </div>
-    <div class="card"><div class="card-hd" style="margin-bottom:10px"><div class="card-t">🔵 Rolle: Quality Managerin</div></div>
-      <div class="lr"><div class="lr-dot" style="background:var(--border3)"></div><div class="lr-body"><div class="lr-title">HACCP-Gefahrenanalyse & Kontrollpunkte</div><div class="lr-meta">Pflicht QM · Phase 2 · 4h</div></div><div class="lr-pct" style="color:var(--t4)">–</div></div>
-      <div class="lr"><div class="lr-dot" style="background:var(--border3)"></div><div class="lr-body"><div class="lr-title">ISO 9001:2015 Grundlagen (intern)</div><div class="lr-meta">Pflicht QM · Phase 2 · 3h</div></div><div class="lr-pct" style="color:var(--t4)">–</div></div>
-      <div class="lr"><div class="lr-dot" style="background:var(--border3)"></div><div class="lr-body"><div class="lr-title">SAP QM – Prüfmittelverwaltung</div><div class="lr-meta">Pflicht QM · Phase 2 · 2h</div></div><div class="lr-pct" style="color:var(--t4)">–</div></div>
-      <div class="sep"></div>
-      <div style="font-size:9.5px;font-weight:700;color:var(--t5);text-transform:uppercase;letter-spacing:.7px;margin-bottom:7px">Optional</div>
-      <div class="lr"><div class="lr-dot" style="background:var(--border3)"></div><div class="lr-body"><div class="lr-title">IFS Food 8 – Überblick für QM</div><div class="lr-meta">Optional · 3h</div></div><div class="lr-pct" style="color:var(--t4)">–</div></div>
+    <div class="card"><div class="card-hd" style="margin-bottom:10px"><div class="card-t">🔵 Rolle: Produktionsmitarbeiter Bäckerei</div></div>
+      <div class="lr"><div class="lr-dot" style="background:var(--border3)"></div><div class="lr-body"><div class="lr-title">HACCP-Grundlagen & Allergenmanagement</div><div class="lr-meta">Pflicht Produktion · Phase 1 · 2h</div></div><div class="lr-pct" style="color:var(--t4)">–</div></div>
+      <div class="lr"><div class="lr-dot" style="background:var(--border3)"></div><div class="lr-body"><div class="lr-title">Maschineneinführung Bäckerei</div><div class="lr-meta">Pflicht Produktion · Phase 2 · 3h</div></div><div class="lr-pct" style="color:var(--t4)">–</div></div>
     </div>
   </div>
 </div>
-
+ 
 <!-- CONTACTS -->
 <div class="page" id="p-con">
   <div class="ph"><div class="ph-left"><div class="pt" data-de="Team & Kontakte" data-en="Team & Contacts">Team & Kontakte</div><div class="ps" data-de="Deine wichtigsten Ansprechpersonen bei NoRFood AG" data-en="Your key contacts at NoRFood AG">Deine wichtigsten Ansprechpersonen bei NoRFood AG</div></div></div>
   <div class="g2" style="margin-bottom:14px">
     <div>
       <div style="font-size:9.5px;font-weight:700;color:var(--t5);text-transform:uppercase;letter-spacing:.8px;margin-bottom:9px">Direktes Umfeld</div>
-      <div style="display:flex;flex-direction:column;gap:9px">
-        <div class="cc"><div class="cc-head"><div class="av" style="background:#E2EEF4;color:#163845">PE</div><div class="cc-info"><div class="cc-name">Ing. Peter Eder</div><div class="cc-role">Mentor · QM-Leitung Salzburg</div></div><span class="loc">SBG</span></div><div class="cc-det">📧 p.eder@norfood.at · 📞 Ext. 312</div><div class="cc-when">Für fachliche Fragen, QM-Einführung, wöchentliche Check-ins</div></div>
-        <div class="cc"><div class="cc-head"><div class="av" style="background:#E8F2EE;color:#1C4A29">SK</div><div class="cc-info"><div class="cc-name">DI Dr. Sabine Kastner</div><div class="cc-role">Direkte Vorgesetzte · Head of Quality</div></div><span class="loc">SBG</span></div><div class="cc-det">📧 s.kastner@norfood.at · 📞 Ext. 200</div><div class="cc-when">Für Ziele, Leistung, Eskalationen und Probezeitgespräch</div></div>
-      </div>
+      <div style="display:flex;flex-direction:column;gap:9px" id="con-direct"></div>
     </div>
     <div>
       <div style="font-size:9.5px;font-weight:700;color:var(--t5);text-transform:uppercase;letter-spacing:.8px;margin-bottom:9px">HR & Support</div>
-      <div style="display:flex;flex-direction:column;gap:9px">
-        <div class="cc"><div class="cc-head"><div class="av" style="background:#E8F2EE;color:#1C4A29">MR</div><div class="cc-info"><div class="cc-name">Mag. Maria Reiter</div><div class="cc-role">HR Business Partner · Region West</div></div><span class="loc">SBG/LNZ</span></div><div class="cc-det">📧 m.reiter@norfood.at · 📞 Ext. 110</div><div class="cc-when">Für Onboarding-Fragen, HR-Anliegen, Feedback-Vorbereitung</div></div>
-        <div class="cc"><div class="cc-head"><div class="av" style="background:#FAF0E2;color:#7A470A;font-size:10px">IT</div><div class="cc-info"><div class="cc-name">IT Helpdesk Salzburg</div><div class="cc-role">IT Support · Standort Salzburg</div></div><span class="loc">SBG</span></div><div class="cc-det">📧 it-sbg@norfood.at · 📞 Ext. 199</div><div class="cc-when">Für alle IT-Probleme, Zugänge, Geräte, SAP-Fragen. Ticket via Portal.</div></div>
-      </div>
+      <div style="display:flex;flex-direction:column;gap:9px" id="con-hr"></div>
     </div>
   </div>
   <div style="font-size:9.5px;font-weight:700;color:var(--t5);text-transform:uppercase;letter-spacing:.8px;margin-bottom:9px">Eskalationswege</div>
-  <div class="g3">
-    <div class="card-sm" style="border-left:3px solid var(--blue);border-top-left-radius:0;border-bottom-left-radius:0"><div style="font-size:11px;font-weight:700;color:var(--blue);margin-bottom:5px">IT-Problem</div><div style="font-size:12px;color:var(--t2);margin-bottom:4px">IT Helpdesk → IT Lead → CIO</div><div style="font-size:10.5px;color:var(--t4)">it-sbg@norfood.at</div></div>
-    <div class="card-sm" style="border-left:3px solid var(--green2);border-top-left-radius:0;border-bottom-left-radius:0"><div style="font-size:11px;font-weight:700;color:var(--green);margin-bottom:5px">HR-Anliegen</div><div style="font-size:12px;color:var(--t2);margin-bottom:4px">HR BP → HR-Leitung → CPO</div><div style="font-size:10.5px;color:var(--t4)">m.reiter@norfood.at</div></div>
-    <div class="card-sm" style="border-left:3px solid var(--red);border-top-left-radius:0;border-bottom-left-radius:0"><div style="font-size:11px;font-weight:700;color:var(--red);margin-bottom:5px">Datenschutz</div><div style="font-size:12px;color:var(--t2);margin-bottom:4px">Datenschutzbeauftragte</div><div style="font-size:10.5px;color:var(--t4)">dsgvo@norfood.at</div></div>
-  </div>
+  <div class="g3" id="con-escalation"></div>
 </div>
-
+ 
 <!-- BUDDY -->
 <div class="page" id="p-buddy">
   <div class="ph">
-    <div class="ph-left"><div class="pt" data-de="NoRFood Buddy – KI-Assistent" data-en="NoRFood Buddy – AI Assistant">NoRFood Buddy – KI-Assistent</div><div class="ps" id="bsub">Kontextbezogene Unterstützung · Sarah Koller · Quality Managerin · Salzburg · Tag 18</div></div>
+    <div class="ph-left"><div class="pt" data-de="NoRFood Buddy – KI-Assistent" data-en="NoRFood Buddy – AI Assistant">NoRFood Buddy – KI-Assistent</div><div class="ps" id="bsub">Kontextbezogene Unterstützung · Markus Huber · Produktionsmitarbeiter Bäckerei · Linz · Tag 23</div></div>
   </div>
   <div class="buddy-wrap">
     <div class="chat-col">
       <div class="chat-hdr">
         <div class="chat-av">NB</div>
         <div class="chat-info"><div class="chat-name">NoRFood Buddy</div><div class="chat-online" data-de="● Online · KI-Assistent" data-en="● Online · AI Assistant">● Online · KI-Assistent</div></div>
-        <span class="chat-ctx" id="bctx">Mitarbeiter · SBG · QM</span>
+        <span class="chat-ctx" id="bctx">Produktion · LNZ · Bäckerei</span>
       </div>
       <div class="chat-msgs" id="cm">
-        <div class="msg-b"><div class="bubble" id="bwelc">Hallo Sarah! Ich bin dein NoRFood Buddy. Ich kenne deinen Onboarding-Plan, deine offenen Aufgaben und die NoRFood-Prozesse. Wie kann ich dir heute helfen?</div><div class="msg-time">Heute, 08:30</div></div>
+        <div class="msg-b"><div class="bubble" id="bwelc">Hallo Markus! Ich bin dein NoRFood Buddy. Ich kenne deinen Einschulungsplan, deine offenen Aufgaben und die NoRFood-Prozesse. Wie kann ich dir heute helfen?</div><div class="msg-time">Heute, 08:30</div></div>
       </div>
-      <div class="chat-quick">
-        <button class="qp" onclick="sq(0)">📅 90-Tage-Plan erstellen</button>
-        <button class="qp" onclick="sq(1)">✅ Offene Aufgaben</button>
-        <button class="qp" onclick="sq(2)">🏥 Krankmeldungsprozess</button>
-        <button class="qp" onclick="sq(3)">📋 Checkliste erste Woche</button>
-        <button class="qp" onclick="sq(4)">📊 30-Tage-Feedback</button>
-        <button class="qp" id="hrqp" style="display:none" onclick="sq(5)">🏢 HR-Checkliste QM Salzburg</button>
-      </div>
+      <div class="chat-quick" id="chat-quick-row"></div>
       <div class="chat-inp-row">
         <textarea class="chat-inp" id="ci" rows="1" placeholder="Nachricht an Buddy…" onkeydown="hck(event)"></textarea>
         <button class="chat-send" onclick="sm()">Senden</button>
@@ -719,55 +640,34 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);font-size:13
     <div class="buddy-side">
       <div class="bsc">
         <div class="bsc-t">Kontext</div>
-        <div class="bsc-item"><div class="bsc-dot" style="background:var(--green2)"></div><span id="bcn">Sarah Koller</span></div>
-        <div class="bsc-item"><div class="bsc-dot" style="background:var(--t5)"></div><span data-de="Quality Managerin" data-en="Quality Manager">Quality Managerin</span></div>
-        <div class="bsc-item"><div class="bsc-dot" style="background:var(--t5)"></div><span>Salzburg</span></div>
-        <div class="bsc-item"><div class="bsc-dot" style="background:var(--t5)"></div><span data-de="Tag 18 von 90" data-en="Day 18 of 90">Tag 18 von 90</span></div>
-        <div class="bsc-item warn"><div class="bsc-dot" style="background:var(--red)"></div><span data-de="2 überfällige Aufgaben" data-en="2 overdue tasks">2 überfällige Aufgaben</span></div>
+        <div class="bsc-item"><div class="bsc-dot" style="background:var(--green2)"></div><span id="bcn">Markus Huber</span></div>
+        <div class="bsc-item"><div class="bsc-dot" style="background:var(--t5)"></div><span id="bsc-role">Produktionsmitarbeiter Bäckerei</span></div>
+        <div class="bsc-item"><div class="bsc-dot" style="background:var(--t5)"></div><span id="bsc-loc">Linz</span></div>
+        <div class="bsc-item"><div class="bsc-dot" style="background:var(--t5)"></div><span id="bsc-day">Tag 23 von 90</span></div>
+        <div class="bsc-item warn"><div class="bsc-dot" style="background:var(--red)"></div><span id="bsc-overdue">2 überfällige Aufgaben</span></div>
       </div>
       <div class="bsc">
         <div class="bsc-t" data-de="Sofortige Aktionen" data-en="Immediate Actions">Sofortige Aktionen</div>
-        <div class="bsc-item warn"><div class="bsc-dot" style="background:var(--red)"></div><span>Sicherheitsunterweisung – +5 Tage</span></div>
-        <div class="bsc-item warn"><div class="bsc-dot" style="background:var(--red)"></div><span>SAP Ticket #IT-2241 – +7 Tage</span></div>
-        <div class="bsc-item"><div class="bsc-dot" style="background:var(--amber)"></div><span>Datenschutz-Schulung – 5 Tage</span></div>
-        <div class="bsc-item"><div class="bsc-dot" style="background:var(--t5)"></div><span>30-Tage-Feedback buchen</span></div>
+        <div id="bsc-actions"></div>
       </div>
-      <!-- BUDDY VIDEO REPLAY CARD -->
       <div class="bsc" style="padding:0;overflow:hidden">
         <div style="padding:10px 13px 8px;border-bottom:1px solid var(--border)"><div class="bsc-t" style="margin-bottom:0" data-de="Einführungsvideo" data-en="Introduction Video">Einführungsvideo</div></div>
-        <div style="position:relative;background:#1A2820;cursor:pointer" onclick="playBuddy()">
-          <!-- Replace ./assets/norfood-buddy-intro.mp4 and ./assets/norfood-buddy-poster.jpg with your actual file paths -->
-          <video id="vid-buddy" style="width:100%;display:block;object-fit:cover;height:108px" preload="metadata" poster="./assets/norfood-buddy-poster.jpg" src="./assets/norfood-buddy-intro.mp4"></video>
-          <div id="vid-buddy-overlay" style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;background:linear-gradient(160deg,#1C3A28 0%,#0F2218 100%)">
-            <div style="width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,0.12);border:2px solid rgba(255,255,255,0.28);display:flex;align-items:center;justify-content:center;margin-bottom:6px">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="white" style="margin-left:2px"><path d="M8 5v14l11-7z"/></svg>
-            </div>
-            <div style="font-size:10.5px;font-weight:600;color:rgba(255,255,255,0.85)" data-de="Video abspielen" data-en="Play video">Video abspielen</div>
-            <div style="font-size:9.5px;color:rgba(255,255,255,0.4);margin-top:2px">3:24</div>
+        <div style="background:#1A2820;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:18px;" onclick="openVidModal()">
+          <div style="width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,0.12);border:2px solid rgba(255,255,255,0.28);display:flex;align-items:center;justify-content:center;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="white" style="margin-left:2px"><path d="M8 5v14l11-7z"/></svg>
           </div>
-        </div>
-        <div style="padding:7px 13px;display:flex;align-items:center;gap:6px">
-          <span style="font-size:10.5px;color:var(--t4)" id="vid-buddy-status" data-de="Noch nicht angesehen" data-en="Not yet watched">Noch nicht angesehen</span>
-          <span style="flex:1"></span>
-          <button class="btn-ghost" style="font-size:10px;padding:3px 0;color:var(--green)" onclick="replayBuddy()" data-de="↺ Wiederholen" data-en="↺ Replay">↺ Wiederholen</button>
+          <div style="font-size:10.5px;font-weight:600;color:rgba(255,255,255,0.85)" data-de="Video im Vollbild öffnen" data-en="Open video fullscreen">Video im Vollbild öffnen</div>
+          <div style="font-size:9.5px;color:rgba(255,255,255,0.4)">3:24 Min.</div>
         </div>
       </div>
       <div class="bsc">
         <div class="bsc-t" data-de="Relevante Dokumente" data-en="Relevant Documents">Relevante Dokumente</div>
-        <div class="bsc-item"><div class="bsc-dot" style="background:var(--blue)"></div><span data-de="Mitarbeiterhandbuch" data-en="Employee Handbook">Mitarbeiterhandbuch</span></div>
-        <div class="bsc-item"><div class="bsc-dot" style="background:var(--t5)"></div><span data-de="Krankmeldungsprozess" data-en="Sick Leave Process">Krankmeldungsprozess</span></div>
-        <div class="bsc-item"><div class="bsc-dot" style="background:var(--t5)"></div><span data-de="Hygienerichtlinien" data-en="Hygiene Guidelines">Hygienerichtlinien</span></div>
-      </div>
-      <div class="bsc">
-        <div class="bsc-t" data-de="Vorgeschlagene Kontakte" data-en="Suggested Contacts">Vorgeschlagene Kontakte</div>
-        <div class="bsc-item"><div class="bsc-dot" style="background:var(--green2)"></div><span>Ing. P. Eder (Mentor)</span></div>
-        <div class="bsc-item"><div class="bsc-dot" style="background:var(--green2)"></div><span>Mag. M. Reiter (HRBP)</span></div>
-        <div class="bsc-item"><div class="bsc-dot" style="background:var(--blue)"></div><span>IT Helpdesk SBG</span></div>
+        <div id="bsc-docs"></div>
       </div>
     </div>
   </div>
 </div>
-
+ 
 <!-- HR OPS -->
 <div class="page" id="p-hr">
   <div class="ph">
@@ -790,8 +690,8 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);font-size:13
     <table class="tbl">
       <thead><tr><th>Mitarbeitende</th><th>Rolle</th><th>Standort</th><th>Start</th><th>Phase</th><th>Fortschritt</th><th>Blocker</th><th>Status</th></tr></thead>
       <tbody>
-        <tr><td><div style="display:flex;align-items:center;gap:7px"><div class="av" style="width:24px;height:24px;font-size:9px;background:#E2EEF4;color:#163845">SK</div>Sarah Koller</div></td><td style="color:var(--t2)">Quality Managerin</td><td><span class="loc">SBG</span></td><td style="color:var(--t3)">07.01.</td><td><span class="badge b-open">Phase 1</span></td><td><div style="display:flex;align-items:center;gap:7px"><div class="pb" style="flex:1"><div class="pf" style="width:38%"></div></div><span style="font-size:10.5px;color:var(--t3);min-width:26px">38%</span></div></td><td><span class="badge b-overdue">2 Blocker</span></td><td><span class="badge b-review">Aktiv</span></td></tr>
-        <tr><td><div style="display:flex;align-items:center;gap:7px"><div class="av" style="width:24px;height:24px;font-size:9px;background:#E8F2EE;color:#1C4A29">MH</div>Markus Huber</div></td><td style="color:var(--t2)">Produktionsmitarbeiter</td><td><span class="loc">LNZ</span></td><td style="color:var(--t3)">13.01.</td><td><span class="badge b-open">Phase 1</span></td><td><div style="display:flex;align-items:center;gap:7px"><div class="pb" style="flex:1"><div class="pf" style="width:22%"></div></div><span style="font-size:10.5px;color:var(--t3);min-width:26px">22%</span></div></td><td><span class="badge b-done" style="font-size:9.5px">Kein</span></td><td><span class="badge b-done">Auf Kurs</span></td></tr>
+        <tr><td><div style="display:flex;align-items:center;gap:7px"><div class="av" style="width:24px;height:24px;font-size:9px;background:#E8F2EE;color:#1C4A29">MH</div>Markus Huber</div></td><td style="color:var(--t2)">Produktionsmitarbeiter Bäckerei</td><td><span class="loc">LNZ</span></td><td style="color:var(--t3)">02.01.</td><td><span class="badge b-open">Phase 1</span></td><td><div style="display:flex;align-items:center;gap:7px"><div class="pb" style="flex:1"><div class="pf" style="width:26%"></div></div><span style="font-size:10.5px;color:var(--t3);min-width:26px">26%</span></div></td><td><span class="badge b-overdue">2 Blocker</span></td><td><span class="badge b-review">Aktiv</span></td></tr>
+        <tr><td><div style="display:flex;align-items:center;gap:7px"><div class="av" style="width:24px;height:24px;font-size:9px;background:#E2EEF4;color:#163845">SK</div>Sarah Koller</div></td><td style="color:var(--t2)">Marketing Koordinatorin</td><td><span class="loc">SBG</span></td><td style="color:var(--t3)">20.01.</td><td><span class="badge b-open">Phase 1</span></td><td><div style="display:flex;align-items:center;gap:7px"><div class="pb" style="flex:1"><div class="pf" style="width:8%"></div></div><span style="font-size:10.5px;color:var(--t3);min-width:26px">8%</span></div></td><td><span class="badge b-review">1 Blocker</span></td><td><span class="badge b-review">Aktiv</span></td></tr>
         <tr><td><div style="display:flex;align-items:center;gap:7px"><div class="av" style="width:24px;height:24px;font-size:9px;background:#FAF0E2;color:#7A470A">TB</div>Thomas Brandl</div></td><td style="color:var(--t2)">Schichtleiter Produktion</td><td><span class="loc">GRZ</span></td><td style="color:var(--t3)">02.12.</td><td><span class="badge b-req">Phase 2</span></td><td><div style="display:flex;align-items:center;gap:7px"><div class="pb" style="flex:1"><div class="pf" style="width:71%"></div></div><span style="font-size:10.5px;color:var(--t3);min-width:26px">71%</span></div></td><td><span class="badge b-overdue">1 Blocker</span></td><td><span class="badge b-review">Aktiv</span></td></tr>
         <tr><td><div style="display:flex;align-items:center;gap:7px"><div class="av" style="width:24px;height:24px;font-size:9px;background:#E2EEF4;color:#163845">AL</div>Anna Lechner</div></td><td style="color:var(--t2)">HR Assistentin</td><td><span class="loc">WIE</span></td><td style="color:var(--t3)">07.01.</td><td><span class="badge b-open">Phase 1</span></td><td><div style="display:flex;align-items:center;gap:7px"><div class="pb" style="flex:1"><div class="pf" style="width:45%"></div></div><span style="font-size:10.5px;color:var(--t3);min-width:26px">45%</span></div></td><td><span class="badge b-done" style="font-size:9.5px">Kein</span></td><td><span class="badge b-done">Auf Kurs</span></td></tr>
       </tbody>
@@ -802,8 +702,8 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);font-size:13
       <div class="card-hd" style="margin-bottom:12px"><div class="card-t">Onboarding-Status nach Standort</div></div>
       <div style="display:flex;flex-direction:column;gap:7px">
         <div style="display:flex;align-items:center;gap:9px"><span class="loc">WIE</span><span style="font-size:12.5px;flex:1">Wien</span><div class="pb" style="flex:2"><div class="pf" style="width:62%"></div></div><span style="font-size:11px;color:var(--t3);min-width:40px">3 aktiv</span><span class="badge b-done">Gut</span></div>
-        <div style="display:flex;align-items:center;gap:9px"><span class="loc">SBG</span><span style="font-size:12.5px;flex:1">Salzburg</span><div class="pb" style="flex:2"><div class="pf amb" style="width:38%"></div></div><span style="font-size:11px;color:var(--t3);min-width:40px">2 aktiv</span><span class="badge b-overdue">2 Blocker</span></div>
-        <div style="display:flex;align-items:center;gap:9px"><span class="loc">LNZ</span><span style="font-size:12.5px;flex:1">Linz</span><div class="pb" style="flex:2"><div class="pf" style="width:55%"></div></div><span style="font-size:11px;color:var(--t3);min-width:40px">4 aktiv</span><span class="badge b-review">OK</span></div>
+        <div style="display:flex;align-items:center;gap:9px"><span class="loc">SBG</span><span style="font-size:12.5px;flex:1">Salzburg</span><div class="pb" style="flex:2"><div class="pf amb" style="width:8%"></div></div><span style="font-size:11px;color:var(--t3);min-width:40px">1 aktiv</span><span class="badge b-review">1 Blocker</span></div>
+        <div style="display:flex;align-items:center;gap:9px"><span class="loc">LNZ</span><span style="font-size:12.5px;flex:1">Linz</span><div class="pb" style="flex:2"><div class="pf amb" style="width:26%"></div></div><span style="font-size:11px;color:var(--t3);min-width:40px">4 aktiv</span><span class="badge b-overdue">2 Blocker</span></div>
         <div style="display:flex;align-items:center;gap:9px"><span class="loc">GRZ</span><span style="font-size:12.5px;flex:1">Graz</span><div class="pb" style="flex:2"><div class="pf amb" style="width:44%"></div></div><span style="font-size:11px;color:var(--t3);min-width:40px">2 aktiv</span><span class="badge b-overdue">1 Blocker</span></div>
         <div style="display:flex;align-items:center;gap:9px"><span class="loc">STY</span><span style="font-size:12.5px;flex:1">Steyr</span><div class="pb" style="flex:2"><div class="pf" style="width:80%"></div></div><span style="font-size:11px;color:var(--t3);min-width:40px">1 aktiv</span><span class="badge b-done">Gut</span></div>
       </div>
@@ -811,9 +711,9 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);font-size:13
     <div class="card">
       <div class="card-hd" style="margin-bottom:12px"><div class="card-t">Onboarding-Vorlagen</div></div>
       <div style="display:flex;flex-direction:column;gap:7px">
-        <div style="display:flex;align-items:center;gap:9px;padding:8px 10px;border:1px solid var(--border);border-radius:var(--r6);cursor:pointer" onclick="nav('buddy')"><span>🏭</span><div style="flex:1"><div style="font-size:12.5px;font-weight:500">Produktion – Schichtmitarbeiter</div><div style="font-size:10.5px;color:var(--t4)">Linz, Graz, Steyr · 90 Tage</div></div><span class="badge b-done">Aktiv</span></div>
-        <div style="display:flex;align-items:center;gap:9px;padding:8px 10px;border:1px solid var(--border);border-radius:var(--r6);cursor:pointer" onclick="nav('buddy')"><span>🔬</span><div style="flex:1"><div style="font-size:12.5px;font-weight:500">Quality Management</div><div style="font-size:10.5px;color:var(--t4)">Alle Standorte · QM, HACCP, ISO</div></div><span class="badge b-done">Aktiv</span></div>
-        <div style="display:flex;align-items:center;gap:9px;padding:8px 10px;border:1px solid var(--border);border-radius:var(--r6);cursor:pointer" onclick="nav('buddy')"><span>👔</span><div style="flex:1"><div style="font-size:12.5px;font-weight:500">Office &amp; Administration</div><div style="font-size:10.5px;color:var(--t4)">Wien · HR, Finance, Marketing</div></div><span class="badge b-done">Aktiv</span></div>
+        <div style="display:flex;align-items:center;gap:9px;padding:8px 10px;border:1px solid var(--border);border-radius:var(--r6);cursor:pointer" onclick="nav('buddy')"><span>🏭</span><div style="flex:1"><div style="font-size:12.5px;font-weight:500">Produktion – Bäckerei / Schichtmitarbeiter</div><div style="font-size:10.5px;color:var(--t4)">Linz, Graz, Steyr · 90 Tage</div></div><span class="badge b-done">Aktiv</span></div>
+        <div style="display:flex;align-items:center;gap:9px;padding:8px 10px;border:1px solid var(--border);border-radius:var(--r6);cursor:pointer" onclick="nav('buddy')"><span>📣</span><div style="flex:1"><div style="font-size:12.5px;font-weight:500">Marketing & Kommunikation</div><div style="font-size:10.5px;color:var(--t4)">Salzburg, Wien · Marketing, PR</div></div><span class="badge b-done">Aktiv</span></div>
+        <div style="display:flex;align-items:center;gap:9px;padding:8px 10px;border:1px solid var(--border);border-radius:var(--r6);cursor:pointer" onclick="nav('buddy')"><span>👔</span><div style="flex:1"><div style="font-size:12.5px;font-weight:500">Office &amp; Administration</div><div style="font-size:10.5px;color:var(--t4)">Wien · HR, Finance, Management</div></div><span class="badge b-done">Aktiv</span></div>
         <button class="btn-out" style="width:100%;justify-content:center;margin-top:2px" onclick="nav('buddy')">+ Neue Vorlage mit Buddy</button>
       </div>
     </div>
@@ -827,328 +727,479 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);font-size:13
     </div>
   </div>
 </div>
-
+ 
     </div><!-- /main -->
   </div><!-- /body -->
 </div><!-- /platform -->
-
+ 
 <script>
-const QP = [
-  { de: 'Erstell meinen 90-Tage-Onboarding-Plan', en: 'Create my 90-day onboarding plan' },
-  { de: 'Zeig meine offenen Onboarding-Aufgaben', en: 'Show my open onboarding tasks' },
-  { de: 'Was muss ich tun, wenn ich krank bin?', en: 'What do I need to do if I\'m sick?' },
-  { de: 'Erstell eine Checkliste für meine erste Woche', en: 'Create a checklist for my first week' },
-  { de: 'Bereite mein 30-Tage-Feedback vor', en: 'Prepare my 30-day feedback' },
-  { de: 'HR-Onboarding-Checkliste: Quality Manager Salzburg', en: 'HR onboarding checklist: Quality Manager Salzburg' },
+// ─── Per-persona quick prompts ────────────────────────────────────────────────
+const QP_BY_ACC = [
+  [
+    { de: 'Zeig meinen Einschulungsplan Bäckerei', en: 'Show my bakery onboarding plan' },
+    { de: 'Welche Hygiene- und HACCP-Regeln muss ich kennen?', en: 'What hygiene and HACCP rules do I need to know?' },
+    { de: 'Was muss ich tun, wenn ich krank bin?', en: 'What do I need to do if I\'m sick?' },
+    { de: 'Wer sind meine Ansprechpartner in Linz?', en: 'Who are my contacts in Linz?' },
+    { de: 'Welche Schutzausrüstung brauche ich?', en: 'What protective equipment do I need?' },
+  ],
+  [
+    { de: 'Zeig meinen Marketing-Einschulungsplan', en: 'Show my marketing onboarding plan' },
+    { de: 'Welche Tools und Systeme brauche ich?', en: 'Which tools and systems do I need?' },
+    { de: 'Was muss ich tun, wenn ich krank bin?', en: 'What do I need to do if I\'m sick?' },
+    { de: 'Wie laufen Kampagnen-Freigaben ab?', en: 'How do campaign approvals work?' },
+    { de: 'Bereite mein 30-Tage-Feedback vor', en: 'Prepare my 30-day feedback' },
+  ],
+  [
+    { de: 'HR-Checkliste für neues Onboarding', en: 'HR checklist for new onboarding' },
+    { de: 'Zeig aktive Onboardings mit Blockern', en: 'Show active onboardings with blockers' },
+    { de: 'Erstelle eine Feedback-Vorlage (30 Tage)', en: 'Create a feedback template (30 days)' },
+    { de: 'Welche Pflichtschulungen sind offen?', en: 'Which mandatory trainings are open?' },
+    { de: 'Onboarding-Vorlage: Produktion Bäckerei', en: 'Onboarding template: Bakery Production' },
+  ],
 ];
-
-const BR = {
-  0: {
-    de: `Hier ist dein personalisierter 90-Tage-Onboarding-Plan als Quality Managerin in Salzburg:\n\n**Phase 1 – Erste 30 Tage: Orientierung**\n• Willkommenstag & Betriebsrundgang ✓\n• IT-Zugänge & SAP QM Setup\n  ⚠ SAP QS-Vollzugang ausstehend – Ticket #IT-2241\n• Hygieneschulung ✓ · Sicherheitsunterweisung ⚠ überfällig\n• Datenschutz-Schulung (Fällig 25.01.)\n• 30-Tage-Feedback mit Mag. Reiter buchen\n\n**Phase 2 – Tage 31–60: Vertiefung**\n• HACCP-Schulung (intern, 4h)\n• ISO 9001 Einführung\n• Erste eigenständige Qualitätsprüfungen\n\n**Phase 3 – Tage 61–90: Integration**\n• Internes Audit-Vorbereitung\n• 90-Tage-Probezeitgespräch\n\n⚠ Sofortiger Handlungsbedarf:\n→ Sicherheitsunterweisung: p.eder@norfood.at\n→ SAP Ticket: it-sbg@norfood.at`,
-    en: `Here is your personalized 90-day onboarding plan as Quality Manager in Salzburg:\n\n**Phase 1 – First 30 Days: Orientation**\n• Welcome day & facility tour ✓\n• IT access & SAP QM setup\n  ⚠ SAP QS full access pending – Ticket #IT-2241\n• Hygiene training ✓ · Safety briefing ⚠ overdue\n• Data privacy training (Due 25.01.)\n• Book 30-day feedback with Mag. Reiter\n\n**Phase 2 – Days 31–60: Deepening**\n• HACCP training (internal, 4h)\n• ISO 9001 introduction\n• First independent quality checks\n\n**Phase 3 – Days 61–90: Integration**\n• Internal audit preparation\n• 90-day probation review\n\n⚠ Immediate action needed:\n→ Safety briefing: p.eder@norfood.at\n→ SAP ticket: it-sbg@norfood.at`
+ 
+// ─── Static fallback replies ──────────────────────────────────────────────────
+const BR_BY_ACC = [
+  {
+    0:{de:`Dein Einschulungsplan – Produktionsmitarbeiter Bäckerei, Linz:\n\n**Phase 1 – Erste 30 Tage: Grundlagen & Sicherheit**\n• Unternehmensüberblick & Produktionsaufbau ✓\n• Schutzkleidung & Zugangskarte ✓\n• Sicherheitsunterweisung ⚠ überfällig\n• PSA-Schulung ⚠ überfällig\n• Hygieneregeln & HACCP-Grundlagen\n• Allergenmanagement\n\n**Phase 2 – Tage 31–60: Maschinen & Prozesse**\n• Maschineneinführung (Start/Stop/Not-Aus)\n• Produktionsablauf & Rezepturen\n• Teigverarbeitung & Backprozesse\n• Qualitätskontrollen & Dokumentation\n\n**Phase 3 – Tage 61–90: Selbstständigkeit**\n• Schichtübergaben & Störungsmeldungen\n• 5S-Prinzip & Arbeitsplatzpflege\n• Praktische Prüfung & Freigabe\n• 90-Tage-Feedbackgespräch\n\n⚠ Sofort handeln:\n→ Sicherheitsunterweisung: HSQE-Team Linz\n→ PSA-Schulung: Schichtleiter informieren`,en:`Your onboarding plan – Bakery Production Worker, Linz:\n\n**Phase 1 – First 30 Days: Basics & Safety**\n• Company overview & production structure ✓\n• Protective clothing & access card ✓\n• Safety briefing ⚠ overdue\n• PPE training ⚠ overdue\n• Hygiene rules & HACCP basics\n• Allergen management\n\n**Phase 2 – Days 31–60: Machines & Processes**\n• Machine introduction\n• Production flow & recipes\n• Dough processing & baking\n• Quality controls & documentation\n\n**Phase 3 – Days 61–90: Independence**\n• Shift handovers & fault reporting\n• 5S principle & workplace care\n• Practical test & sign-off\n• 90-day feedback meeting\n\n⚠ Act now:\n→ Safety briefing: HSQE Team Linz\n→ PPE training: inform shift supervisor`},
+    1:{de:`Hygiene & HACCP in der Bäckerei:\n\n🧼 Persönliche Hygiene\n• Hände waschen & desinfizieren vor jedem Produktionseinsatz\n• Schutzkleidung vollständig anlegen (Haarnetz, Handschuhe, Kittel)\n• Keine Schmuckstücke oder Uhren in der Produktion\n\n⚠ HACCP-Grundregeln\n• Kritische Kontrollpunkte kennen und einhalten\n• Temperaturen dokumentieren\n• Abweichungen sofort melden\n\n🌾 Allergenmanagement\n• Allergene strikt trennen (besonders Gluten, Nüsse, Milch)\n• Kreuzkontamination durch saubere Werkzeuge vermeiden\n\n📋 Zuständig: HSQE-Team Linz`,en:`Hygiene & HACCP in the bakery:\n\n🧼 Personal Hygiene\n• Wash & disinfect hands before every shift\n• Wear full protective clothing\n• No jewellery or watches in production\n\n⚠ HACCP Key Rules\n• Know and follow critical control points\n• Document temperatures\n• Report deviations immediately\n\n🌾 Allergen Management\n• Strictly separate allergens\n• Avoid cross-contamination\n\n📋 Responsible: HSQE Team Linz`},
+    2:{de:`Krankmeldungsprozess bei NoRFood AG:\n\n1. **Sofort telefonisch melden** – vor Schichtbeginn!\n   → Schichtleiter Produktion Linz\n   → Wenn kein Anruf möglich: WhatsApp\n\n2. **HR informieren** per E-Mail\n   → hr-linz@norfood.at\n\n3. **Krankenbestätigung** ab Tag 1\n   → Upload im HR-Portal\n\n⚠ Frühzeitig melden ist besonders wichtig – der Schichtleiter muss die Besetzung rechtzeitig planen.\n\nGute Besserung, Markus! 🙏`,en:`Sick leave process:\n\n1. **Call immediately** – before shift start!\n   → Shift supervisor Production Linz\n   → If no call: WhatsApp\n\n2. **Inform HR** by email\n   → hr-linz@norfood.at\n\n3. **Medical certificate** from day 1\n   → Upload in HR portal\n\nGet well soon, Markus! 🙏`},
+    3:{de:`Deine Ansprechpersonen am Standort Linz:\n\n👤 Direktes Umfeld\n• **Schichtleiter Produktion** – tägliche Fragen, Schichtplanung, Probleme in der Produktion\n• **HSQE-Team Linz** – Sicherheit, Hygiene, PSA, Unfallmeldung\n\n👥 HR & Support\n• **HR Business Partner Linz** – Onboarding, Urlaubsanträge, HR-Fragen\n• **IT Helpdesk Linz** – Zugänge, Systeme\n\n🚨 Notfall\n• Schichtleiter sofort informieren\n• Notruf: 112 (Rettung) / 133 (Polizei)\n\n📧 Onboarding-Fragen:\nhr-linz@norfood.at`,en:`Your contacts at Linz:\n\n👤 Direct\n• **Shift supervisor** – daily questions, shift planning\n• **HSQE Team Linz** – safety, hygiene, PPE\n\n👥 HR & Support\n• **HR Business Partner Linz** – onboarding, leave\n• **IT Helpdesk Linz** – access, systems\n\n🚨 Emergency: 112 / 133\n\n📧 Onboarding: hr-linz@norfood.at`},
+    4:{de:`PSA – Persönliche Schutzausrüstung:\n\n🦺 Pflichtausstattung\n• Haarschutz (Haarnetz)\n• Sicherheitsschuhe (Stahlkappe)\n• Schutzhandschuhe (lebensmittelkonform)\n• Schutzkittel / Arbeitskleidung\n• Gehörschutz bei lauten Maschinen\n\n📦 Ausgabe: Woche 1 vom Schichtleiter\n\n⚠ Ohne vollständige PSA kein Zugang zur Produktionslinie!\n\n📋 Zuständig: HSQE-Team Linz`,en:`PPE – Personal Protective Equipment:\n\n🦺 Mandatory\n• Hairnet\n• Safety shoes (steel toe)\n• Gloves (food-safe)\n• Protective coat\n• Ear protection near loud machines\n\n📦 Issued in Week 1 by shift supervisor\n\n⚠ No access to production line without full PPE!\n\n📋 Responsible: HSQE Team Linz`},
   },
-  1: {
-    de: `Deine aktuellen offenen Onboarding-Aufgaben:\n\n🔴 Überfällig – sofort handeln\n• Sicherheitsunterweisung HSQE – seit 15.01. (+5 Tage)\n  → HSQE-Team Salzburg · p.eder@norfood.at\n• SAP QS-Vollzugang (Ticket #IT-2241) – seit 13.01. (+7 Tage)\n  → IT Helpdesk SBG · it-sbg@norfood.at\n\n🟡 Diese Woche fällig\n• Mentor-Meeting planen (Woche 3) – 22.01.\n• PSA-Ausstattung entgegennehmen – 22.01.\n\n🔵 Bald fällig\n• Datenschutz-Schulung – 25.01.\n• 30-Tage-Feedback buchen – 28.01.`,
-    en: `Your current open onboarding tasks:\n\n🔴 Overdue – act immediately\n• Safety briefing HSQE – since 15.01. (+5 days)\n  → HSQE Team Salzburg · p.eder@norfood.at\n• SAP QS full access (Ticket #IT-2241) – since 13.01. (+7 days)\n  → IT Helpdesk SBG · it-sbg@norfood.at\n\n🟡 Due this week\n• Schedule mentor meeting (Week 3) – 22.01.\n• Receive PPE equipment – 22.01.\n\n🔵 Coming soon\n• Data privacy training – 25.01.\n• Book 30-day feedback – 28.01.`
+  {
+    0:{de:`Dein Marketing-Einschulungsplan – Marketing Koordinatorin, Salzburg:\n\n**Phase 1 – Erste 30 Tage: Orientierung & Grundlagen**\n• Unternehmensüberblick, Produkte & Marken\n• Rolle & Aufgaben im Marketing klären\n• Laufende Projekte & Kampagnen kennenlernen\n• Freigabeprozesse & Entscheidungswege verstehen\n• Systeme & Tools einrichten (noch offen)\n\n**Phase 2 – Tage 31–60: Prozesse & erste Projekte**\n• Kampagnenablauf von Planung bis Nachbereitung\n• Briefing-Prozesse & Agenturgespräche\n• Erste eigene Kampagne mitbegleiten\n\n**Phase 3 – Tage 61–90: Eigenständigkeit**\n• Erste Aufgabe eigenständig bearbeiten\n• KPIs & Reporting verstehen\n• 90-Tage-Feedbackgespräch\n\n📞 HR: Mag. Maria Reiter · m.reiter@norfood.at`,en:`Your marketing onboarding plan – Marketing Coordinator, Salzburg:\n\n**Phase 1 – First 30 Days: Orientation**\n• Company overview, products & brands\n• Clarify role & responsibilities\n• Learn current projects & campaigns\n• Understand approval processes\n• Set up systems & tools (still open)\n\n**Phase 2 – Days 31–60: Processes**\n• Campaign flow\n• Briefing processes\n• Accompany first own campaign\n\n**Phase 3 – Days 61–90: Independence**\n• Complete first task independently\n• Understand KPIs & reporting\n• 90-day feedback meeting\n\n📞 HR: Mag. Maria Reiter`},
+    1:{de:`Systeme & Tools im Marketing – Salzburg:\n\n💻 Zugänge die du brauchst\n• Intranet & E-Mail ✓\n• Marketing-Tools (Briefing-System, Kampagnenplanung) – noch offen\n• Ablagestruktur (SharePoint / Netzlaufwerk) – Einführung geplant\n• Reporting-Dashboards – Einführung Woche 2\n\n⚠ Noch offen\n→ Marketing-Systemzugang: IT Helpdesk Salzburg\n   it-sbg@norfood.at\n\n📋 Einführung durch: Marketing-Teamlead Salzburg`,en:`Systems & tools in Marketing – Salzburg:\n\n💻 Access needed\n• Intranet & email ✓\n• Marketing tools – still open\n• File structure – intro planned\n• Reporting dashboards – intro Week 2\n\n⚠ Still open\n→ Marketing system access: IT Helpdesk SBG\n   it-sbg@norfood.at\n\n📋 Introduction by: Marketing Team Lead`},
+    2:{de:`Krankmeldungsprozess bei NoRFood AG:\n\n1. **Sofort telefonisch melden** – vor Arbeitsbeginn!\n   → Marketing Teamlead Salzburg\n   → WhatsApp als Fallback\n\n2. **HR informieren** per E-Mail\n   → Mag. Maria Reiter · m.reiter@norfood.at\n\n3. **Krankenbestätigung** ab Tag 1\n   → Upload im HR-Portal\n\nGute Besserung, Sarah! 🙏`,en:`Sick leave process:\n\n1. **Call immediately** – before work start!\n   → Marketing Team Lead Salzburg\n   → WhatsApp as fallback\n\n2. **Inform HR** by email\n   → Mag. Maria Reiter · m.reiter@norfood.at\n\n3. **Medical certificate** from day 1\n   → Upload in HR portal\n\nGet well soon, Sarah! 🙏`},
+    3:{de:`Kampagnen-Freigabeprozess:\n\n1. Briefing → Teamlead freigeben lassen\n2. Konzept intern abstimmen\n3. Freigaberunde mit Fachbereich\n4. Externe Agenturen: Briefing + Freigabe vor Produktion\n5. Compliance-Prüfung bei öffentlichen Inhalten\n6. Finale Freigabe durch Teamlead\n7. Veröffentlichung & Erfolgsmessung\n\n⚠ Keine Inhalte ohne Freigabe veröffentlichen!\n\n📞 Zuständig: Marketing Teamlead Salzburg`,en:`Campaign approval process:\n\n1. Briefing → get team lead approval\n2. Align concept internally\n3. Approval round with specialist dept.\n4. Agencies: briefing + approval before production\n5. Compliance check for public content\n6. Final approval by team lead\n7. Publication & measurement\n\n⚠ Never publish without approval!\n\n📞 Responsible: Marketing Team Lead`},
+    4:{de:`30-Tage-Feedback-Vorbereitung – Sarah Koller, Marketing Salzburg:\n\n1. Onboarding-Status\n• Was lief gut?\n• Offene Blocker: System-Zugänge\n• Erste Eindrücke vom Team\n\n2. Aufgaben & Erwartungen\n• Rolle & Zuständigkeiten klar?\n• Erste eigene Aufgabe erledigt?\n\n3. Ziele nächste 30 Tage\n• Erste Kampagne mitbegleiten\n• Alle System-Zugänge einrichten\n\n📅 ca. Tag 30\nZuständig: Mag. Maria Reiter · m.reiter@norfood.at`,en:`30-Day Feedback Preparation – Sarah Koller, Marketing:\n\n1. Onboarding Status\n• What went well?\n• Open blockers: system access\n• First impressions\n\n2. Tasks & expectations\n• Role clear?\n• First task done?\n\n3. Goals for next 30 days\n• Accompany first campaign\n• Set up all access\n\n📅 Around Day 30\nResponsible: Mag. Maria Reiter`},
   },
-  2: {
-    de: `Krankmeldungsprozess bei NoRFood AG:\n\n1. Sofort am ersten Kranktag telefonisch melden\n   → Direkte Vorgesetzte: Dr. Kastner · Ext. 200\n   → Vor Beginn der Arbeitszeit!\n\n2. Digitale Meldung über das Portal\n   Service Center → Neue Anfrage → Krankmeldung\n\n3. Ärztliche Bestätigung\n   Ab dem 3. Krankheitstag erforderlich\n   → hr@norfood.at oder bei HR einreichen\n\n4. Rückkehr nach längerer Abwesenheit\n   Ab 5 Tagen: Rückmeldeformular ausfüllen\n\n📞 Bei Fragen:\nMag. Maria Reiter (HRBP) · m.reiter@norfood.at`,
-    en: `Sick leave process at NoRFood AG:\n\n1. Call immediately on the first sick day\n   → Direct supervisor: Dr. Kastner · Ext. 200\n   → Before work start time!\n\n2. Digital notification via portal\n   Service Center → New Request → Sick Report\n\n3. Medical certificate\n   Required from the 3rd day of sick leave\n\n4. Return after extended absence\n   From 5 days: complete return form\n\n📞 Questions: Mag. Maria Reiter · m.reiter@norfood.at`
+  {
+    0:{de:`HR-Onboarding-Checkliste:\n\n📋 Vor Tag 1\n☐ Willkommenspaket vorbereiten\n☐ Laptop & Telefon bei IT anfordern\n☐ Systemzugänge beantragen\n☐ Mentor / Einschulungspartner zuweisen\n☐ Dienstvertrag & Unterlagen prüfen\n\n👥 Tag 1\n☐ Empfang durch HR BP\n☐ Betriebsrundgang\n☐ Zugänge aktivieren\n\n📅 Feedback-Termine\n☐ 30-Tage-Review\n☐ 60-Tage-Review\n☐ 90-Tage-Probezeitgespräch`,en:`HR Onboarding Checklist:\n\n📋 Before Day 1\n☐ Prepare welcome package\n☐ Request laptop & phone\n☐ Apply for system access\n☐ Assign mentor\n☐ Check contract\n\n👥 Day 1\n☐ Reception by HR BP\n☐ Facility tour\n☐ Activate access\n\n📅 Feedback\n☐ 30-day review\n☐ 60-day review\n☐ 90-day probation meeting`},
+    1:{de:`Aktive Onboardings mit Blockern:\n\n🔴 Linz – Markus Huber (Bäckerei, Tag 23)\n• Sicherheitsunterweisung überfällig (+13 Tage)\n• PSA-Schulung ausstehend\n→ Schichtleiter Linz kontaktieren\n\n🔴 Salzburg – Sarah Koller (Marketing, Tag 3)\n• System-Zugänge Marketing noch nicht eingerichtet\n→ IT Helpdesk SBG eskalieren\n\n🟡 Graz – Thomas Brandl (Phase 2)\n• 1 Blocker: Systemzugang Schichtdoku\n\n✅ Wien – Anna Lechner: kein Blocker`,en:`Active onboardings with blockers:\n\n🔴 Linz – Markus Huber (Bakery, Day 23)\n• Safety briefing overdue (+13 days)\n• PPE training pending\n→ Contact shift supervisor Linz\n\n🔴 Salzburg – Sarah Koller (Marketing, Day 3)\n• Marketing system access not set up\n→ Escalate to IT Helpdesk SBG\n\n🟡 Graz – Thomas Brandl: 1 blocker\n\n✅ Vienna – Anna Lechner: no blocker`},
+    2:{de:`30-Tage-Feedback-Vorlage (HR):\n\n**Mitarbeitende/r:** ________________\n**Rolle & Standort:** ________________\n**Datum:** ________________\n\n1. Onboarding-Verlauf\n• Was lief gut?\n• Pflichtschulungen abgeschlossen?\n• Systeme vollständig?\n\n2. Erwartungen & Aufgaben\n• Rolle klar?\n• Unterstützungsbedarf?\n\n3. Ziele nächste 30 Tage\n\n4. Offene Punkte\n\n**Unterschrift HR BP:** ________________\n**Unterschrift Vorgesetzte/r:** ________________`,en:`30-Day Feedback Template (HR):\n\n**Employee:** ________________\n**Role & Location:** ________________\n**Date:** ________________\n\n1. Onboarding progress\n• What went well?\n• Mandatory trainings done?\n• Systems set up?\n\n2. Tasks & expectations\n• Role clear?\n• Support needed?\n\n3. Goals for next 30 days\n\n4. Open items\n\n**Signature HR BP:** ________________\n**Signature Manager:** ________________`},
+    3:{de:`Offene Pflichtschulungen:\n\n🔴 Überfällig\n• Markus Huber (LNZ) – Sicherheitsunterweisung (+13 Tage)\n• Markus Huber (LNZ) – PSA-Schulung (+13 Tage)\n\n🟡 Diese Woche fällig\n• Sarah Koller (SBG) – Datenschutz-Pflichtmodul (Tag 10)\n\n📧 Eskalation: HSQE-Teams vor Ort\nhr-ops@norfood.at`,en:`Open mandatory trainings:\n\n🔴 Overdue\n• Markus Huber (LNZ) – Safety briefing (+13 days)\n• Markus Huber (LNZ) – PPE training (+13 days)\n\n🟡 Due this week\n• Sarah Koller (SBG) – Data privacy module (Day 10)\n\n📧 Escalation: HSQE teams on site\nhr-ops@norfood.at`},
+    4:{de:`Onboarding-Vorlage: Produktion Bäckerei\n\n📋 Vor Tag 1\n☐ PSA-Set vorbereiten\n☐ Schichtplan & Schichtleiter benennen\n☐ HSQE für Sicherheitsunterweisung informieren\n\n👥 Woche 1\n☐ Sicherheitsunterweisung (HSQE)\n☐ PSA ausgeben & einweisen\n☐ Hygieneunterweisung & HACCP\n\n🏭 Woche 2–4\n☐ Produktionsabläufe & Rezepturen\n☐ Teigverarbeitung & Backprozesse\n☐ Qualitätskontrolle & Dokumentation\n\n📅 30-Tage-Review mit Schichtleiter & HR BP`,en:`Onboarding template: Bakery Production\n\n📋 Before Day 1\n☐ Prepare PPE set\n☐ Name shift plan & supervisor\n☐ Inform HSQE for safety briefing\n\n👥 Week 1\n☐ Safety briefing\n☐ Issue & brief on PPE\n☐ Hygiene & HACCP basics\n\n🏭 Weeks 2–4\n☐ Production processes & recipes\n☐ Dough & baking\n☐ Quality & documentation\n\n📅 30-day review with shift supervisor & HR BP`},
   },
-  3: {
-    de: `Checkliste Erste Woche – Quality Managerin Salzburg:\n\n✅ Tag 1 – Willkommenstag\n☐ Empfang durch HR-Team\n☐ Betriebsrundgang Salzburg\n☐ Mentor Ing. Eder kennenlernen\n\n☐ IT-Setup (Tage 2–3)\n☐ Laptop + Telefon entgegennehmen\n☐ E-Mail & Intranet-Zugang\n☐ SAP QM Basiszugang\n\n☐ Orientierung (Tage 3–5)\n☐ Hygieneschulung absolvieren\n☐ Sicherheitsunterweisung HSQE\n☐ Laborordnung unterzeichnen\n☐ QM-Handbuch lesen\n\n☐ Verwaltung\n☐ Bankdaten für Lohnverrechnung\n☐ Notfallkontakt hinterlegen`,
-    en: `First Week Checklist – Quality Manager Salzburg:\n\n✅ Day 1 – Welcome Day\n☐ Reception by HR team\n☐ Facility tour Salzburg\n☐ Meet mentor Ing. Eder\n\n☐ IT Setup (Days 2–3)\n☐ Receive laptop + phone\n☐ Email & intranet access\n☐ SAP QM basic access\n\n☐ Orientation (Days 3–5)\n☐ Complete hygiene training\n☐ Safety briefing HSQE\n☐ Sign lab regulations\n☐ Read QM manual\n\n☐ Administration\n☐ Bank details for payroll\n☐ Add emergency contact`
+];
+ 
+// ─── Employee profiles ────────────────────────────────────────────────────────
+const EMPLOYEE_PROFILES = [
+  {
+    name:'Markus Huber', role:'Produktionsmitarbeiter Bäckerei',
+    department:'Produktion / Bäckerei', location:'Linz', day:23,
+    startDate:'02.01.2025', probationEnd:'02.07.2025',
+    openTasks:6, overdueTasks:2, nextFeedback:'02.02.2025',
+    manager:'Schichtleiter Produktion Linz',
+    hrBP:'HR Business Partner Linz', mentor:'Schichtleiter Produktion Linz',
+    priorities:[
+      {num:1,color:'amb',text:'Sicherheitsunterweisung HSQE vereinbaren',meta:'HSQE-Team Linz · hsqe-linz@norfood.at',badge:'b-overdue',label:'Überfällig'},
+      {num:2,color:'red',text:'PSA-Schulung absolvieren',meta:'HSQE-Team Linz · hsqe-linz@norfood.at',badge:'b-overdue',label:'Überfällig'},
+      {num:3,color:'neutral',text:'HACCP-Grundlagen Einführung buchen',meta:'Fällig: 31.01.2025',badge:'b-open',label:'Offen'},
+    ],
+    contacts:{
+      direct:[
+        {init:'SL',bg:'#E8F2EE',cl:'#1C4A29',name:'Schichtleiter Produktion',role:'Fachliche Fragen, Schichtplanung, tägliche Probleme',email:'schicht-linz@norfood.at'},
+      ],
+      hr:[
+        {init:'HR',bg:'#E2EEF4',cl:'#163845',name:'HR Business Partner Linz',role:'Onboarding, Urlaubsanträge, HR-Fragen',email:'hr-linz@norfood.at'},
+        {init:'IT',bg:'#FAF0E2',cl:'#7A470A',name:'IT Helpdesk Linz',role:'Zugänge, Systeme, digitale Protokolle',email:'it-linz@norfood.at'},
+      ],
+    },
+    buddyActions:[
+      {warn:true,text:'Sicherheitsunterweisung – +13 Tage'},
+      {warn:true,text:'PSA-Schulung – noch offen'},
+      {warn:false,text:'HACCP-Einführung – 31.01.'},
+      {warn:false,text:'30-Tage-Feedback buchen'},
+    ],
+    buddyDocs:['Hygienerichtlinien Produktion','PSA-Vorschriften','HACCP-Grundlagen'],
   },
-  4: {
-    de: `30-Tage-Feedback-Vorbereitung – Sarah Koller, QM Salzburg:\n\nThemen für das Gespräch mit Mag. Reiter & Dr. Kastner:\n\n1. Onboarding-Status\n• Was lief gut in den ersten 30 Tagen?\n• Offene Blocker: SAP-Zugang, Sicherheitsunterweisung\n• Mentor-Zusammenarbeit mit Ing. Eder\n\n2. Fachliche Einarbeitung\n• QM-Prozesse verstanden?\n• Laboreinführung abgeschlossen?\n\n3. Ziele nächste 30 Tage\n• HACCP-Schulung abschließen\n• Erste eigenständige Prüfung\n• SAP QS-Vollzugang klären\n\n📅 Empfohlener Termin: 30.01.2025\nZuständig: Mag. Maria Reiter · m.reiter@norfood.at`,
-    en: `30-Day Feedback Preparation – Sarah Koller, QM Salzburg:\n\nTopics for meeting with Mag. Reiter & Dr. Kastner:\n\n1. Onboarding Status\n• What went well in the first 30 days?\n• Open blockers: SAP access, safety briefing\n• Mentor collaboration with Ing. Eder\n\n2. Technical Onboarding\n• QM processes understood?\n• Lab introduction complete?\n\n3. Goals for next 30 days\n• Complete HACCP training\n• First independent quality check\n• Resolve SAP QS full access\n\n📅 Recommended date: 30.01.2025\nResponsible: Mag. Maria Reiter · m.reiter@norfood.at`
+  {
+    name:'Sarah Koller', role:'Marketing Koordinatorin',
+    department:'Marketing', location:'Salzburg', day:3,
+    startDate:'20.01.2025', probationEnd:'20.07.2025',
+    openTasks:8, overdueTasks:0, nextFeedback:'20.02.2025',
+    manager:'Marketing Teamlead Salzburg',
+    hrBP:'Mag. Maria Reiter', mentor:null,
+    priorities:[
+      {num:1,color:'blue',text:'Marketing-Systemzugang einrichten',meta:'IT Helpdesk SBG · it-sbg@norfood.at',badge:'b-open',label:'Offen'},
+      {num:2,color:'neutral',text:'Laufende Kampagnen kennenlernen',meta:'Marketing Teamlead Salzburg',badge:'b-open',label:'Offen'},
+      {num:3,color:'neutral',text:'Datenschutz-Pflichtmodul starten',meta:'Fällig: Tag 10 · Online · HR',badge:'b-open',label:'Offen'},
+    ],
+    contacts:{
+      direct:[
+        {init:'MT',bg:'#E2EEF4',cl:'#163845',name:'Marketing Teamlead Salzburg',role:'Fachliche Einführung, Kampagnen, wöchentliche Check-ins',email:'marketing-sbg@norfood.at'},
+      ],
+      hr:[
+        {init:'MR',bg:'#E8F2EE',cl:'#1C4A29',name:'Mag. Maria Reiter',role:'HR Business Partner · Onboarding & HR-Fragen',email:'m.reiter@norfood.at'},
+        {init:'IT',bg:'#FAF0E2',cl:'#7A470A',name:'IT Helpdesk Salzburg',role:'Zugänge, Geräte, Marketing-Tools',email:'it-sbg@norfood.at'},
+      ],
+    },
+    buddyActions:[
+      {warn:false,text:'Marketing-Systemzugang offen'},
+      {warn:false,text:'Datenschutz-Schulung – Tag 10'},
+      {warn:false,text:'30-Tage-Feedback – 20.02.'},
+    ],
+    buddyDocs:['Mitarbeiterhandbuch','Datenschutzgrundsätze','FAQ Neue Mitarbeitende'],
   },
-  5: {
-    de: `HR-Onboarding-Checkliste: Quality Manager/in · Salzburg\n\n📋 Vor dem ersten Arbeitstag (HR)\n☐ Willkommenspaket vorbereiten\n☐ Laptop & Telefon bei IT anfordern (min. 5 Tage vorher)\n☐ SAP QM Basiszugang beantragen\n☐ Mentor zuweisen (QM-Abteilung Salzburg)\n☐ Dienstvertrag und Unterlagen prüfen\n\n👥 Tag 1 – Koordination\n☐ Empfang durch HR Business Partner\n☐ Betriebsrundgang organisieren\n☐ Zugänge aktivieren\n\n⚠ Pflichtschulungen tracken\n☐ Hygieneschulung (Woche 1)\n☐ Sicherheitsunterweisung HSQE (Woche 2)\n☐ Datenschutz-Pflichtmodul (bis Tag 25)\n\n📊 Feedback-Termine anlegen\n☐ 30-Tage-Review mit HRBP + Vorgesetzter\n☐ 60-Tage-Review\n☐ 90-Tage-Probezeitgespräch`,
-    en: `HR Onboarding Checklist: Quality Manager · Salzburg\n\n📋 Before Day 1 (HR)\n☐ Prepare welcome package\n☐ Request laptop & phone from IT (min. 5 days prior)\n☐ Apply for SAP QM basic access\n☐ Assign mentor (QM dept. Salzburg)\n☐ Check employment contract\n\n👥 Day 1 – Coordination\n☐ Reception by HR Business Partner\n☐ Organize facility tour\n☐ Activate accesses\n\n⚠ Track mandatory trainings\n☐ Hygiene training (Week 1)\n☐ Safety briefing HSQE (Week 2)\n☐ Mandatory data privacy module (by Day 25)\n\n📊 Create feedback appointments\n☐ 30-day review with HRBP + supervisor\n☐ 60-day review\n☐ 90-day probation meeting`
+  {
+    name:'Lisa Wagner', role:'HR Koordinatorin',
+    department:'Human Resources', location:'Wien', day:14,
+    startDate:'07.01.2025', probationEnd:'07.07.2025',
+    openTasks:3, overdueTasks:0, nextFeedback:'07.02.2025',
+    manager:'HR Leitung Wien', hrBP:'HR Leitung', mentor:null,
+    priorities:[
+      {num:1,color:'amb',text:'Blocker Markus Huber (LNZ) eskalieren',meta:'Sicherheitsunterweisung +13 Tage',badge:'b-overdue',label:'Dringend'},
+      {num:2,color:'blue',text:'Marketing-Zugang Sarah Koller klären',meta:'IT Helpdesk SBG kontaktieren',badge:'b-review',label:'In Klärung'},
+      {num:3,color:'neutral',text:'30-Tage-Reviews vorbereiten',meta:'3 anstehend diese Woche',badge:'b-open',label:'Offen'},
+    ],
+    contacts:{
+      direct:[
+        {init:'HL',bg:'#E2EEF4',cl:'#163845',name:'HR Leitung Wien',role:'Strategie, Eskalationen, Personalentscheidungen',email:'hr-leitung@norfood.at'},
+      ],
+      hr:[
+        {init:'MR',bg:'#E8F2EE',cl:'#1C4A29',name:'Mag. Maria Reiter',role:'HR BP Region West · Salzburg, Linz',email:'m.reiter@norfood.at'},
+        {init:'DS',bg:'#FAF0E2',cl:'#7A470A',name:'Datenschutzbeauftragte',role:'DSGVO, Datenschutzfragen',email:'dsgvo@norfood.at'},
+      ],
+    },
+    buddyActions:[
+      {warn:true,text:'Markus Huber – 2 Blocker Linz'},
+      {warn:true,text:'Sarah Koller – Systemzugang offen'},
+      {warn:false,text:'30-Tage-Reviews – 3 anstehend'},
+    ],
+    buddyDocs:['HR-Onboarding-Checkliste','Feedback-Vorlagen','Datenschutzgrundsätze'],
   }
-};
-
-const ACCS = [
-  { i: 'SK', nm: 'Sarah Koller',  role: 'e', bg: '#E2EEF4', cl: '#163845' },
-  { i: 'MH', nm: 'Markus Huber',  role: 'e', bg: '#E8F2EE', cl: '#1C4A29' },
-  { i: 'LW', nm: 'Lisa Wagner',   role: 'h', bg: '#FAF0E2', cl: '#7A470A' },
 ];
-
+ 
+// ─── Login accounts (index = EMPLOYEE_PROFILES index) ────────────────────────
+const ACCS = [
+  {i:'MH',nm:'Markus Huber', role:'e',bg:'#E8F2EE',cl:'#1C4A29'},
+  {i:'SK',nm:'Sarah Koller', role:'e',bg:'#E2EEF4',cl:'#163845'},
+  {i:'LW',nm:'Lisa Wagner',  role:'h',bg:'#FAF0E2',cl:'#7A470A'},
+];
+ 
 let selectedAcc = 0;
 let lang = 'de';
 let role = 'e';
 let typing = false;
-
+let chatHistory = [];
+ 
+// ─── Login ────────────────────────────────────────────────────────────────────
 function selAcc(i) {
   selectedAcc = i;
-  document.querySelectorAll('.lc-acct').forEach((el, j) => el.classList.toggle('sel', j === i));
+  document.querySelectorAll('.lc-acct').forEach(function(el,j){el.classList.toggle('sel',j===i);});
 }
-
+ 
 function doLogin() {
+  chatHistory = [];
   const a = ACCS[selectedAcc];
+  const emp = EMPLOYEE_PROFILES[selectedAcc];
   document.getElementById('login-screen').style.display = 'none';
   document.getElementById('platform').classList.add('on');
   const av = document.getElementById('uav');
-  av.textContent = a.i;
-  av.style.background = a.bg;
-  av.style.color = a.cl;
+  av.textContent = a.i; av.style.background = a.bg; av.style.color = a.cl;
   document.getElementById('unm').textContent = a.nm;
+ 
+  // Dashboard
+  const dw = document.getElementById('dw');
+  if(dw) dw.textContent = (lang==='de'?'Guten Morgen, ':'Good morning, ')+emp.name.split(' ')[0]+' 👋';
+  const ds = document.getElementById('ds');
+  if(ds) ds.innerHTML = emp.role+' · Standort '+emp.location+' · <strong>Tag '+emp.day+'</strong> von 90';
+  const dl = document.getElementById('dash-loc');
+  if(dl) dl.textContent = '📍 '+emp.location;
+  const dp = document.getElementById('dash-progress');
+  if(dp) dp.textContent = Math.round(emp.day/90*100*0.8)+'%';
+  const dpf = document.getElementById('dash-pf');
+  if(dpf) dpf.style.width = Math.round(emp.day/90*100*0.8)+'%';
+  const dd = document.getElementById('dash-day');
+  if(dd) dd.textContent = (lang==='de'?'Tag ':'Day ')+emp.day+(lang==='de'?' von ':' of ')+90;
+  const dt = document.getElementById('dash-tasks');
+  if(dt) dt.textContent = emp.openTasks;
+  const dod = document.getElementById('dash-overdue');
+  if(dod) dod.textContent = emp.overdueTasks>0?'⚠ '+emp.overdueTasks+' überfällig':'Alles im Plan';
+ 
+  // Focus text
+  const ft = document.getElementById('focus-text');
+  if(ft && emp.priorities && emp.priorities.length) {
+    ft.textContent = emp.priorities.map(function(p){return p.text;}).join(' · ');
+  }
+ 
+  // Dashboard priorities
+  const dp2 = document.getElementById('dash-priorities');
+  if(dp2 && emp.priorities) {
+    dp2.innerHTML = emp.priorities.map(function(p,i){
+      var colors = {amb:'var(--amb-bg)',red:'var(--red-bg)',blue:'var(--blue-bg)',neutral:'var(--surface3)'};
+      var borderColors = {amb:'var(--amb-bd)',red:'var(--red-bd)',blue:'var(--blue-bd)',neutral:'var(--border2)'};
+      var textColors = {amb:'var(--amber)',red:'var(--red)',blue:'var(--blue)',neutral:'var(--t3)'};
+      return '<div style="display:flex;align-items:flex-start;gap:10px;padding:9px 0;border-bottom:'+(i<emp.priorities.length-1?'1px solid var(--border)':'none')+'">'
+        +'<div style="width:20px;height:20px;border-radius:50%;background:'+colors[p.color]+';border:1px solid '+borderColors[p.color]+';display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:'+textColors[p.color]+';flex-shrink:0;margin-top:1px">'+p.num+'</div>'
+        +'<div style="flex:1"><div style="font-size:12.5px;font-weight:500;color:var(--text)">'+p.text+'</div>'
+        +'<div style="font-size:10.5px;color:var(--t4);margin-top:2px">'+p.meta+'</div></div>'
+        +'<span class="badge '+p.badge+'">'+p.label+'</span></div>';
+    }).join('');
+  }
+ 
+  // Dashboard contacts
+  const dc = document.getElementById('dash-contacts');
+  if(dc && emp.contacts) {
+    var allContacts = (emp.contacts.direct||[]).concat(emp.contacts.hr||[]).slice(0,3);
+    dc.innerHTML = allContacts.map(function(c,i){
+      return '<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:'+(i<allContacts.length-1?'1px solid var(--border)':'none')+'">'
+        +'<div class="av" style="width:30px;height:30px;font-size:10px;background:'+c.bg+';color:'+c.cl+';flex-shrink:0">'+c.init+'</div>'
+        +'<div style="flex:1"><div style="font-size:12.5px;font-weight:600;color:var(--text)">'+c.name+'</div>'
+        +'<div style="font-size:10.5px;color:var(--t3)">'+c.role+'</div></div>'
+        +'<a style="font-size:10px;color:var(--green);text-decoration:none;flex-shrink:0">'+c.email.replace('@','@<br>')+'</a></div>';
+    }).join('');
+  }
+ 
+  // Onboarding sub
+  const obs = document.getElementById('ob-sub');
+  if(obs) obs.textContent = (lang==='de'?'Personalisierter 90-Tage-Plan · ':'Personalized 90-day plan · ')+emp.role+' · '+emp.location+' · '+emp.startDate;
+ 
+  // Buddy
+  const bsub = document.getElementById('bsub');
+  if(bsub) bsub.textContent = (lang==='de'?'Kontextbezogene Unterstützung · ':'Contextual support · ')+emp.name+' · '+emp.role+' · '+emp.location+(lang==='de'?' · Tag ':' · Day ')+emp.day;
+  const bcn = document.getElementById('bcn');
+  if(bcn) bcn.textContent = emp.name;
+  const bctx = document.getElementById('bctx');
+  if(bctx) bctx.textContent = emp.department+' · '+emp.location;
+  const bscRole = document.getElementById('bsc-role');
+  if(bscRole) bscRole.textContent = emp.role;
+  const bscLoc = document.getElementById('bsc-loc');
+  if(bscLoc) bscLoc.textContent = emp.location;
+  const bscDay = document.getElementById('bsc-day');
+  if(bscDay) bscDay.textContent = (lang==='de'?'Tag ':'Day ')+emp.day+(lang==='de'?' von ':' of ')+90;
+  const bscOv = document.getElementById('bsc-overdue');
+  if(bscOv) bscOv.textContent = emp.overdueTasks+(lang==='de'?' überfällige Aufgaben':' overdue tasks');
+ 
+  // Buddy actions
+  const bscA = document.getElementById('bsc-actions');
+  if(bscA && emp.buddyActions) {
+    bscA.innerHTML = emp.buddyActions.map(function(a){
+      return '<div class="bsc-item'+(a.warn?' warn':'')+'"><div class="bsc-dot" style="background:'+(a.warn?'var(--red)':'var(--t5)')+'"></div><span>'+a.text+'</span></div>';
+    }).join('');
+  }
+ 
+  // Buddy docs
+  const bscD = document.getElementById('bsc-docs');
+  if(bscD && emp.buddyDocs) {
+    bscD.innerHTML = emp.buddyDocs.map(function(d,i){
+      return '<div class="bsc-item"><div class="bsc-dot" style="background:'+(i===0?'var(--blue)':'var(--t5)')+'"></div><span>'+d+'</span></div>';
+    }).join('');
+  }
+ 
+  // Contacts page
+  const conD = document.getElementById('con-direct');
+  if(conD && emp.contacts && emp.contacts.direct) {
+    conD.innerHTML = emp.contacts.direct.map(function(c){
+      return '<div class="cc"><div class="cc-head"><div class="av" style="background:'+c.bg+';color:'+c.cl+'">'+c.init+'</div><div class="cc-info"><div class="cc-name">'+c.name+'</div><div class="cc-role">'+c.role+'</div></div><span class="loc">'+emp.location.substring(0,3).toUpperCase()+'</span></div><div class="cc-det">📧 '+c.email+'</div></div>';
+    }).join('');
+  }
+  const conHR = document.getElementById('con-hr');
+  if(conHR && emp.contacts && emp.contacts.hr) {
+    conHR.innerHTML = emp.contacts.hr.map(function(c){
+      return '<div class="cc"><div class="cc-head"><div class="av" style="background:'+c.bg+';color:'+c.cl+'">'+c.init+'</div><div class="cc-info"><div class="cc-name">'+c.name+'</div><div class="cc-role">'+c.role+'</div></div></div><div class="cc-det">📧 '+c.email+'</div></div>';
+    }).join('');
+  }
+ 
+  // Buddy welcome
+  const cm = document.getElementById('cm');
+  if(cm) {
+    cm.innerHTML = '';
+    const d = document.createElement('div');
+    d.className = 'msg-b';
+    d.innerHTML = '<div class="bubble" id="bwelc">'
+      +(lang==='de'
+        ?'Hallo '+emp.name.split(' ')[0]+'! Ich bin dein NoRFood Buddy. Ich kenne deinen Einschulungsplan, deine offenen Aufgaben und die NoRFood-Prozesse. Wie kann ich dir heute helfen?'
+        :'Hi '+emp.name.split(' ')[0]+'! I\'m your NoRFood Buddy. I know your onboarding plan, open tasks and NoRFood processes. How can I help you today?')
+      +'</div><div class="msg-time">Heute, 08:30</div>';
+    cm.appendChild(d);
+  }
+ 
+  renderQuickPrompts();
   setRole(a.role);
   applyLang(lang);
 }
-
+ 
+// ─── Quick prompts ────────────────────────────────────────────────────────────
+function renderQuickPrompts() {
+  var qrow = document.getElementById('chat-quick-row');
+  if(!qrow) return;
+  var prompts = QP_BY_ACC[selectedAcc]||[];
+  qrow.innerHTML = '';
+  prompts.forEach(function(qp,i){
+    var btn = document.createElement('button');
+    btn.className = 'qp';
+    btn.textContent = qp[lang]||qp['de'];
+    btn.onclick = function(){sq(i);};
+    qrow.appendChild(btn);
+  });
+}
+ 
+function sq(i) {
+  var qp = (QP_BY_ACC[selectedAcc]||[])[i];
+  if(!qp) return;
+  addUmsg(qp[lang]||qp['de']);
+  var replies = BR_BY_ACC[selectedAcc]||{};
+  var r = replies[i];
+  simReply(r?(r[lang]||r['de']):(lang==='de'?'Ich arbeite daran…':'Working on it…'));
+}
+ 
+// ─── Role & Language ──────────────────────────────────────────────────────────
 function setRole(r) {
   role = r;
-  document.getElementById('re').classList.toggle('on', r === 'e');
-  document.getElementById('rh').classList.toggle('on', r === 'h');
-  document.getElementById('hr-sb').style.display = r === 'h' ? 'block' : 'none';
-  const hp = document.getElementById('hrqp');
-  if (hp) hp.style.display = r === 'h' ? 'flex' : 'none';
-  const bc = document.getElementById('bctx');
-  const bs = document.getElementById('bsub');
-  const bn = document.getElementById('bcn');
-  if (r === 'h') {
-    if (bc) bc.textContent = lang === 'de' ? 'HR / Ops · Wien' : 'HR / Ops · Vienna';
-    if (bs) bs.textContent = lang === 'de' ? 'HR-Modus · Lisa Wagner · HR Koordinatorin · Wien' : 'HR mode · Lisa Wagner · HR Coordinator · Vienna';
-    if (bn) bn.textContent = 'Lisa Wagner (HR)';
-  } else {
-    if (bc) bc.textContent = lang === 'de' ? 'Mitarbeiter · SBG · QM' : 'Employee · SBG · QM';
-    if (bs) bs.textContent = lang === 'de' ? 'Kontextbezogene Unterstützung · Sarah Koller · Quality Managerin · Salzburg · Tag 18' : 'Contextual support · Sarah Koller · Quality Manager · Salzburg · Day 18';
-    if (bn) bn.textContent = 'Sarah Koller';
-  }
+  document.getElementById('re').classList.toggle('on',r==='e');
+  document.getElementById('rh').classList.toggle('on',r==='h');
+  document.getElementById('hr-sb').style.display = r==='h'?'block':'none';
 }
-
+ 
 function setLang(l) {
   lang = l;
-  document.getElementById('lde').classList.toggle('on', l === 'de');
-  document.getElementById('len').classList.toggle('on', l === 'en');
+  document.getElementById('lde').classList.toggle('on',l==='de');
+  document.getElementById('len').classList.toggle('on',l==='en');
   applyLang(l);
 }
-
+ 
 function applyLang(l) {
-  document.querySelectorAll('[data-de],[data-en]').forEach(el => {
-    const val = el.getAttribute('data-' + l);
-    if (!val) return;
-    if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
-      el.placeholder = val;
-    } else {
-      el.textContent = val;
-    }
+  document.querySelectorAll('[data-de],[data-en]').forEach(function(el){
+    var val = el.getAttribute('data-'+l);
+    if(!val) return;
+    if(el.tagName==='INPUT'||el.tagName==='TEXTAREA'){el.placeholder=val;}
+    else{el.textContent=val;}
   });
-  const ci = document.getElementById('ci');
-  if (ci) ci.placeholder = l === 'de' ? 'Nachricht an Buddy…' : 'Message Buddy…';
-  document.querySelectorAll('.chat-send').forEach(b => { b.textContent = l === 'de' ? 'Senden' : 'Send'; });
-  const hs = document.getElementById('hs');
-  if (hs) hs.placeholder = l === 'de' ? 'Suche in Portal…' : 'Search portal…';
-  const cm = document.getElementById('cm');
-  if (cm && cm.children.length === 1) {
-    const wb = document.getElementById('bwelc');
-    if (wb) wb.textContent = l === 'de'
-      ? 'Hallo Sarah! Ich bin dein NoRFood Buddy. Ich kenne deinen Onboarding-Plan, deine offenen Aufgaben und die NoRFood-Prozesse. Wie kann ich dir heute helfen?'
-      : "Hi Sarah! I'm your NoRFood Buddy. I know your onboarding plan, open tasks and NoRFood processes. How can I help you today?";
-  }
+  var ci = document.getElementById('ci');
+  if(ci) ci.placeholder = l==='de'?'Nachricht an Buddy…':'Message Buddy…';
+  document.querySelectorAll('.chat-send').forEach(function(b){b.textContent=l==='de'?'Senden':'Send';});
+  var hs = document.getElementById('hs');
+  if(hs) hs.placeholder = l==='de'?'Suche in Portal…':'Search portal…';
+  renderQuickPrompts();
   setRole(role);
 }
-
+ 
+// ─── Navigation ───────────────────────────────────────────────────────────────
 function nav(p) {
-  document.querySelectorAll('.page').forEach(x => x.classList.remove('on'));
-  document.querySelectorAll('.sb-item').forEach(x => x.classList.remove('on'));
-  const pg = document.getElementById('p-' + p);
-  if (pg) pg.classList.add('on');
-  document.querySelectorAll('.sb-item').forEach(b => {
-    const oc = b.getAttribute('onclick');
-    if (oc && oc.includes("'" + p + "'")) b.classList.add('on');
+  document.querySelectorAll('.page').forEach(function(x){x.classList.remove('on');});
+  document.querySelectorAll('.sb-item').forEach(function(x){x.classList.remove('on');});
+  var pg = document.getElementById('p-'+p);
+  if(pg) pg.classList.add('on');
+  document.querySelectorAll('.sb-item').forEach(function(b){
+    var oc = b.getAttribute('onclick');
+    if(oc&&oc.includes("'"+p+"'")) b.classList.add('on');
   });
 }
-
+ 
 function tog(id) {
-  const e = document.getElementById(id);
-  if (e) e.style.display = e.style.display === 'none' ? 'block' : 'none';
+  var e = document.getElementById(id);
+  if(e) e.style.display = e.style.display==='none'?'block':'none';
 }
-
-function swTab(btn, sid) {
-  btn.closest('.tabs').querySelectorAll('.tab').forEach(t => t.classList.remove('on'));
+ 
+function swTab(btn,sid) {
+  btn.closest('.tabs').querySelectorAll('.tab').forEach(function(t){t.classList.remove('on');});
   btn.classList.add('on');
-  ['clo', 'cld', 'clv'].forEach(id => {
-    const e = document.getElementById(id);
-    if (e) e.style.display = id === sid ? 'block' : 'none';
+  ['clo','cld','clv'].forEach(function(id){
+    var e = document.getElementById(id);
+    if(e) e.style.display = id===sid?'block':'none';
   });
 }
-
-function sq(i) {
-  addUmsg(QP[i][lang]);
-  const r = BR[i];
-  simReply(r ? r[lang] : (lang === 'de' ? 'Ich arbeite daran…' : 'Working on it…'));
-}
-
+ 
+// ─── Chat ────────────────────────────────────────────────────────────────────
 function addUmsg(t) {
-  const cm = document.getElementById('cm');
-  const d = document.createElement('div');
-  const now = new Date();
+  var cm = document.getElementById('cm');
+  var d = document.createElement('div');
+  var now = new Date();
   d.className = 'msg-u';
-  d.innerHTML = '<div class="bubble">' + esc(t) + '</div><div class="msg-time">' + now.getHours() + ':' + String(now.getMinutes()).padStart(2, '0') + '</div>';
+  d.innerHTML = '<div class="bubble">'+esc(t)+'</div><div class="msg-time">'+now.getHours()+':'+String(now.getMinutes()).padStart(2,'0')+'</div>';
   cm.appendChild(d);
   cm.scrollTop = cm.scrollHeight;
 }
-function simReply(t){
+ 
+marked.setOptions({breaks:true,gfm:true});
+function renderBuddyMarkdown(text){return marked.parse(String(text||'').trim(),{async:false});}
+ 
+function simReply(t) {
   if(typing) return;
   typing = true;
-
-  const cm = document.getElementById('cm');
-  const ti = document.createElement('div');
-  ti.className = 'msg-b';
-  ti.id = 'ti';
-  ti.innerHTML = `<div class="bubble"><div class="tdots"><span></span><span></span><span></span></div></div>`;
-  cm.appendChild(ti);
-  cm.scrollTop = cm.scrollHeight;
-
+  var cm = document.getElementById('cm');
+  var ti = document.createElement('div');
+  ti.className = 'msg-b'; ti.id = 'ti';
+  ti.innerHTML = '<div class="bubble"><div class="tdots"><span></span><span></span><span></span></div></div>';
+  cm.appendChild(ti); cm.scrollTop = cm.scrollHeight;
   setTimeout(function(){
-    const old = document.getElementById('ti');
+    var old = document.getElementById('ti');
     if(old) old.remove();
-
-    const now = new Date();
-    const d = document.createElement('div');
+    var now = new Date();
+    var d = document.createElement('div');
     d.className = 'msg-b';
-    d.innerHTML = `
-      <div class="bubble bubble-md">${renderBuddyMarkdown(t)}</div>
-      <div class="msg-time">${now.getHours()}:${String(now.getMinutes()).padStart(2, '0')}</div>
-    `;
-    cm.appendChild(d);
-    cm.scrollTop = cm.scrollHeight;
+    d.innerHTML = '<div class="bubble bubble-md">'+renderBuddyMarkdown(t)+'</div>'
+      +'<div class="msg-time">'+now.getHours()+':'+String(now.getMinutes()).padStart(2,'0')+'</div>';
+    cm.appendChild(d); cm.scrollTop = cm.scrollHeight;
     typing = false;
-  }, 1100 + Math.random() * 500);
+  }, 1100+Math.random()*500);
 }
-function esc(s) {
-  return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-}
-
-async function sm(){
-  const ci = document.getElementById('ci');
-  const t = ci.value.trim();
+ 
+function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+ 
+// ─── API call ────────────────────────────────────────────────────────────────
+async function sm() {
+  var ci = document.getElementById('ci');
+  var t = ci.value.trim();
   if(!t) return;
-
   ci.value = '';
   addUmsg(t);
-
+  var employee = EMPLOYEE_PROFILES[selectedAcc];
   try {
-    const response = await fetch('/api/chat', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        message: t,
-        language: lang
-      })
+    var response = await fetch('/api/chat',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({message:t,messages:chatHistory.slice(-20),employee:employee,language:lang})
     });
-
-    if(!response.ok){
-      throw new Error('API error: ' + response.status);
-    }
-
-    const data = await response.json();
-
-    const reply =
-      data.reply ||
-      data.message ||
-      data.text ||
-      (lang === 'de'
-        ? 'Ich konnte gerade keine Antwort laden. Bitte versuche es noch einmal.'
-        : 'I could not load a reply right now. Please try again.');
-
+    if(!response.ok) throw new Error('API error: '+response.status);
+    var data = await response.json();
+    var reply = data.reply||(lang==='de'?'Ich konnte gerade keine Antwort laden. Bitte versuche es noch einmal.':'I could not load a reply right now. Please try again.');
+    chatHistory.push({role:'user',content:t});
+    chatHistory.push({role:'assistant',content:reply});
     simReply(reply);
-
-  } catch (error) {
-    console.error('Buddy chat error:', error);
-
-    simReply(
-      lang === 'de'
-        ? 'Ich konnte gerade keine Antwort vom Buddy laden. Bitte versuche es noch einmal oder kontaktiere bei dringenden HR-Themen direkt deine Ansprechperson.'
-        : 'I could not load a Buddy response right now. Please try again or contact your responsible HR contact directly for urgent topics.'
-    );
+  } catch(error) {
+    console.error('Buddy chat error:',error);
+    simReply(lang==='de'?'Ich konnte gerade keine Antwort vom Buddy laden. Bitte versuche es noch einmal.':'I could not load a Buddy response right now. Please try again.');
   }
 }
-
-function hck(e) {
-  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sm(); }
+ 
+function hck(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sm();}}
+ 
+// ─── Video modal ─────────────────────────────────────────────────────────────
+function openVidModal() {
+  var m = document.getElementById('vid-modal');
+  m.style.display = 'flex';
+  document.body.style.overflow = 'hidden';
 }
-
-function playDash() {
-  const v = document.getElementById('vid-dash');
-  const o = document.getElementById('vid-dash-overlay');
-  const s = document.getElementById('vid-dash-status');
-  if (o) o.style.display = 'none';
+ 
+function closeVidModal() {
+  var m = document.getElementById('vid-modal');
+  var v = document.getElementById('vid-modal-player');
+  m.style.display = 'none';
+  v.pause();
+  document.body.style.overflow = '';
+  var ws = document.getElementById('vid-watch-status');
+  if(ws){ws.textContent=lang==='de'?'Angesehen ✓':'Watched ✓';}
+}
+ 
+function playModalVid() {
+  var v = document.getElementById('vid-modal-player');
+  var o = document.getElementById('vid-modal-overlay');
+  if(o) o.style.display = 'none';
   v.controls = true;
   v.play().catch(function(){});
-  if (s) { s.setAttribute('data-de', 'Angesehen ✓'); s.setAttribute('data-en', 'Watched ✓'); s.textContent = lang === 'de' ? 'Angesehen ✓' : 'Watched ✓'; }
-  const bs = document.getElementById('vid-buddy-status');
-  if (bs) { bs.setAttribute('data-de', 'Angesehen ✓'); bs.setAttribute('data-en', 'Watched ✓'); bs.textContent = lang === 'de' ? 'Angesehen ✓' : 'Watched ✓'; }
 }
-
-function playBuddy() {
-  const v = document.getElementById('vid-buddy');
-  const o = document.getElementById('vid-buddy-overlay');
-  const s = document.getElementById('vid-buddy-status');
-  if (o) o.style.display = 'none';
-  v.controls = true;
-  v.play().catch(function(){});
-  if (s) { s.setAttribute('data-de', 'Angesehen ✓'); s.setAttribute('data-en', 'Watched ✓'); s.textContent = lang === 'de' ? 'Angesehen ✓' : 'Watched ✓'; }
-  const ds = document.getElementById('vid-dash-status');
-  if (ds) { ds.setAttribute('data-de', 'Angesehen ✓'); ds.setAttribute('data-en', 'Watched ✓'); ds.textContent = lang === 'de' ? 'Angesehen ✓' : 'Watched ✓'; }
-}
-
-marked.setOptions({
-  breaks: true,
-  gfm: true
+ 
+// ─── Init ────────────────────────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', function() {
+  document.getElementById('vid-modal').addEventListener('click', function(e){
+    if(e.target===this) closeVidModal();
+  });
+  applyLang('de');
 });
-
-function renderBuddyMarkdown(text){
-  const raw = String(text || '').trim();
-  return marked.parse(raw, { async: false });
-}
-
-function simReply(t){
-  if(typing) return;
-  typing = true;
-
-  const cm = document.getElementById('cm');
-  const ti = document.createElement('div');
-  ti.className = 'msg-b';
-  ti.id = 'ti';
-  ti.innerHTML = `<div class="bubble"><div class="tdots"><span></span><span></span><span></span></div></div>`;
-  cm.appendChild(ti);
-  cm.scrollTop = cm.scrollHeight;
-
-  setTimeout(function(){
-    const old = document.getElementById('ti');
-    if(old) old.remove();
-
-    const now = new Date();
-    const d = document.createElement('div');
-    d.className = 'msg-b';
-    d.innerHTML = `
-      <div class="bubble bubble-md">${renderBuddyMarkdown(t)}</div>
-      <div class="msg-time">${now.getHours()}:${String(now.getMinutes()).padStart(2, '0')}</div>
-    `;
-    cm.appendChild(d);
-    cm.scrollTop = cm.scrollHeight;
-    typing = false;
-  }, 1100 + Math.random() * 500);
-}
-
-function replayBuddy() {
-  const v = document.getElementById('vid-buddy');
-  const o = document.getElementById('vid-buddy-overlay');
-  v.currentTime = 0;
-  if (o) o.style.display = 'none';
-  v.controls = true;
-  v.play().catch(function(){});
-}
-
-document.addEventListener('DOMContentLoaded', function() { applyLang('de'); });
-
-document.addEventListener('DOMContentLoaded', function() { applyLang('de'); });
 </script>
 </body>
 </html>
+ 
