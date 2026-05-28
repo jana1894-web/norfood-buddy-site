@@ -339,6 +339,13 @@ ANTWORTQUALITÄT
 - Lass keine Pflichtschritte weg, wenn ein Themenmodul zutrifft.
 - Wenn mehrere Themen zutreffen, kombiniere die relevanten Pflichtschritte sinnvoll.
 `;
+   const sysprompt_addition_DE = `
+DOKUMENTENINHALT-REGEL (kritisch)
+- Wenn du Inhalte aus der Wissensbasis erhältst und danach gefragt wird: gib sie direkt und vollständig wieder.
+- Fasse niemals einen Dokumentinhalt in eigenen Worten zusammen wenn der Originalinhalt verfügbar ist.
+- Wenn nur ein Teil gefragt wird (z.B. "erste 30 Tage"): gib nur diesen Abschnitt aus, nicht das gesamte Dokument.
+- Wenn jemand fragt "Kannst du mir das als Word haben" oder ähnliches: antworte "Klar! Klick auf den Download-Button unter meiner Nachricht." — sage nie, dass du keine Dateien erstellen kannst.
+`; 
 
     const baseSystemPromptEN = `
 You are the Onboarding Buddy for NoRFood AG, an Austrian food production company with around 6,000 employees across 7 locations.
@@ -551,7 +558,13 @@ RESPONSE QUALITY
 - Do not omit mandatory steps when a topic module applies.
 - If multiple topics apply, combine the relevant mandatory steps sensibly.
 `;
-
+const sysprompt_addition_EN = `
+DOCUMENT CONTENT RULE (critical)
+- When you receive content from the knowledge base and are asked about it: reproduce it directly and completely.
+- Never paraphrase or summarise document content when the original is available.
+- If only part is asked for (e.g. "first 30 days"): output only that section, not the whole document.
+- If someone asks "Can I have this as a Word file" or similar: respond "Sure! Click the download button below my message." — never say you cannot create files.
+`;
     const baseSystemPrompt = detectedLanguage === 'de' ? baseSystemPromptDE : baseSystemPromptEN;
     const systemPrompt = employeeContext
       ? `${employeeContext}\n\n${baseSystemPrompt}`
@@ -568,8 +581,48 @@ RESPONSE QUALITY
 
     // Build the final user message, optionally enriched with RAG context
     const userContent = needleContext
-      ? `Knowledge context:\n${needleContext}\n\nEmployee message:\n${trimmedMessage}\n\nInstruction:\nUse the knowledge context where relevant. If one or more topic modules apply, include every mandatory step for those modules. Never mention documents, files, records, or search.`
-      : `Employee message:\n${trimmedMessage}\n\nInstruction:\nIf one or more topic modules apply, include every mandatory step for those modules. Never mention documents, files, records, or search.`;
+      ? `WISSENSBASIS-DOKUMENTE (aus interner Needle-Suche):
+${needleContext}
+ 
+MITARBEITER-NACHRICHT:
+${trimmedMessage}
+ 
+ANWEISUNG:
+Du hast oben Inhalte aus internen NoRFood-Dokumenten erhalten.
+ 
+Regel 1 – DOKUMENT DIREKT VERWENDEN:
+Wenn die Mitarbeiter-Nachricht nach einer Checkliste, einem Plan, Schritten oder 
+Inhalten fragt, die in den Wissensbasis-Dokumenten vorhanden sind, gibst du den 
+relevanten Inhalt aus diesen Dokumenten direkt und vollständig wieder.
+Fasse NICHT in eigenen Worten zusammen. Schreibe KEINE generische Antwort.
+Übernimm den Wortlaut, die Struktur und alle Punkte des Dokuments.
+ 
+Regel 2 – NUR DEN GEFRAGTEN TEIL AUSGEBEN:
+Wenn der Mitarbeitende nur nach einem Teil fragt (z.B. "erste 30 Tage", 
+"Schritt 3", "Sicherheitsregeln"), gibst du NUR diesen Teil des Dokuments aus —
+nicht das gesamte Dokument. Identifiziere den relevanten Abschnitt und gib 
+ausschließlich diesen wieder.
+ 
+Regel 3 – KONTEXT ANPASSEN:
+Füge vor dem Dokumentinhalt einen kurzen, natürlichen Einleitungssatz ein 
+(1-2 Sätze), der zum Mitarbeitenden passt. Dann folgt der Dokumentinhalt direkt.
+Ergänze am Ende maximal 1-2 Sätze mit dem nächsten sinnvollen Schritt.
+ 
+Regel 4 – NIEMALS ERWÄHNEN:
+Erwähne niemals Dateien, Dokumente, Knowledge Base, Needle, Suche oder Quellen.
+Klingt wie ein Kollege der das einfach weiß — nicht wie ein System das sucht.
+ 
+Regel 5 – THEMENMODULE:
+Wenn ein Themenmodul (Krankmeldung, Unfall, etc.) zutrifft, alle Pflichtschritte
+einhalten — auch wenn das Dokument etwas anderes enthält.`
+  : `MITARBEITER-NACHRICHT:
+${trimmedMessage}
+ 
+ANWEISUNG:
+Kein Wissensdokument verfügbar. Antworte aus deinem Wissen über NoRFood-Prozesse.
+Wenn ein Themenmodul zutrifft, alle Pflichtschritte einhalten.
+Erfinde keine spezifischen Daten, Namen oder Fristen.
+Verweise bei Unsicherheit an HR oder die zuständige Stelle.`;
 
     const conversationMessages = [
       ...trimmedHistory,
