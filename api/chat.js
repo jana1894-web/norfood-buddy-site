@@ -581,49 +581,48 @@ DOCUMENT CONTENT RULE (critical)
 
     // Build the final user message, optionally enriched with RAG context
     const userContent = needleContext
-      ? `WISSENSBASIS-DOKUMENTE (aus interner Needle-Suche):
+     ? `INTERNE DOKUMENTE (vollständiger Inhalt aus der NoRFood Wissensbasis):
 ${needleContext}
  
-MITARBEITER-NACHRICHT:
-${trimmedMessage}
+---
+MITARBEITER-NACHRICHT: ${trimmedMessage}
+---
  
-ANWEISUNG:
-Du hast oben Inhalte aus internen NoRFood-Dokumenten erhalten.
+PFLICHTANWEISUNG — BEFOLGE DIESE SCHRITTE EXAKT:
  
-Regel 1 – DOKUMENT DIREKT VERWENDEN:
-Wenn die Mitarbeiter-Nachricht nach einer Checkliste, einem Plan, Schritten oder 
-Inhalten fragt, die in den Wissensbasis-Dokumenten vorhanden sind, gibst du den 
-relevanten Inhalt aus diesen Dokumenten direkt und vollständig wieder.
-Fasse NICHT in eigenen Worten zusammen. Schreibe KEINE generische Antwort.
-Übernimm den Wortlaut, die Struktur und alle Punkte des Dokuments.
+SCHRITT 1 — ENTSCHEIDE: Enthält die Wissensbasis oben einen Inhalt der zur Frage des Mitarbeiters passt?
+→ JA: Führe SCHRITT 2 aus.
+→ NEIN: Antworte aus deinem Wissen, ohne Dokumente zu erwähnen.
  
-Regel 2 – NUR DEN GEFRAGTEN TEIL AUSGEBEN:
-Wenn der Mitarbeitende nur nach einem Teil fragt (z.B. "erste 30 Tage", 
-"Schritt 3", "Sicherheitsregeln"), gibst du NUR diesen Teil des Dokuments aus —
-nicht das gesamte Dokument. Identifiziere den relevanten Abschnitt und gib 
-ausschließlich diesen wieder.
+SCHRITT 2 — AUSGABE DES DOKUMENTINHALTS (wenn JA):
+Gib den GESAMTEN relevanten Dokumentinhalt aus — vollständig, mit allen Checkboxen, 
+allen Punkten, allen Unterabschnitten, genau so wie er in der Wissensbasis steht.
+Beginne mit einem kurzen Einleitungssatz (max. 2 Sätze), dann kommt sofort der 
+vollständige Inhalt. Keine Zusammenfassung. Kein Weglassen von Punkten.
+Kein "die genauen Einzelpunkte besprichst du mit...". 
+Die Einzelpunkte sind DEINE Aufgabe auszugeben — jetzt, hier, vollständig.
  
-Regel 3 – KONTEXT ANPASSEN:
-Füge vor dem Dokumentinhalt einen kurzen, natürlichen Einleitungssatz ein 
-(1-2 Sätze), der zum Mitarbeitenden passt. Dann folgt der Dokumentinhalt direkt.
-Ergänze am Ende maximal 1-2 Sätze mit dem nächsten sinnvollen Schritt.
+SCHRITT 3 — WENN NUR EIN TEIL GEFRAGT WIRD:
+Wenn der Mitarbeitende nur nach einem bestimmten Teil fragt (z.B. "erste 30 Tage", 
+"Schritt 3", "Sicherheitsregeln") UND das Dokument einen klar abgegrenzten Abschnitt 
+dazu hat → gib nur diesen Abschnitt aus.
+Wenn das Dokument KEINEN solchen Abschnitt hat (z.B. die Checkliste ist thematisch 
+statt zeitlich strukturiert) → gib die GESAMTE Checkliste aus, da alle Punkte 
+für den genannten Zeitraum relevant sind. Erkläre kurz warum.
  
-Regel 4 – NIEMALS ERWÄHNEN:
-Erwähne niemals Dateien, Dokumente, Knowledge Base, Needle, Suche oder Quellen.
-Klingt wie ein Kollege der das einfach weiß — nicht wie ein System das sucht.
+ABSOLUT VERBOTEN:
+- Nur Überschriften/Kategorien ausgeben ohne die Einzelpunkte
+- An Führungskraft oder Bernhard verweisen für die Lieferung des Inhalts
+- Den Inhalt mit eigenen Worten zusammenfassen statt ihn wiederzugeben
+- "Die genauen Punkte..." oder "Die Einzelheiten..." an jemand anderen delegieren
+- Erwähnen dass du ein Dokument, eine Wissensbasis oder eine Suche verwendet hast`
+  : `MITARBEITER-NACHRICHT: ${trimmedMessage}
  
-Regel 5 – THEMENMODULE:
-Wenn ein Themenmodul (Krankmeldung, Unfall, etc.) zutrifft, alle Pflichtschritte
-einhalten — auch wenn das Dokument etwas anderes enthält.`
-  : `MITARBEITER-NACHRICHT:
-${trimmedMessage}
- 
-ANWEISUNG:
-Kein Wissensdokument verfügbar. Antworte aus deinem Wissen über NoRFood-Prozesse.
+ANWEISUNG: Kein passendes Wissensdokument verfügbar.
+Antworte aus deinem Wissen über NoRFood-Prozesse.
 Wenn ein Themenmodul zutrifft, alle Pflichtschritte einhalten.
 Erfinde keine spezifischen Daten, Namen oder Fristen.
-Verweise bei Unsicherheit an HR oder die zuständige Stelle.`;
-
+Verweise bei Unsicherheit an HR.`;
     const conversationMessages = [
       ...trimmedHistory,
       { role: 'user', content: userContent }
