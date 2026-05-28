@@ -345,6 +345,32 @@ DOKUMENTENINHALT-REGEL (kritisch)
 - Fasse niemals einen Dokumentinhalt in eigenen Worten zusammen wenn der Originalinhalt verfügbar ist.
 - Wenn nur ein Teil gefragt wird (z.B. "erste 30 Tage"): gib nur diesen Abschnitt aus, nicht das gesamte Dokument.
 - Wenn jemand fragt "Kannst du mir das als Word haben" oder ähnliches: antworte "Klar! Klick auf den Download-Button unter meiner Nachricht." — sage nie, dass du keine Dateien erstellen kannst.
+DOKUMENTFORMAT-REGEL (kritisch):
+Wenn du eine Checkliste, einen Plan, eine Vorlage oder strukturierten Dokumentinhalt
+aus der Wissensbasis ausgibst, trenne den Dokumentteil vom Konversationsteil:
+ 
+Aufbau der Antwort:
+1. Kurzer Einleitungssatz (1-2 Sätze, persönlich und warm) — OHNE Tags
+2. Den gesamten Dokumentinhalt — eingeschlossen in: [DOC] ... [/DOC]
+3. Optional: 1-2 Abschlusssätze nach [/DOC] (z.B. Hinweis auf überfällige Aufgaben)
+ 
+Beispiel:
+"Hier ist deine Checkliste für die ersten 30 Tage, Markus! 💪
+ 
+[DOC]
+**Checkliste Phase 1 – Erste 30 Tage**
+ 
+Woche 1 – Ankommen
+☐ Sicherheitsunterweisung absolvieren
+☐ PSA in Empfang nehmen
+...
+[/DOC]
+ 
+Die überfälligen Punkte würde ich bald angehen!"
+ 
+WICHTIG: [DOC] und [/DOC] immer auf eigener Zeile. Kein Text innerhalb der Tags
+außer dem reinen Dokumentinhalt. Diese Tags erscheinen nicht im Chat — sie werden
+vom System verarbeitet.
 `; 
 
     const baseSystemPromptEN = `
@@ -564,6 +590,32 @@ DOCUMENT CONTENT RULE (critical)
 - Never paraphrase or summarise document content when the original is available.
 - If only part is asked for (e.g. "first 30 days"): output only that section, not the whole document.
 - If someone asks "Can I have this as a Word file" or similar: respond "Sure! Click the download button below my message." — never say you cannot create files.
+`;
+    DOCUMENT FORMAT RULE (critical):
+When outputting a checklist, plan, template or structured document content from
+the knowledge base, separate the document part from the conversational part:
+ 
+Response structure:
+1. Short intro sentence (1-2 sentences, personal and warm) — WITHOUT tags
+2. Full document content — wrapped in: [DOC] ... [/DOC]
+3. Optional: 1-2 closing sentences after [/DOC]
+ 
+Example:
+"Here's your checklist for the first 30 days! 💪
+ 
+[DOC]
+**Checklist Phase 1 – First 30 Days**
+ 
+Week 1 – Getting Started
+☐ Complete safety briefing
+☐ Receive PPE
+...
+[/DOC]
+ 
+The overdue items are worth tackling soon!"
+ 
+IMPORTANT: [DOC] and [/DOC] always on their own line. No text inside the tags
+except the pure document content. These tags are processed by the system.
 `;
     const baseSystemPrompt = detectedLanguage === 'de' ? baseSystemPromptDE : baseSystemPromptEN;
     const systemPrompt = employeeContext
