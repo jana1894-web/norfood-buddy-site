@@ -1241,12 +1241,11 @@ function renderQuickPrompts() {
 }
 
 function sq(i) {
-  var qp = (QP_BY_ACC[selectedAcc]||[])[i];
-  if(!qp) return;
-  addUmsg(qp[lang]||qp['de']);
-  var replies = BR_BY_ACC[selectedAcc]||{};
-  var r = replies[i];
-  simReply(r?(r[lang]||r['de']):(lang==='de'?'Ich arbeite daran…':'Working on it…'));
+  var qp = (QP_BY_ACC[selectedAcc] || [])[i];
+  if (!qp) return;
+  var text = qp[lang] || qp['de'];
+  document.getElementById('ci').value = text;
+  sm(); 
 }
 
 // ─── Role & Language ──────────────────────────────────────────────────────────
