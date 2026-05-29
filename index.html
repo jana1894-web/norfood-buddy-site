@@ -1093,9 +1093,13 @@ function doLogin() {
 
   // Dashboard
   const dw = document.getElementById('dw');
-  if(dw) dw.textContent = (lang==='de'?'Guten Morgen, ':'Good morning, ')+emp.name.split(' ')[0]+' 👋';
+ if(dw) dw.textContent = selectedAcc === 2
+    ? (lang==='de'?'Guten Morgen, Lisa 👋 – HR Operations':'Good morning, Lisa 👋 – HR Operations')
+    : (lang==='de'?'Guten Morgen, ':'Good morning, ')+emp.name.split(' ')[0]+' 👋';
   const ds = document.getElementById('ds');
-  if(ds) ds.innerHTML = emp.role+(lang==='de'?' · Standort ':' · Location ')+emp.location+' · <strong>'+(lang==='de'?'Tag ':'Day ')+emp.day+'</strong> '+(lang==='de'?'von':'of')+' 90';
+if(ds) ds.innerHTML = selectedAcc === 2
+    ? emp.role+' · '+emp.location
+    : emp.role+(lang==='de'?' · Standort ':' · Location ')+emp.location+' · <strong>'+(lang==='de'?'Tag ':'Day ')+emp.day+'</strong> '+(lang==='de'?'von':'of')+' 90';
   const dl = document.getElementById('dash-loc');
   if(dl) dl.textContent = '📍 '+emp.location;
   const dp = document.getElementById('dash-progress');
