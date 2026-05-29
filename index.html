@@ -1257,6 +1257,12 @@ function setRole(r) {
   document.getElementById('re').classList.toggle('on',r==='e');
   document.getElementById('rh').classList.toggle('on',r==='h');
   document.getElementById('hr-sb').style.display = r==='h'?'block':'none';
+
+  // Für Lisa (HR): persönliche Onboarding-Items ausblenden
+  var obItem = document.querySelector('.sb-item[onclick*="nav(\'ob\')"]');
+  var clItem = document.querySelector('.sb-item[onclick*="nav(\'cl\')"]');
+  if(obItem) obItem.style.display = r==='h'?'none':'flex';
+  if(clItem) clItem.style.display = r==='h'?'none':'flex';
 }
 function setLang(l) {
   lang = l;
