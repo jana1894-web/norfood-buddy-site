@@ -1193,17 +1193,21 @@ function doLogin() {
     }).join('');
   }
 
-  // Buddy welcome
+// Buddy welcome
   const cm = document.getElementById('cm');
   if(cm) {
     cm.innerHTML = '';
     const d = document.createElement('div');
     d.className = 'msg-b';
     d.innerHTML = '<div class="bubble" id="bwelc">'
-      +(lang==='de'
-        ?'Hallo '+emp.name.split(' ')[0]+'! Ich bin dein NoRFood Buddy. Ich kenne deinen Einschulungsplan, deine offenen Aufgaben und die NoRFood-Prozesse. Wie kann ich dir heute helfen?'
-        :'Hi '+emp.name.split(' ')[0]+'! I\'m your NoRFood Buddy. I know your onboarding plan, open tasks and NoRFood processes. How can I help you today?')
-      +'</div><div class="msg-time">Heute, 08:30</div>';
+      +(selectedAcc === 2
+        ? (lang==='de'
+            ? 'Hallo Lisa! Ich bin dein HR Buddy. Ich unterstütze dich beim Onboarding-Management, bei HR-Prozessen und deinen täglichen Aufgaben. Wie kann ich dir heute helfen?'
+            : 'Hi Lisa! I\'m your HR Buddy. I support you with onboarding management, HR processes and your daily tasks. How can I help you today?')
+        : (lang==='de'
+            ? 'Hallo '+emp.name.split(' ')[0]+'! Ich bin dein NoRFood Buddy. Ich kenne deinen Einschulungsplan, deine offenen Aufgaben und die NoRFood-Prozesse. Wie kann ich dir heute helfen?'
+            : 'Hi '+emp.name.split(' ')[0]+'! I\'m your NoRFood Buddy. I know your onboarding plan, open tasks and NoRFood processes. How can I help you today?'))
+      +'</div><div class="msg-time" id="bwelc-time">Heute, 08:30</div>';
     cm.appendChild(d);
   }
 
