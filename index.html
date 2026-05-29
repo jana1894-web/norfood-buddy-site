@@ -1254,35 +1254,12 @@ function setRole(r) {
   document.getElementById('rh').classList.toggle('on',r==='h');
   document.getElementById('hr-sb').style.display = r==='h'?'block':'none';
 }
-
 function setLang(l) {
   lang = l;
-  document.getElementById('lde').classList.toggle('on', l==='de');
-  document.getElementById('len').classList.toggle('on', l==='en');
-  var a = EMPLOYEE_PROFILES[selectedAcc];
-  if (a && a.role !== 'h') {
-    var p = a.profile;
-    var cm = document.getElementById('cm');
-    if (cm && cm.children.length <= 1) {
-      renderBuddyChat();
-    }
-    var ctxTitle = document.getElementById('bsc-ctx-title');
-    if (ctxTitle) ctxTitle.textContent = l==='de' ? 'Kontext' : 'Context';
-    var bscDay = document.getElementById('bsc-day');
-    if (bscDay) bscDay.textContent = (l==='de'?'Tag ':'Day ')+p.day+(l==='de'?' von ':' of ')+p.totalDays;
-    var bscOv = document.getElementById('bsc-overdue');
-    if (bscOv) bscOv.textContent = p.overdueTasks+(l==='de'?' überfällige Aufgaben':' overdue tasks');
-    var bscActions = document.getElementById('bsc-actions-title');
-    if (bscActions) bscActions.textContent = l==='de' ? 'Sofortige Aktionen' : 'Immediate Actions';
-    var bscVid = document.getElementById('bsc-vid-title');
-    if (bscVid) bscVid.textContent = l==='de' ? 'Einführungsvideo' : 'Introduction Video';
-    var bscDocs = document.getElementById('bsc-docs-title');
-    if (bscDocs) bscDocs.textContent = l==='de' ? 'Relevante Dokumente' : 'Relevant Documents';
-    renderQuickPrompts();
-  }
+  document.getElementById('lde').classList.toggle('on',l==='de');
+  document.getElementById('len').classList.toggle('on',l==='en');
   applyLang(l);
 }
-
 function applyLang(l) {
   document.querySelectorAll('[data-de],[data-en]').forEach(function(el){
     var val = el.getAttribute('data-'+l);
@@ -1292,34 +1269,37 @@ function applyLang(l) {
   });
   var ci = document.getElementById('ci');
   if(ci) ci.placeholder = l==='de'?'Nachricht an Buddy…':'Message Buddy…';
+  document.querySelectorAll('.chat-send').forEach(function(b){b.textContent=l==='de'?'Senden':'Send';});
+  var hs = document.getElementById('hs');
+  if(hs) hs.placeholder = l==='de'?'Suche in Portal…':'Search portal…';
   var ph1 = document.getElementById('ob-phase1-label');
   if(ph1) ph1.textContent = l==='de'?'Phase 1 – Erste 30 Tage: Grundlagen & Sicherheit':'Phase 1 – First 30 Days: Basics & Safety';
+  var empCur = EMPLOYEE_PROFILES[selectedAcc];
   var obs = document.getElementById('ob-sub');
-  if(obs) obs.textContent = (l==='de'?'Personalisierter 90-Tage-Plan · ':'Personalized 90-day plan · ')+(EMPLOYEE_PROFILES[selectedAcc]?EMPLOYEE_PROFILES[selectedAcc].role+' · '+EMPLOYEE_PROFILES[selectedAcc].location:'');
+  if(obs && empCur) obs.textContent = (l==='de'?'Personalisierter 90-Tage-Plan · ':'Personalized 90-day plan · ')+empCur.role+' · '+empCur.location;
   var bs = document.getElementById('bsub');
-  var emp2 = EMPLOYEE_PROFILES[selectedAcc];
-  if(bs && emp2) bs.textContent = (l==='de'?'Kontextbezogene Unterstützung · ':'Contextual support · ')+emp2.name+' · '+emp2.role+' · '+emp2.location+(l==='de'?' · Tag ':' · Day ')+emp2.day;
-  var kpiLabels = {
-    'kpi-prog-lbl': l==='de'?'Onboarding-Fortschritt':'Onboarding Progress',
-    'kpi-tasks-lbl': l==='de'?'Offene Aufgaben':'Open Tasks',
-    'kpi-train-lbl': l==='de'?'Schulungen':'Trainings',
-    'kpi-fb-lbl': l==='de'?'Nächstes Feedback':'Next Feedback',
-    'kpi-req-lbl': l==='de'?'Offene Anfragen':'Open Requests',
-  };
-  Object.keys(kpiLabels).forEach(function(id){
-    var el = document.getElementById(id);
-    if(el) el.textContent = kpiLabels[id];
-  });
+  if(bs && empCur) bs.textContent = (l==='de'?'Kontextbezogene Unterstützung · ':'Contextual support · ')+empCur.name+' · '+empCur.role+' · '+empCur.location+(l==='de'?' · Tag ':' · Day ')+empCur.day;
+  var bscDay = document.getElementById('bsc-day');
+  if(bscDay && empCur) bscDay.textContent = (l==='de'?'Tag ':'Day ')+empCur.day+(l==='de'?' von ':' of ')+90;
+  var bscOv = document.getElementById('bsc-overdue');
+  if(bscOv && empCur) bscOv.textContent = empCur.overdueTasks+(l==='de'?' überfällige Aufgaben':' overdue tasks');
+  var dod2 = document.getElementById('dash-overdue');
+  if(dod2 && empCur) dod2.textContent = empCur.overdueTasks>0?'⚠ '+empCur.overdueTasks+(l==='de'?' überfällig':' overdue'):(l==='de'?'Alles im Plan':'All on track');
+  var dd = document.getElementById('dash-day');
+  if(dd && empCur) dd.textContent = (l==='de'?'Tag ':'Day ')+empCur.day+(l==='de'?' von ':' of ')+90;
+  var ds = document.getElementById('ds');
+  if(ds && empCur) ds.innerHTML = empCur.role+(l==='de'?' · Standort ':' · Location ')+empCur.location+' · <strong>'+(l==='de'?'Tag ':'Day ')+empCur.day+'</strong> '+(l==='de'?'von':'of')+' 90';
   var bwelc = document.getElementById('bwelc');
   var bwelcTime = document.getElementById('bwelc-time');
-  var emp3 = EMPLOYEE_PROFILES[selectedAcc];
-  if(bwelc && emp3 && emp3.profile) {
-    var fn = emp3.profile.name.split(' ')[0];
+  if(bwelc && empCur) {
+    var fn = empCur.name.split(' ')[0];
     bwelc.textContent = l==='de'
       ? 'Hallo '+fn+'! Ich bin dein NoRFood Buddy. Ich kenne deinen Einschulungsplan, deine offenen Aufgaben und die NoRFood-Prozesse. Wie kann ich dir heute helfen?'
-      : 'Hi '+fn+'! I\'m your NoRFood Buddy. I know your onboarding plan, open tasks and NoRFood processes. How can I help you today?';
+      : 'Hi '+fn+"! I'm your NoRFood Buddy. I know your onboarding plan, open tasks and NoRFood processes. How can I help you today?";
   }
   if(bwelcTime) bwelcTime.textContent = l==='de'?'Heute, 08:30':'Today, 08:30';
+  renderQuickPrompts();
+  setRole(role);
 }
   // Dashboard overdue
   var emp3 = EMPLOYEE_PROFILES[selectedAcc];
