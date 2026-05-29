@@ -1730,8 +1730,8 @@ function hck(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sm();}}
 function openVidModal() {
   var v = document.getElementById('vid-modal-player');
   var src = lang === 'de'
-    ? '/assets/buddy_intro_de.mp4'
-    : '/assets/buddy_intro_en.mp4';
+    ? '/buddy_intro_de.mp4'
+    : '/buddy_intro_en.mp4';
 
   if (v.getAttribute('data-loaded-lang') !== lang) {
     v.src = src;
