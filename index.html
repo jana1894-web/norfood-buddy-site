@@ -1658,7 +1658,15 @@ function renderZeiterfassung() {
     +'</div>';
   }
 }
+function extractDocContent(text) {
+  var s = text.indexOf('[DOC]'), e = text.indexOf('[/DOC]');
+  if (s !== -1 && e !== -1 && e > s) return text.slice(s + 5, e).trim();
+  return text.trim();
+}
 
+function cleanReplyForDisplay(text) {
+  return text.replace(/\[DOC\]/g, '').replace(/\[\/DOC\]/g, '').trim();
+}
 function simReply(t) {
   if (typing) return;
   typing = true;
@@ -1674,23 +1682,23 @@ function simReply(t) {
     var now = new Date();
     var d = document.createElement('div');
     d.className = 'msg-b';
-
-    var html = '<div class="bubble bubble-md">' + renderBuddyMarkdown(t) + '</div>'
+var displayText = cleanReplyForDisplay(t);
+    var docContent = extractDocContent(t);
+    var html = '<div class="bubble bubble-md">' + renderBuddyMarkdown(displayText) + '</div>'
       + '<div class="msg-time">' + now.getHours() + ':' + String(now.getMinutes()).padStart(2, '0') + '</div>';
-
-    if (shouldShowDownload(t)) {
-      var fname = generateFilename(t);
-      var idx = _buddyReplies.push(t) - 1;
+    if (shouldShowDownload(docContent)) {
+      var fname = generateFilename(docContent);
+      var idx = _buddyReplies.push(docContent) - 1;
       var btnLabel = lang === 'de' ? '⬇ Als Word herunterladen' : '⬇ Download as Word';
       html += '<div style="margin-top:7px">'
         + '<button onclick="_downloadBuddyReply('+idx+')" '
         + 'style="padding:6px 13px;background:var(--green-lt);color:var(--green);border:1px solid #C2DBCA;border-radius:8px;font-size:11px;font-weight:600;cursor:pointer;font-family:var(--font);display:inline-flex;align-items:center;gap:5px;transition:.15s;">'
         + btnLabel + '</button></div>';
     }
-
     d.innerHTML = html;
     cm.appendChild(d); cm.scrollTop = cm.scrollHeight;
     typing = false;
+  
   }, 1100 + Math.random() * 500);
 }
 
