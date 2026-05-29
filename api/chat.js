@@ -20,19 +20,15 @@ export default async function handler(req, res) {
 
     const trimmedMessage = message.trim();
 
-    // ─── Language Detection ────────────────────────────────────────────────
+   // ─── Language Detection ────────────────────────────────────────────────
     const containsGerman =
       /[äöüß]|\b(ich|bin|krank|urlaub|homeoffice|hilfe|hallo|danke|bitte|schicht|krankmeldung|abwesenheit|mobbing|belästigung|unfall|gehalt|probezeit|datenschutz)\b/i.test(trimmedMessage);
-   const containsEnglish =
-  /\b(i|am|sick|vacation|holiday|home office|help|hello|thanks|please|shift|absence|bullying|harassment|accident|salary|probation|privacy|data protection|what|my|is|the|can|you|show|tell|me|how|does|where|who|when|have|need|your|want|give|get|find|new|name|pretty|woman|man|colleague)\b/i.test(trimmedMessage);
-
+    const containsEnglish =
+      /\b(i|am|sick|vacation|holiday|home office|help|hello|thanks|please|shift|absence|bullying|harassment|accident|salary|probation|privacy|data protection|what|my|is|the|can|you|show|tell|me|how|does|where|who|when|have|need|your|want|give|get|find|new|name|pretty|woman|man|colleague)\b/i.test(trimmedMessage);
     const detectedLanguage =
-      language === 'de' || language === 'en'
-        ? language
-        : containsGerman && !containsEnglish
-          ? 'de'
-          : 'en';
-
+      containsGerman && !containsEnglish
+        ? 'de'
+        : 'en';
     // ─── Needle RAG Search ─────────────────────────────────────────────────
     let needleContext = '';
     try {
