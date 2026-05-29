@@ -60,7 +60,7 @@ export default async function handler(req, res) {
           : [];
 
         needleContext = results
-          .slice(0, 8)
+          .slice(0, 12)
           .map((item, index) => {
             const text =
               item?.content || item?.text || item?.chunk ||
@@ -68,8 +68,8 @@ export default async function handler(req, res) {
             const title =
               item?.title || item?.name ||
               item?.metadata?.title || item?.fields?.title || `Dokument ${index + 1}`;
-            return String(text).slice(0, 3000)
-              ? `[${title}]\n${String(text).slice(0, 3000)}`
+            return String(text).slice(0, 8000)
+              ? `[${title}]\n${String(text).slice(0, 8000)}`
               : '';
           })
           .filter(Boolean)
