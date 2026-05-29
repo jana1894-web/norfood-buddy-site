@@ -1301,11 +1301,15 @@ function applyLang(l) {
   if(ds && empCur) ds.innerHTML = empCur.role+(l==='de'?' · Standort ':' · Location ')+empCur.location+' · <strong>'+(l==='de'?'Tag ':'Day ')+empCur.day+'</strong> '+(l==='de'?'von':'of')+' 90';
   var bwelc = document.getElementById('bwelc');
   var bwelcTime = document.getElementById('bwelc-time');
-  if(bwelc && empCur) {
+if(bwelc && empCur) {
     var fn = empCur.name.split(' ')[0];
-    bwelc.textContent = l==='de'
-      ? 'Hallo '+fn+'! Ich bin dein NoRFood Buddy. Ich kenne deinen Einschulungsplan, deine offenen Aufgaben und die NoRFood-Prozesse. Wie kann ich dir heute helfen?'
-      : 'Hi '+fn+"! I'm your NoRFood Buddy. I know your onboarding plan, open tasks and NoRFood processes. How can I help you today?";
+    bwelc.textContent = selectedAcc === 2
+      ? (l==='de'
+          ? 'Hallo Lisa! Ich bin dein HR Buddy. Ich unterstütze dich beim Onboarding-Management, bei HR-Prozessen und deinen täglichen Aufgaben. Wie kann ich dir heute helfen?'
+          : 'Hi Lisa! I\'m your HR Buddy. I support you with onboarding management, HR processes and your daily tasks. How can I help you today?')
+      : (l==='de'
+          ? 'Hallo '+fn+'! Ich bin dein NoRFood Buddy. Ich kenne deinen Einschulungsplan, deine offenen Aufgaben und die NoRFood-Prozesse. Wie kann ich dir heute helfen?'
+          : 'Hi '+fn+"! I'm your NoRFood Buddy. I know your onboarding plan, open tasks and NoRFood processes. How can I help you today?");
   }
   if(bwelcTime) bwelcTime.textContent = l==='de'?'Heute, 08:30':'Today, 08:30';
   renderQuickPrompts();
