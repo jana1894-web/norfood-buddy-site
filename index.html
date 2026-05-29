@@ -634,7 +634,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);font-size:13
         <span class="chat-ctx" id="bctx">Produktion · LNZ · Bäckerei</span>
       </div>
       <div class="chat-msgs" id="cm">
-        <div class="msg-b"><div class="bubble" id="bwelc">Hallo Markus! Ich bin dein NoRFood Buddy. Ich kenne deinen Einschulungsplan, deine offenen Aufgaben und die NoRFood-Prozesse. Wie kann ich dir heute helfen?</div><div class="msg-time">Heute, 08:30</div></div>
+        <div class="msg-b"><div class="bubble" id="bwelc"></div><div class="msg-time" id="bwelc-time">Heute, 08:30</div></div>
       </div>
       <div class="chat-quick" id="chat-quick-row"></div>
       <div class="chat-inp-row">
@@ -1342,7 +1342,18 @@ function applyLang(l) {
   if(hs) hs.placeholder = l==='de'?'Suche in Portal…':'Search portal…';
   renderQuickPrompts();
   setRole(role);
-}
+}  var bwelc = document.getElementById('bwelc');
+  var bwelcTime = document.getElementById('bwelc-time');
+  var emp3 = EMPLOYEE_PROFILES[selectedAcc];
+  if (bwelc && emp3 && emp3.profile) {
+    var fn = emp3.profile.name.split(' ')[0];
+    bwelc.textContent = l==='de'
+      ? 'Hallo '+fn+'! Ich bin dein NoRFood Buddy. Ich kenne deinen Einschulungsplan, deine offenen Aufgaben und die NoRFood-Prozesse. Wie kann ich dir heute helfen?'
+      : 'Hi '+fn+'! I\'m your NoRFood Buddy. I know your onboarding plan, open tasks and NoRFood processes. How can I help you today?';
+  }
+  if (bwelcTime) {
+    bwelcTime.textContent = l==='de' ? 'Heute, 08:30' : 'Today, 08:30';
+  }
 
 // ─── Navigation ───────────────────────────────────────────────────────────────
 function nav(p) {
