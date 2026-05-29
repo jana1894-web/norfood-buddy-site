@@ -1257,8 +1257,39 @@ function setRole(r) {
 
 function setLang(l) {
   lang = l;
-  document.getElementById('lde').classList.toggle('on',l==='de');
-  document.getElementById('len').classList.toggle('on',l==='en');
+  document.getElementById('lde').classList.toggle('on', l==='de');
+  document.getElementById('len').classList.toggle('on', l==='en');
+
+  var a = EMPLOYEE_PROFILES[selectedAcc];
+  if (a && a.role !== 'h') {
+    var p = a.profile;
+
+    var cm = document.getElementById('cm');
+    if (cm && cm.children.length <= 1) {
+      renderBuddyChat();
+    }
+
+    var ctxTitle = document.getElementById('bsc-ctx-title');
+    if (ctxTitle) ctxTitle.textContent = l==='de' ? 'Kontext' : 'Context';
+
+    var bscDay = document.getElementById('bsc-day');
+    if (bscDay) bscDay.textContent = (l==='de'?'Tag ':'Day ')+p.day+(l==='de'?' von ':' of ')+p.totalDays;
+
+    var bscOv = document.getElementById('bsc-overdue');
+    if (bscOv) bscOv.textContent = p.overdueTasks+(l==='de'?' überfällige Aufgaben':' overdue tasks');
+
+    var bscActions = document.getElementById('bsc-actions-title');
+    if (bscActions) bscActions.textContent = l==='de' ? 'Sofortige Aktionen' : 'Immediate Actions';
+
+    var bscVid = document.getElementById('bsc-vid-title');
+    if (bscVid) bscVid.textContent = l==='de' ? 'Einführungsvideo' : 'Introduction Video';
+
+    var bscDocs = document.getElementById('bsc-docs-title');
+    if (bscDocs) bscDocs.textContent = l==='de' ? 'Relevante Dokumente' : 'Relevant Documents';
+
+    renderQuickPrompts();
+  }
+
   applyLang(l);
 }
 
