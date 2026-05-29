@@ -1324,30 +1324,28 @@ function applyLang(l) {
   // Dashboard overdue
   var emp3 = EMPLOYEE_PROFILES[selectedAcc];
   var dod2 = document.getElementById('dash-overdue');
-  if(dod2 && emp3) dod2.textContent = emp3.overdueTasks>0?'⚠ '+emp3.overdueTasks+(l==='de'?' überfällig':' overdue'):(l==='de'?'Alles im Plan':'All on track');
-  // Quick action buttons
-  var qaMap = {'qa-req':[l==='de'?'Anfrage stellen':'Submit Request'],'qa-buddy':[l==='de'?'Buddy fragen':'Ask Buddy'],'qa-train':[l==='de'?'Schulung starten':'Start Training'],'qa-ob':[l==='de'?'Onboarding-Plan':'Onboarding Plan'],'qa-doc':[l==='de'?'Dokument finden':'Find Document'],'qa-con':[l==='de'?'Kontakte':'Contacts']};
-  Object.keys(qaMap).forEach(function(id){var el=document.getElementById(id);if(el)el.textContent=qaMap[id][0];});
-  // Page titles
-  var ptMap = {'ob-title':[l==='de'?'Mein Onboarding-Plan':'My Onboarding Plan'],'cl-title':[l==='de'?'Checklisten':'Checklists'],'req-title':[l==='de'?'Meine Anfragen':'My Requests'],'doc-title':[l==='de'?'Dokumente & Richtlinien':'Documents & Policies'],'lrn-title':[l==='de'?'Lernen & Compliance':'Learning & Compliance'],'con-title':[l==='de'?'Team & Kontakte':'Team & Contacts'],'time-title':[l==='de'?'Zeiterfassung':'Time Tracking'],'buddy-title':[l==='de'?'NoRFood Buddy – KI-Assistent':'NoRFood Buddy – AI Assistant']};
-  Object.keys(ptMap).forEach(function(id){var el=document.getElementById(id);if(el)el.textContent=ptMap[id][0];});
-  // Sidebar labels
-  var sbMap = {'sb-lbl-overview':[l==='de'?'Übersicht':'Overview'],'sb-lbl-services':['Services'],'sb-lbl-time':[l==='de'?'Arbeitszeit':'Working Time'],'sb-lbl-network':[l==='de'?'Netzwerk':'Network'],'sb-lbl-assistant':[l==='de'?'Assistent':'Assistant']};
-  Object.keys(sbMap).forEach(function(id){var el=document.getElementById(id);if(el)el.textContent=sbMap[id][0];});
+ if(dod2 && emp3) dod2.textContent = emp3.overdueTasks>0?'⚠ '+emp3.overdueTasks+(l==='de'?' überfällig':' overdue'):(l==='de'?'Alles im Plan':'All on track');
+  var qaMap = {'qa-req':l==='de'?'Anfrage stellen':'Submit Request','qa-buddy':l==='de'?'Buddy fragen':'Ask Buddy','qa-train':l==='de'?'Schulung starten':'Start Training','qa-ob':l==='de'?'Onboarding-Plan':'Onboarding Plan','qa-doc':l==='de'?'Dokument finden':'Find Document','qa-con':l==='de'?'Kontakte':'Contacts'};
+  Object.keys(qaMap).forEach(function(id){var el=document.getElementById(id);if(el)el.textContent=qaMap[id];});
+  var ptMap = {'ob-title':l==='de'?'Mein Onboarding-Plan':'My Onboarding Plan','cl-title':l==='de'?'Checklisten':'Checklists','req-title':l==='de'?'Meine Anfragen':'My Requests','doc-title':l==='de'?'Dokumente & Richtlinien':'Documents & Policies','lrn-title':l==='de'?'Lernen & Compliance':'Learning & Compliance','con-title':l==='de'?'Team & Kontakte':'Team & Contacts','time-title':l==='de'?'Zeiterfassung':'Time Tracking','buddy-title':l==='de'?'NoRFood Buddy – KI-Assistent':'NoRFood Buddy – AI Assistant'};
+  Object.keys(ptMap).forEach(function(id){var el=document.getElementById(id);if(el)el.textContent=ptMap[id];});
+  var sbMap = {'sb-lbl-overview':l==='de'?'Übersicht':'Overview','sb-lbl-services':'Services','sb-lbl-time':l==='de'?'Arbeitszeit':'Working Time','sb-lbl-network':l==='de'?'Netzwerk':'Network','sb-lbl-assistant':l==='de'?'Assistent':'Assistant'};
+  Object.keys(sbMap).forEach(function(id){var el=document.getElementById(id);if(el)el.textContent=sbMap[id];});
   document.querySelectorAll('.chat-send').forEach(function(b){b.textContent=l==='de'?'Senden':'Send';});
   var hs = document.getElementById('hs');
   if(hs) hs.placeholder = l==='de'?'Suche in Portal…':'Search portal…';
   renderQuickPrompts();
-  setRole(role);
-var bwelc = document.getElementById('bwelc');
+  var bwelc = document.getElementById('bwelc');
   var bwelcTime = document.getElementById('bwelc-time');
   var emp3 = EMPLOYEE_PROFILES[selectedAcc];
-  if (bwelc && emp3 && emp3.profile) {
+  if(bwelc && emp3 && emp3.profile) {
     var fn = emp3.profile.name.split(' ')[0];
     bwelc.textContent = l==='de'
       ? 'Hallo '+fn+'! Ich bin dein NoRFood Buddy. Ich kenne deinen Einschulungsplan, deine offenen Aufgaben und die NoRFood-Prozesse. Wie kann ich dir heute helfen?'
       : 'Hi '+fn+'! I\'m your NoRFood Buddy. I know your onboarding plan, open tasks and NoRFood processes. How can I help you today?';
   }
+  if(bwelcTime) bwelcTime.textContent = l==='de'?'Heute, 08:30':'Today, 08:30';
+}
   if (bwelcTime) {
     bwelcTime.textContent = l==='de' ? 'Heute, 08:30' : 'Today, 08:30';
   }
