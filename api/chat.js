@@ -30,7 +30,7 @@ export default async function handler(req, res) {
         ? 'de'
         : 'en';
     // ─── Needle RAG Search ─────────────────────────────────────────────────
-    let needleContext = '';
+   let needleContext = '';
     try {
       const needleUrl = `https://search.needle.app/api/v1/collections/${needleCollectionId}/search`;
       const needleResponse = await fetch(needleUrl, {
@@ -39,10 +39,11 @@ export default async function handler(req, res) {
           'Content-Type': 'application/json',
           'x-api-key': needleApiKey
         },
-body: JSON.stringify({ 
-  text: trimmedMessage,
-  top_k: 20
-})
+        body: JSON.stringify({ 
+          text: trimmedMessage,
+          top_k: 20
+        })
+      });
       const needleText = await needleResponse.text();
       let needleData = {};
       try { needleData = JSON.parse(needleText); } catch (e) { needleData = {}; }
